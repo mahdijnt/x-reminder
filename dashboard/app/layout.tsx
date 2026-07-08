@@ -2,9 +2,11 @@
 
 import "./globals.css";
 
+import { DashboardAppShell } from "@/components/layout/dashboard-app-shell";
+
 export const metadata = {
   title: "X Engagement Intelligence Manager",
-  description: "Dashboard skeleton (no product features yet).",
+  description: "Next.js dashboard UI (fake data only).",
 };
 
 export default function RootLayout({
@@ -15,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen bg-background text-foreground antialiased">
-        {children}
+        <DashboardAppShell>{children}</DashboardAppShell>
       </body>
     </html>
   );
