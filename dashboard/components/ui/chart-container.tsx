@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 
@@ -17,9 +17,8 @@ export function ChartContainer({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-lg border shadow-md",
-        "border-glass-border bg-glass/30 backdrop-blur-sm",
-        "before:pointer-events-none before:absolute before:inset-0 before:bg-gradient-to-b before:from-primary/20 before:to-transparent",
+        "card-premium relative overflow-hidden rounded-[1.25rem] border border-white/8 p-0 shadow-md",
+        "before:pointer-events-none before:absolute before:inset-0 before:bg-gradient-to-b before:from-primary/18 before:to-transparent",
         variant === "soft" && "bg-secondary/10 before:from-accent/10",
         className
       )}

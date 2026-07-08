@@ -1,12 +1,16 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { usePathname } from "next/navigation";
+import { m } from "framer-motion";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Navbar } from "@/components/layout/navbar";
 import { TopNavigation } from "@/components/layout/top-navigation";
+import { AuroraBackground } from "@/components/effects/aurora-background";
+import { GradientMesh } from "@/components/effects/gradient-mesh";
+import { AnimatedLines } from "@/components/effects/animated-lines";
 import { cn } from "@/lib/utils";
 import {
   sampleNotifications,
@@ -64,16 +68,26 @@ export function DashboardAppShell({
   );
 
   return (
-    <div className="min-h-screen">
-      <div className="mx-auto max-w-[1280px] space-y-4 p-4">
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[20rem_1fr]">
-          <div className="hidden lg:block">
+    <div className="relative min-h-screen overflow-hidden">
+      <AuroraBackground />
+      <GradientMesh className="opacity-60" />
+      <AnimatedLines className="mix-blend-screen" />
+
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(8,12,28,0.15),transparent_28%),linear-gradient(180deg,rgba(7,10,20,0.12),rgba(7,10,20,0.4))]" />
+
+      <div className="relative mx-auto max-w-[1280px] space-y-4 p-4 md:p-5 lg:p-6">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(16rem,19rem)_1fr] lg:gap-5">
+          <m.div
+            layout
+            transition={{ type: "spring", stiffness: 220, damping: 24, mass: 0.8 }}
+            className="hidden lg:block"
+          >
             <Sidebar
               items={sidebarItems}
               collapsed={sidebarCollapsed}
               onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
               footer={
-                <div className="space-y-2 rounded-xl border border-glass-border bg-background/40 p-3">
+                <div className="glass-panel space-y-2 rounded-2xl p-3">
                   <p className="text-xs font-medium text-foreground">Status</p>
                   <p className="text-xs text-muted-foreground">
                     UI ready with simulated loading and transitions.
@@ -81,9 +95,9 @@ export function DashboardAppShell({
                 </div>
               }
             />
-          </div>
+          </m.div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 lg:space-y-5">
             <Navbar
               title={pageTitle}
               subtitle={pageSubtitle}
@@ -105,8 +119,8 @@ export function DashboardAppShell({
       <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
         <DialogContent
           className={cn(
-            "max-w-[90vw] overflow-hidden p-2",
-            "bg-glass/20 backdrop-blur-xl shadow-glow"
+            "max-w-[90vw] overflow-hidden border-white/10 p-2",
+            "bg-glass/20 shadow-glow backdrop-blur-2xl"
           )}
         >
           <div className="p-1">

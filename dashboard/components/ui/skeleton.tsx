@@ -7,13 +7,11 @@ import { cn } from "@/lib/utils";
 export const Skeleton = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(({ className, style, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn(
-      "animate-pulse rounded-md bg-gradient-to-r from-secondary/80 via-secondary/50 to-secondary/80",
-      className
-    )}
+    className={cn("skeleton-shimmer rounded-md", className)}
+    style={style}
     {...props}
   />
 ));

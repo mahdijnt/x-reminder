@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { m } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 
@@ -24,10 +25,14 @@ export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
             <span>{percentage}%</span>
           </div>
         ) : null}
-        <div className="h-2.5 overflow-hidden rounded-full bg-secondary/70">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-primary to-accent transition-[width] duration-300"
-            style={{ width: `${percentage}%` }}
+        <div className="relative h-2.5 overflow-hidden rounded-full bg-secondary/70">
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent)] opacity-60" />
+          <m.div
+            className="h-full rounded-full bg-gradient-to-r from-primary via-violet-400 to-accent will-change-transform"
+            initial={{ scaleX: 0.2, opacity: 0.5 }}
+            animate={{ scaleX: percentage / 100 || 0, opacity: 1 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            style={{ transformOrigin: "left center" }}
           />
         </div>
       </div>

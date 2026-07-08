@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatedCard } from "@/components/motion/animated-card";
 import {
   Card,
   CardContent,
@@ -23,15 +24,17 @@ export function ProgressCard({
   label = "Completion",
 }: ProgressCardProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardDescription>{label}</CardDescription>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Progress value={value} showLabel />
-        {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
-      </CardContent>
-    </Card>
+    <AnimatedCard>
+      <Card className="card-premium rounded-[1.5rem] border-white/10">
+        <CardHeader>
+          <CardDescription>{label}</CardDescription>
+          <CardTitle>{title}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Progress value={value} showLabel />
+          {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
+        </CardContent>
+      </Card>
+    </AnimatedCard>
   );
 }

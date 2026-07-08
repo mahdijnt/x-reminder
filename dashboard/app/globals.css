@@ -1,12 +1,6 @@
-﻿@tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/*
-  Design System Tokens
-  - Premium AI SaaS look (futuristic, minimal)
-  - Dark-first palette (html uses class="dark")
-*/
 
 @layer base {
   :root {
@@ -15,80 +9,56 @@
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
       "Liberation Mono", "Courier New", monospace;
 
-    /* Typography (Tailwind fontSize uses these vars) */
     --text-xs: 0.75rem;
     --leading-xs: 1rem;
-
     --text-sm: 0.875rem;
     --leading-sm: 1.25rem;
-
     --text-base: 1rem;
     --leading-base: 1.5rem;
-
     --text-lg: 1.125rem;
     --leading-lg: 1.75rem;
 
-    /* Radii */
     --radius-lg: 0.9rem;
-
-    /* Spacing scale (custom, used by tailwind extension) */
-    --space-18: 4.5rem; /* 72px */
-    --space-22: 5.5rem; /* 88px */
-    --space-28: 7rem; /* 112px */
-    --space-34: 8.5rem; /* 136px */
-
-    /* Layout */
+    --space-18: 4.5rem;
+    --space-22: 5.5rem;
+    --space-28: 7rem;
+    --space-34: 8.5rem;
     --container-padding: 1rem;
 
-    /* Animation tokens */
     --duration-fast: 180ms;
     --duration-normal: 280ms;
     --duration-slow: 420ms;
 
-    /* Glass surfaces */
     --glass-blur: 18px;
     --glass-alpha: 0.55;
 
-    /* Shadow tokens */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.10);
     --shadow-md: 0 12px 30px -18px rgb(0 0 0 / 0.18);
     --shadow-lg: 0 18px 40px -25px rgb(0 0 0 / 0.22);
     --shadow-glow: 0 0 0 1px rgb(168 85 247 / 0.10), 0 0 40px rgba(168, 85, 247, 0.25);
 
-    /* Color tokens as HSL components: `h s l` */
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;
-
     --muted: 215 16% 91%;
     --muted-foreground: 215 16% 40%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
-
     --primary: 258 90% 60%;
     --primary-foreground: 0 0% 100%;
-
     --secondary: 210 16% 92%;
     --secondary-foreground: 222 47% 11%;
-
     --accent: 190 95% 35%;
     --accent-foreground: 0 0% 100%;
-
     --destructive: 0 85% 50%;
     --destructive-foreground: 0 0% 100%;
-
     --border: 215 22% 84%;
     --input: 215 22% 84%;
     --ring: 258 90% 60%;
-
     --glass: 240 30% 98%;
     --glass-foreground: 222 47% 11%;
     --glass-border: 215 22% 84%;
-
-    /* Gradient surfaces */
     --gradient-from: 258 92% 65%;
     --gradient-to: 190 95% 45%;
   }
@@ -96,40 +66,28 @@
   .dark {
     --background: 240 20% 6%;
     --foreground: 210 22% 96%;
-
     --muted: 240 16% 15%;
     --muted-foreground: 215 18% 76%;
-
     --popover: 240 22% 9%;
     --popover-foreground: 210 22% 98%;
-
     --card: 240 22% 10%;
     --card-foreground: 210 22% 98%;
-
     --primary: 258 92% 65%;
     --primary-foreground: 0 0% 100%;
-
     --secondary: 230 18% 14%;
     --secondary-foreground: 210 22% 98%;
-
     --accent: 190 95% 45%;
     --accent-foreground: 0 0% 100%;
-
     --destructive: 0 85% 58%;
     --destructive-foreground: 210 22% 98%;
-
     --border: 240 16% 24%;
     --input: 240 16% 26%;
     --ring: 258 92% 65%;
-
     --glass: 240 18% 12%;
     --glass-foreground: 210 22% 98%;
     --glass-border: 240 18% 30%;
-
-    /* Gradient surfaces */
     --gradient-from: 258 92% 65%;
     --gradient-to: 190 95% 45%;
-
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.28);
     --shadow-md: 0 14px 38px -22px rgb(0 0 0 / 0.75);
     --shadow-lg: 0 22px 60px -30px rgb(0 0 0 / 0.85);
@@ -147,6 +105,7 @@
   body {
     @apply bg-background text-foreground font-sans;
     text-rendering: optimizeLegibility;
+    background-image: radial-gradient(circle at top, rgba(139, 92, 246, 0.10), transparent 22%), radial-gradient(circle at 20% 80%, rgba(34, 211, 238, 0.08), transparent 18%);
   }
 }
 
@@ -155,12 +114,27 @@
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
   }
 
-  /* Global glass helper used by cards/overlays */
   .glass-surface {
     background: hsl(var(--glass) / var(--glass-alpha));
     border: 1px solid hsl(var(--glass-border) / 1);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
+  }
+
+  .glass-panel {
+    background: linear-gradient(180deg, hsl(var(--glass) / 0.72), hsl(var(--glass) / 0.5));
+    border: 1px solid rgb(255 255 255 / 0.08);
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(22px) saturate(135%);
+    -webkit-backdrop-filter: blur(22px) saturate(135%);
+  }
+
+  .card-premium {
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.03));
+    border: 1px solid rgb(255 255 255 / 0.08);
+    box-shadow: 0 24px 60px -36px rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
   }
 
   .ai-gradient {
@@ -173,7 +147,6 @@
     text-wrap: balance;
   }
 
-  /* Token-backed micro animations */
   @keyframes ds-fade-in {
     from {
       opacity: 0;
@@ -192,19 +165,126 @@
   @keyframes ds-float {
     0%,
     100% {
-      transform: translateY(0);
+      transform: translate3d(0, 0, 0);
     }
     50% {
-      transform: translateY(-2px);
+      transform: translate3d(0, -8px, 0);
+    }
+  }
+
+  @keyframes aurora-shift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(4%, -3%, 0) scale(1.08);
+    }
+  }
+
+  @keyframes mesh-pan {
+    0% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(-2%, 2%, 0) scale(1.04);
+    }
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+
+  @keyframes line-drift {
+    0% {
+      transform: translate3d(-8%, 0, 0);
+      opacity: 0;
+    }
+    20%,
+    80% {
+      opacity: 0.85;
+    }
+    100% {
+      transform: translate3d(10%, 0, 0);
+      opacity: 0;
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
     }
   }
 
   .animate-ds-float {
-    animation: ds-float var(--duration-slow) ease-in-out infinite;
+    animation: ds-float 8s ease-in-out infinite;
+  }
+
+  .aurora-blob {
+    position: absolute;
+    inset: auto;
+    border-radius: 9999px;
+    filter: blur(70px);
+    opacity: 0.45;
+    will-change: transform, opacity;
+    animation: aurora-shift 18s ease-in-out infinite;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .aurora-blob-primary {
+    top: -8rem;
+    left: -4rem;
+    height: 24rem;
+    width: 24rem;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.32), transparent 70%);
+  }
+
+  .aurora-blob-secondary {
+    right: -6rem;
+    top: 10%;
+    height: 22rem;
+    width: 22rem;
+    background: radial-gradient(circle, rgba(34, 211, 238, 0.24), transparent 70%);
+    animation-delay: -6s;
+  }
+
+  .aurora-blob-tertiary {
+    bottom: -8rem;
+    left: 30%;
+    height: 20rem;
+    width: 26rem;
+    background: radial-gradient(circle, rgba(244, 114, 182, 0.22), transparent 70%);
+    animation-delay: -10s;
+  }
+
+  .gradient-mesh {
+    background-image: radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.18), transparent 26%), radial-gradient(circle at 80% 10%, rgba(34, 211, 238, 0.12), transparent 22%), radial-gradient(circle at 75% 70%, rgba(59, 130, 246, 0.14), transparent 26%), radial-gradient(circle at 30% 80%, rgba(236, 72, 153, 0.10), transparent 20%);
+    animation: mesh-pan 22s ease-in-out infinite;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .animated-light-line {
+    position: absolute;
+    height: 1px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), rgba(34, 211, 238, 0.55), transparent);
+    box-shadow: 0 0 18px rgba(96, 165, 250, 0.3);
+    animation: line-drift linear infinite;
+    will-change: transform, opacity;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .skeleton-shimmer {
+    background: linear-gradient(90deg, rgba(148, 163, 184, 0.24), rgba(226, 232, 240, 0.38), rgba(148, 163, 184, 0.24));
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+    will-change: background-position;
   }
 }
 
-/* Better defaults for focus styles on interactive elements */
 @layer base {
   button {
     @apply focus-glow;
@@ -214,5 +294,28 @@
   select,
   textarea {
     @apply focus-glow;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .aurora-blob,
+  .gradient-mesh,
+  .animated-light-line,
+  .animate-ds-float,
+  .animate-ds-in,
+  .skeleton-shimmer {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

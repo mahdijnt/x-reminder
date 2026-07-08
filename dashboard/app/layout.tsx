@@ -1,8 +1,9 @@
-﻿import type { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import "./globals.css";
 
 import { DashboardAppShell } from "@/components/layout/dashboard-app-shell";
+import { MotionProvider } from "@/components/motion/motion-provider";
 
 export const metadata = {
   title: "X Engagement Intelligence Manager",
@@ -17,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen bg-background text-foreground antialiased">
-        <DashboardAppShell>{children}</DashboardAppShell>
+        <MotionProvider>
+          <DashboardAppShell>{children}</DashboardAppShell>
+        </MotionProvider>
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import * as React from "react";
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { AnimatedCard } from "@/components/motion/animated-card";
 import {
   Card,
   CardContent,
@@ -40,27 +41,30 @@ export function StatCard({
   const TrendIcon = trendConfig.icon;
 
   return (
-    <Card className="ai-gradient overflow-hidden">
-      <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
-        <div>
-          <CardDescription>{title}</CardDescription>
-          <CardTitle className="mt-2 text-3xl">{value}</CardTitle>
-        </div>
-        <div className="rounded-xl border border-glass-border bg-background/50 p-2 text-muted-foreground">
-          {icon ?? <TrendIcon className="h-5 w-5" />}
-        </div>
-      </CardHeader>
-      <CardContent className="flex items-end justify-between gap-4">
-        <div>
-          {detail ? <p className="text-sm text-muted-foreground">{detail}</p> : null}
-        </div>
-        {change ? (
-          <Badge variant="glass" className={cn("gap-1 px-2 py-1", trendConfig.className)}>
-            <TrendIcon className="h-3.5 w-3.5" />
-            {change}
-          </Badge>
-        ) : null}
-      </CardContent>
-    </Card>
+    <AnimatedCard>
+      <Card className="card-premium ai-gradient overflow-hidden rounded-[1.5rem] border-white/10">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.16),transparent_32%)]" />
+        <CardHeader className="relative flex flex-row items-start justify-between gap-3 space-y-0">
+          <div>
+            <CardDescription>{title}</CardDescription>
+            <CardTitle className="mt-2 text-3xl">{value}</CardTitle>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-background/40 p-2.5 text-muted-foreground backdrop-blur-md">
+            {icon ?? <TrendIcon className="h-5 w-5" />}
+          </div>
+        </CardHeader>
+        <CardContent className="relative flex items-end justify-between gap-4">
+          <div>
+            {detail ? <p className="text-sm text-muted-foreground">{detail}</p> : null}
+          </div>
+          {change ? (
+            <Badge variant="glass" className={cn("gap-1 px-2 py-1", trendConfig.className)}>
+              <TrendIcon className="h-3.5 w-3.5" />
+              {change}
+            </Badge>
+          ) : null}
+        </CardContent>
+      </Card>
+    </AnimatedCard>
   );
 }
