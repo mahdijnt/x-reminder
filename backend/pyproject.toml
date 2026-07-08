@@ -1,0 +1,19 @@
+﻿[project]
+name = "x-reminder-backend"
+version = "0.1.0"
+description = "FastAPI backend foundation for x-reminder"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi==0.115.6",
+  "uvicorn[standard]==0.32.1",
+  "pydantic==2.10.3",
+  "pydantic-settings==2.6.1",
+]
+
+[tool.uvicorn]
+factory = false
+app = "app.main:app"
+host = "0.0.0.0"
+port = 8000
+reload = true

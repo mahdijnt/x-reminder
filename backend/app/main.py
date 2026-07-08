@@ -1,8 +1,5 @@
-from fastapi import FastAPI
+﻿"""Application entrypoint for ASGI servers."""
 
-app = FastAPI()
+from app.factory import create_app
 
-
-@app.get("/healthz")
-def healthz():
-    return {"status": "ok"}
+app = create_app()
