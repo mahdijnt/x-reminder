@@ -1,4 +1,4 @@
-"""Application configuration via Pydantic Settings."""
+﻿"""Application configuration via Pydantic Settings."""
 
 from enum import Enum
 from functools import lru_cache
@@ -45,6 +45,17 @@ class Settings(BaseSettings):
     RATE_LIMIT_ENABLED: bool = False
     RATE_LIMIT_REQUESTS: int = 100
     RATE_LIMIT_WINDOW_SECONDS: int = 60
+
+    REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_ENABLED: bool = True
+    REDIS_KEY_PREFIX: str = "xreminder"
+    REDIS_MAX_CONNECTIONS: int = 10
+    REDIS_SOCKET_TIMEOUT: float = 5.0
+    REDIS_SOCKET_CONNECT_TIMEOUT: float = 5.0
+    REDIS_HEALTH_CHECK_INTERVAL: int = 30
+    REDIS_RETRY_MAX_ATTEMPTS: int = 3
+    REDIS_RETRY_BASE_DELAY: float = 0.5
+    REDIS_RETRY_MAX_DELAY: float = 10.0
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod

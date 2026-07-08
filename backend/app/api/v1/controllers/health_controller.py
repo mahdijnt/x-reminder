@@ -11,4 +11,6 @@ class HealthController:
 
     async def get_health(self) -> APIResponse[HealthData]:
         data = await self._health_service.get_health()
+        if data.status == "degraded":
+            return APIResponse.ok(data=data, message="Service is degraded")
         return APIResponse.ok(data=data, message="Service is healthy")

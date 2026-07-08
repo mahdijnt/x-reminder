@@ -44,3 +44,47 @@ class ForbiddenError(AppException):
 class ConflictError(AppException):
     def __init__(self, message: str = "Conflict", **kwargs: Any) -> None:
         super().__init__(message, code=kwargs.pop("code", "conflict"), status_code=409, **kwargs)
+
+
+class RedisError(AppException):
+    """Base Redis integration error."""
+
+    def __init__(
+        self,
+        message: str = "Redis error",
+        *,
+        code: str = "redis_error",
+        status_code: int = 503,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(message, code=code, status_code=status_code, **kwargs)
+
+
+class RedisConnectionError(RedisError):
+    def __init__(self, message: str = "Redis connection failed", **kwargs: Any) -> None:
+        super().__init__(
+            message,
+            code=kwargs.pop("code", "redis_connection_error"),
+            status_code=503,
+            **kwargs,
+        )
+
+
+class RedisOperationError(RedisError):
+    def __init__(self, message: str = "Redis operation failed", **kwargs: Any) -> None:
+        super().__init__(
+            message,
+            code=kwargs.pop("code", "redis_operation_error"),
+            status_code=503,
+            **kwargs,
+        )
+
+
+class RedisUnavailableError(RedisError):
+    def __init__(self, message: str = "Redis is unavailable", **kwargs: Any) -> None:
+        super().__init__(
+            message,
+            code=kwargs.pop("code", "redis_unavailable"),
+            status_code=503,
+            **kwargs,
+        )

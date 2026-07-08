@@ -14,7 +14,7 @@ router = APIRouter(tags=["health"])
     "/health",
     response_model=APIResponse[HealthData],
     summary="Health check",
-    description="Returns service status without external dependencies.",
+    description="Returns service status including Redis connectivity.",
 )
 async def health_check(health_service: HealthServiceDep) -> APIResponse[HealthData]:
     controller = HealthController(health_service)

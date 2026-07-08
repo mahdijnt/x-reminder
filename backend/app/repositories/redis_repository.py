@@ -1,0 +1,161 @@
+﻿"""Generic Redis key-value repository."""
+
+from __future__ import annotations
+
+import json
+import logging
+from typing import Any
+
+from redis.asyncio import Redis
+
+from app.infrastructure.redis.connection import RedisManager
+from app.core.exceptions import RedisConnectionError, RedisUnavailableError
+
+logger = logging.getLogger(__name__)
+
+
+class RedisRepository:
+    """Low-level Redis operations with graceful error handling."""
+
+    def __init__(self, manager: RedisManager) -> None:
+        self._manager = manager
+
+    async def get(self, key: str) -> str | None:
+        async def _op(client: Redis) -> str | None:
+            return await client.get(key)
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            logger.debug("redis_get_skipped", extra={"key": key})
+            return None
+
+    async def set(
+        self,
+        key: str,
+        value: str,
+        *,
+        ex: int | None = None,
+        px: int | None = None,
+        nx: bool = False,
+        xx: bool = False,
+    ) -> bool:
+        async def _op(client: Redis) -> bool:
+            result = await client.set(key, value, ex=ex, px=px, nx=nx, xx=xx)
+            return bool(result)
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return False
+
+    async def delete(self, *keys: str) -> int:
+        async def _op(client: Redis) -> int:
+            return int(await client.delete(*keys))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return 0
+
+    async def exists(self, *keys: str) -> int:
+        async def _op(client: Redis) -> int:
+            return int(await client.exists(*keys))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return 0
+
+    async def expire(self, key: str, seconds: int) -> bool:
+        async def _op(client: Redis) -> bool:
+            return bool(await client.expire(key, seconds))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return False
+
+    async def ttl(self, key: str) -> int:
+        async def _op(client: Redis) -> int:
+            return int(await client.ttl(key))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return -2
+
+    async def mget(self, keys: list[str]) -> list[str | None]:
+        if not keys:
+            return []
+
+        async def _op(client: Redis) -> list[str | None]:
+            return list(await client.mget(keys))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return [None for _ in keys]
+
+    async def mset(self, mapping: dict[str, str]) -> bool:
+        if not mapping:
+            return True
+
+        async def _op(client: Redis) -> bool:
+            await client.mset(mapping)
+            return True
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return False
+
+    async def hget(self, name: str, key: str) -> str | None:
+        async def _op(client: Redis) -> str | None:
+            return await client.hget(name, key)
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return None
+
+    async def hset(self, name: str, key: str, value: str) -> int:
+        async def _op(client: Redis) -> int:
+            return int(await client.hset(name, key, value))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return 0
+
+    async def hgetall(self, name: str) -> dict[str, str]:
+        async def _op(client: Redis) -> dict[str, str]:
+            data = await client.hgetall(name)
+            return dict(data)
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return {}
+
+    async def hdel(self, name: str, *keys: str) -> int:
+        async def _op(client: Redis) -> int:
+            return int(await client.hdel(name, *keys))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return 0
+
+    async def get_json(self, key: str) -> Any | None:
+        raw = await self.get(key)
+        if raw is None:
+            return None
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError:
+            logger.warning("redis_json_decode_failed", extra={"key": key})
+            return None
+
+    async def set_json(self, key: str, value: Any, *, ex: int | None = None) -> bool:
+        return await self.set(key, json.dumps(value), ex=ex)
