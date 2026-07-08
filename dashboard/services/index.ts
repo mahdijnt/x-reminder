@@ -74,3 +74,4 @@ export const targetAchievedService = {
 export const analyticsService = {
   getOverview: () => apiClient.get<AnalyticsOverview>("analytics/overview"),
 };
+export { authService } from "@/services/auth.service";

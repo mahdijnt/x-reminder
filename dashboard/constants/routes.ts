@@ -9,4 +9,9 @@
   settings: "/settings",
   profile: "/profile",
   notifications: "/notifications",
+  login: "/login",
+  register: "/register",
+  forgotPassword: "/forgot-password",
+  resetPassword: "/reset-password",
+  unauthorized: "/unauthorized",
 } as const;

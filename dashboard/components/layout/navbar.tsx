@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Menu } from "lucide-react";
 import { m } from "framer-motion";
@@ -33,7 +33,7 @@ export function Navbar({
       initial={{ opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
-      className="glass-panel flex flex-col gap-4 rounded-[1.75rem] p-4 shadow-lg lg:flex-row lg:items-center lg:justify-between"
+      className="glass-panel relative z-sticky-header flex flex-col gap-4 rounded-[1.75rem] p-4 shadow-lg lg:flex-row lg:items-center lg:justify-between"
     >
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="icon" type="button" className="lg:hidden" onClick={onMenuClick}>

@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -24,6 +24,18 @@
     --space-28: 7rem;
     --space-34: 8.5rem;
     --container-padding: 1rem;
+    --z-background: 0;
+    --z-aurora: 1;
+    --z-page-content: 10;
+    --z-card: 20;
+    --z-sticky-header: 30;
+    --z-sidebar: 40;
+    --z-dropdown: 50;
+    --z-popover: 60;
+    --z-dialog-overlay: 70;
+    --z-dialog: 80;
+    --z-modal: 90;
+    --z-toast: 100;
 
     --duration-fast: 180ms;
     --duration-normal: 280ms;

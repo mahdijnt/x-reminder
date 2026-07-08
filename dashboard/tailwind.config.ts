@@ -78,6 +78,20 @@ const config: Config = {
       gridTemplateColumns: {
         layout: "repeat(12, minmax(0, 1fr))",
       },
+      zIndex: {
+        background: "var(--z-background)",
+        aurora: "var(--z-aurora)",
+        "page-content": "var(--z-page-content)",
+        card: "var(--z-card)",
+        "sticky-header": "var(--z-sticky-header)",
+        sidebar: "var(--z-sidebar)",
+        dropdown: "var(--z-dropdown)",
+        popover: "var(--z-popover)",
+        "dialog-overlay": "var(--z-dialog-overlay)",
+        dialog: "var(--z-dialog)",
+        modal: "var(--z-modal)",
+        toast: "var(--z-toast)",
+      },
       spacing: {
         18: "var(--space-18)",
         22: "var(--space-22)",

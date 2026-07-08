@@ -1,13 +1,15 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { Check, ChevronRight } from "lucide-react";
 
+import { Portal } from "@/components/ui/portal";
 import { cn } from "@/lib/utils";
 
 type DropdownMenuContextValue = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  triggerRef: React.MutableRefObject<HTMLElement | null>;
 };
 
 const DropdownMenuContext = React.createContext<DropdownMenuContextValue | null>(null);
@@ -36,6 +38,7 @@ export function DropdownMenu({
   onOpenChange,
 }: DropdownMenuProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen);
+  const triggerRef = React.useRef<HTMLElement | null>(null);
   const isControlled = open !== undefined;
   const resolvedOpen = isControlled ? open : uncontrolledOpen;
 
@@ -51,7 +54,7 @@ export function DropdownMenu({
   );
 
   return (
-    <DropdownMenuContext.Provider value={{ open: resolvedOpen, setOpen }}>
+    <DropdownMenuContext.Provider value={{ open: resolvedOpen, setOpen, triggerRef }}>
       <div className="relative inline-flex">{children}</div>
     </DropdownMenuContext.Provider>
   );
@@ -66,7 +69,16 @@ export const DropdownMenuTrigger = React.forwardRef<
   HTMLButtonElement,
   DropdownMenuTriggerProps
 >(({ className, children, onClick, asChild = false, ...props }, ref) => {
-  const { open, setOpen } = useDropdownMenuContext();
+  const { open, setOpen, triggerRef } = useDropdownMenuContext();
+
+  const setRefs = React.useCallback(
+    (node: HTMLButtonElement | null) => {
+      triggerRef.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [ref, triggerRef]
+  );
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     onClick?.(event);
@@ -77,10 +89,20 @@ export const DropdownMenuTrigger = React.forwardRef<
 
   if (asChild && React.isValidElement(children)) {
     const childProps = children.props as Record<string, unknown>;
-    const childOnClick = childProps.onClick as ((event: React.MouseEvent<HTMLButtonElement>) => void) | undefined;
+    const childOnClick = childProps.onClick as
+      | ((event: React.MouseEvent<HTMLButtonElement>) => void)
+      | undefined;
 
     return React.cloneElement(children, {
       ...childProps,
+      ref: (node: HTMLButtonElement | null) => {
+        triggerRef.current = node;
+        const childRef = (childProps as { ref?: React.Ref<HTMLButtonElement> }).ref;
+        if (typeof childRef === "function") childRef(node);
+        else if (childRef && typeof childRef === "object") {
+          (childRef as React.MutableRefObject<HTMLButtonElement | null>).current = node;
+        }
+      },
       onClick: (event: React.MouseEvent<HTMLButtonElement>) => {
         childOnClick?.(event);
         if (!event.defaultPrevented) {
@@ -89,12 +111,12 @@ export const DropdownMenuTrigger = React.forwardRef<
       },
       "aria-expanded": open,
       "aria-haspopup": "menu",
-    });
+    } as Record<string, unknown>);
   }
 
   return (
     <button
-      ref={ref}
+      ref={setRefs}
       type="button"
       className={cn("inline-flex", className)}
       aria-expanded={open}
@@ -111,45 +133,86 @@ DropdownMenuTrigger.displayName = "DropdownMenuTrigger";
 export interface DropdownMenuContentProps
   extends React.HTMLAttributes<HTMLDivElement> {
   align?: "start" | "end";
+  sideOffset?: number;
 }
 
 export const DropdownMenuContent = React.forwardRef<
   HTMLDivElement,
   DropdownMenuContentProps
->(({ className, align = "end", ...props }, ref) => {
-  const { open, setOpen } = useDropdownMenuContext();
+>(({ className, align = "end", sideOffset = 8, style, ...props }, ref) => {
+  const { open, setOpen, triggerRef } = useDropdownMenuContext();
   const contentRef = React.useRef<HTMLDivElement | null>(null);
+  const [position, setPosition] = React.useState({ top: 0, left: 0, minWidth: 192 });
+
+  const updatePosition = React.useCallback(() => {
+    const trigger = triggerRef.current;
+    if (!trigger) return;
+
+    const rect = trigger.getBoundingClientRect();
+    const minWidth = Math.max(rect.width, 192);
+    const left = align === "end" ? rect.right - minWidth : rect.left;
+
+    setPosition({
+      top: rect.bottom + sideOffset,
+      left: Math.max(8, Math.min(left, window.innerWidth - minWidth - 8)),
+      minWidth,
+    });
+  }, [align, sideOffset, triggerRef]);
+
+  React.useLayoutEffect(() => {
+    if (!open) return;
+    updatePosition();
+  }, [open, updatePosition]);
 
   React.useEffect(() => {
     if (!open) return;
 
     const handlePointerDown = (event: MouseEvent) => {
-      if (contentRef.current && !contentRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
+      const target = event.target as Node;
+      if (contentRef.current?.contains(target)) return;
+      if (triggerRef.current?.contains(target)) return;
+      setOpen(false);
     };
 
+    const handleReposition = () => updatePosition();
+
     document.addEventListener("mousedown", handlePointerDown);
-    return () => document.removeEventListener("mousedown", handlePointerDown);
-  }, [open, setOpen]);
+    window.addEventListener("resize", handleReposition);
+    window.addEventListener("scroll", handleReposition, true);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      window.removeEventListener("resize", handleReposition);
+      window.removeEventListener("scroll", handleReposition, true);
+    };
+  }, [open, setOpen, triggerRef, updatePosition]);
 
   if (!open) return null;
 
   return (
-    <div
-      ref={(node) => {
-        contentRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-      }}
-      role="menu"
-      className={cn(
-        "absolute top-full z-50 mt-2 min-w-[12rem] overflow-hidden rounded-lg border border-glass-border bg-popover/95 p-1 text-popover-foreground shadow-glow backdrop-blur-xl",
-        align === "end" ? "right-0" : "left-0",
-        className
-      )}
-      {...props}
-    />
+    <Portal>
+      <div
+        ref={(node) => {
+          contentRef.current = node;
+          if (typeof ref === "function") ref(node);
+          else if (ref) ref.current = node;
+        }}
+        role="menu"
+        style={{
+          position: "fixed",
+          top: position.top,
+          left: position.left,
+          minWidth: position.minWidth,
+          zIndex: "var(--z-dropdown)",
+          ...style,
+        }}
+        className={cn(
+          "max-h-[min(24rem,calc(100vh-1rem))] overflow-y-auto overflow-x-hidden rounded-lg border border-glass-border bg-popover/95 p-1 text-popover-foreground shadow-glow backdrop-blur-xl animate-ds-in",
+          className
+        )}
+        {...props}
+      />
+    </Portal>
   );
 });
 DropdownMenuContent.displayName = "DropdownMenuContent";

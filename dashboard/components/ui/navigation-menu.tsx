@@ -80,7 +80,7 @@ export const NavigationMenuViewport = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Viewport>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>
 >(({ className, ...props }, ref) => (
-  <div className={cn("relative mt-2 flex justify-center", className)}>
+  <div className={cn("relative z-popover mt-2 flex justify-center", className)}>
     <NavigationMenuPrimitive.Viewport
       ref={ref}
       className={cn(

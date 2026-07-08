@@ -1,6 +1,14 @@
 ﻿import { registerMockHandler } from "@/lib/api/api-client";
 import { ApiError } from "@/lib/api/types";
 import {
+  mockAuthForgotPassword,
+  mockAuthLogin,
+  mockAuthLogout,
+  mockAuthMe,
+  mockAuthRegister,
+  mockAuthResetPassword,
+} from "@/lib/api/mocks/auth-mock";
+import {
   analyticsTopTweetRows,
   followTargetRows,
   followingRows,
@@ -19,8 +27,14 @@ import {
   targetAchievedRows,
   watchListRows,
 } from "@/lib/mock-data";
+import type {
+  ForgotPasswordPayload,
+  LoginCredentials,
+  RegisterPayload,
+  ResetPasswordPayload,
+} from "@/types/auth";
 
-const routes: Record<string, () => unknown> = {
+const routes: Record<string, (body?: unknown, headers?: HeadersInit) => unknown> = {
   "GET navigation/sidebar": () => sampleSidebarItems,
   "GET navigation/top-nav": () => sampleTopNavItems,
   "GET navigation/breadcrumbs": () => sampleBreadcrumbs,
@@ -46,6 +60,19 @@ const routes: Record<string, () => unknown> = {
     donutChart: sampleDonutChartData,
     topTweets: analyticsTopTweetRows,
   }),
+  "POST auth/login": (body) => mockAuthLogin(body as LoginCredentials),
+  "POST auth/register": (body) => mockAuthRegister(body as RegisterPayload),
+  "POST auth/forgot-password": (body) => mockAuthForgotPassword(body as ForgotPasswordPayload),
+  "POST auth/reset-password": (body) => mockAuthResetPassword(body as ResetPasswordPayload),
+  "POST auth/logout": () => mockAuthLogout(),
+  "GET auth/me": (_body, headers) => {
+    const authHeader =
+      typeof headers === "object" && headers && "Authorization" in headers
+        ? String((headers as Record<string, string>).Authorization)
+        : "";
+    const token = authHeader.replace(/^Bearer\s+/i, "");
+    return mockAuthMe(token);
+  },
 };
 
 export function installMockApi() {
@@ -57,7 +84,7 @@ export function installMockApi() {
     if (!handler) {
       throw new ApiError({ message: `No mock route for ${normalizedKey}`, code: "NOT_FOUND", status: 404 });
     }
-    return handler();
+    const body = options?.body;
+    return handler(body, options?.headers);
   });
 }
-

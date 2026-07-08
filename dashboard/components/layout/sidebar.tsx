@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import Link from "next/link";
@@ -34,7 +34,7 @@ export function Sidebar({
       layout
       transition={{ type: "spring", stiffness: 240, damping: 26, mass: 0.8 }}
       className={cn(
-        "glass-panel flex h-full min-h-[32rem] flex-col overflow-hidden rounded-[1.75rem] p-4 shadow-lg",
+        "glass-panel relative z-sidebar flex h-full min-h-[32rem] flex-col overflow-x-hidden overflow-y-auto rounded-[1.75rem] p-4 shadow-lg",
         collapsed ? "w-20" : "w-full",
         className
       )}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { cn } from "@/lib/utils";
 
@@ -11,7 +11,7 @@ export function AuroraBackground({ className }: AuroraBackgroundProps) {
     <div
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-0 overflow-hidden",
+        "pointer-events-none absolute inset-0 z-aurora overflow-hidden",
         className
       )}
     >

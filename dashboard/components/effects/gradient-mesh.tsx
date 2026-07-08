@@ -10,7 +10,7 @@ export function GradientMesh({ className }: GradientMeshProps) {
   return (
     <div
       aria-hidden="true"
-      className={cn(
+      className={cn("z-aurora", 
         "pointer-events-none absolute inset-0 opacity-70",
         className
       )}

@@ -2,8 +2,6 @@
 
 import "./globals.css";
 
-import { DashboardAppShell } from "@/components/layout/dashboard-app-shell";
-import { MotionProvider } from "@/components/motion/motion-provider";
 import { AppProviders } from "@/providers/app-providers";
 import { appConfig } from "@/config/app.config";
 
@@ -20,11 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen bg-background text-foreground antialiased">
-        <AppProviders>
-          <MotionProvider>
-            <DashboardAppShell>{children}</DashboardAppShell>
-          </MotionProvider>
-        </AppProviders>
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );

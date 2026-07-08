@@ -19,6 +19,8 @@ import {
   useSidebarNavigation,
   useTopNavigation,
 } from "@/hooks/use-api-data";
+import { useAuth } from "@/hooks/use-auth";
+import { authUserToProfile } from "@/lib/auth/map-user";
 import { useNotificationUiStore } from "@/stores/notification-store";
 
 function getActive(href: string, pathname: string) {
@@ -38,7 +40,9 @@ export function DashboardAppShell({
 
   const { data: sidebarData } = useSidebarNavigation();
   const { data: topNavData } = useTopNavigation();
-  const { data: user } = useCurrentUser();
+  const { user: authUser } = useAuth();
+  const { data: apiUser } = useCurrentUser();
+  const user = authUser ? authUserToProfile(authUser) : apiUser;
   const { data: notificationsQuery } = useNotificationsQuery();
   const menuItems = useNotificationUiStore((s) => s.menuItems);
   const markAllReadInMenu = useNotificationUiStore((s) => s.markAllReadInMenu);
@@ -78,19 +82,19 @@ export function DashboardAppShell({
   );
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      <AuroraBackground />
-      <GradientMesh className="opacity-60" />
-      <AnimatedLines className="mix-blend-screen" />
+    <div className="relative isolate min-h-screen overflow-x-hidden">
+      <AuroraBackground className="z-aurora" />
+      <GradientMesh className="z-aurora opacity-60" />
+      <AnimatedLines className="z-aurora mix-blend-screen" />
 
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(8,12,28,0.15),transparent_28%),linear-gradient(180deg,rgba(7,10,20,0.12),rgba(7,10,20,0.4))]" />
+      <div className="pointer-events-none absolute inset-0 z-aurora bg-[radial-gradient(circle_at_top,rgba(8,12,28,0.15),transparent_28%),linear-gradient(180deg,rgba(7,10,20,0.12),rgba(7,10,20,0.4))]" />
 
-      <div className="relative mx-auto max-w-[1280px] space-y-4 p-4 md:p-5 lg:p-6">
+      <div className="relative z-page-content mx-auto max-w-[1280px] space-y-4 p-4 md:p-5 lg:p-6">
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(16rem,19rem)_1fr] lg:gap-5">
           <m.div
             layout
             transition={{ type: "spring", stiffness: 220, damping: 24, mass: 0.8 }}
-            className="hidden lg:block"
+            className="relative z-sidebar hidden lg:block"
           >
             <Sidebar
               items={sidebarItems}
@@ -111,7 +115,7 @@ export function DashboardAppShell({
             <Navbar
               title={pageTitle}
               subtitle={pageSubtitle}
-              user={user!}
+              user={user ?? apiUser!}
               notifications={notifications}
               onMenuClick={() => setMobileOpen(true)}
               searchPlaceholder="Search within this page"

@@ -17,7 +17,7 @@ export function AnimatedLines({ className }: AnimatedLinesProps) {
   return (
     <div
       aria-hidden="true"
-      className={cn(
+      className={cn("z-aurora", 
         "pointer-events-none absolute inset-0 overflow-hidden opacity-80",
         className
       )}
