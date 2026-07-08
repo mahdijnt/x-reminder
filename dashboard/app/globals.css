@@ -1,0 +1,218 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Design System Tokens
+  - Premium AI SaaS look (futuristic, minimal)
+  - Dark-first palette (html uses class="dark")
+*/
+
+@layer base {
+  :root {
+    --font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+      Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+
+    /* Typography (Tailwind fontSize uses these vars) */
+    --text-xs: 0.75rem;
+    --leading-xs: 1rem;
+
+    --text-sm: 0.875rem;
+    --leading-sm: 1.25rem;
+
+    --text-base: 1rem;
+    --leading-base: 1.5rem;
+
+    --text-lg: 1.125rem;
+    --leading-lg: 1.75rem;
+
+    /* Radii */
+    --radius-lg: 0.9rem;
+
+    /* Spacing scale (custom, used by tailwind extension) */
+    --space-18: 4.5rem; /* 72px */
+    --space-22: 5.5rem; /* 88px */
+    --space-28: 7rem; /* 112px */
+    --space-34: 8.5rem; /* 136px */
+
+    /* Layout */
+    --container-padding: 1rem;
+
+    /* Animation tokens */
+    --duration-fast: 180ms;
+    --duration-normal: 280ms;
+    --duration-slow: 420ms;
+
+    /* Glass surfaces */
+    --glass-blur: 18px;
+    --glass-alpha: 0.55;
+
+    /* Shadow tokens */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.10);
+    --shadow-md: 0 12px 30px -18px rgb(0 0 0 / 0.18);
+    --shadow-lg: 0 18px 40px -25px rgb(0 0 0 / 0.22);
+    --shadow-glow: 0 0 0 1px rgb(168 85 247 / 0.10), 0 0 40px rgba(168, 85, 247, 0.25);
+
+    /* Color tokens as HSL components: `h s l` */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    --muted: 215 16% 91%;
+    --muted-foreground: 215 16% 40%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --primary: 258 90% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 16% 92%;
+    --secondary-foreground: 222 47% 11%;
+
+    --accent: 190 95% 35%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 85% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 22% 84%;
+    --input: 215 22% 84%;
+    --ring: 258 90% 60%;
+
+    --glass: 240 30% 98%;
+    --glass-foreground: 222 47% 11%;
+    --glass-border: 215 22% 84%;
+
+    /* Gradient surfaces */
+    --gradient-from: 258 92% 65%;
+    --gradient-to: 190 95% 45%;
+  }
+
+  .dark {
+    --background: 240 20% 6%;
+    --foreground: 210 22% 96%;
+
+    --muted: 240 16% 15%;
+    --muted-foreground: 215 18% 76%;
+
+    --popover: 240 22% 9%;
+    --popover-foreground: 210 22% 98%;
+
+    --card: 240 22% 10%;
+    --card-foreground: 210 22% 98%;
+
+    --primary: 258 92% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 230 18% 14%;
+    --secondary-foreground: 210 22% 98%;
+
+    --accent: 190 95% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 85% 58%;
+    --destructive-foreground: 210 22% 98%;
+
+    --border: 240 16% 24%;
+    --input: 240 16% 26%;
+    --ring: 258 92% 65%;
+
+    --glass: 240 18% 12%;
+    --glass-foreground: 210 22% 98%;
+    --glass-border: 240 18% 30%;
+
+    /* Gradient surfaces */
+    --gradient-from: 258 92% 65%;
+    --gradient-to: 190 95% 45%;
+
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.28);
+    --shadow-md: 0 14px 38px -22px rgb(0 0 0 / 0.75);
+    --shadow-lg: 0 22px 60px -30px rgb(0 0 0 / 0.85);
+    --shadow-glow: 0 0 0 1px rgb(168 85 247 / 0.10), 0 0 45px rgba(168, 85, 247, 0.25);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@layer components {
+  .focus-glow {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  /* Global glass helper used by cards/overlays */
+  .glass-surface {
+    background: hsl(var(--glass) / var(--glass-alpha));
+    border: 1px solid hsl(var(--glass-border) / 1);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+  }
+
+  .ai-gradient {
+    background: linear-gradient(135deg, hsl(var(--gradient-from) / 0.22) 0%, hsl(var(--gradient-to) / 0.14) 55%, transparent 100%);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Token-backed micro animations */
+  @keyframes ds-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-ds-in {
+    animation: ds-fade-in var(--duration-normal) ease-out both;
+  }
+
+  @keyframes ds-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-2px);
+    }
+  }
+
+  .animate-ds-float {
+    animation: ds-float var(--duration-slow) ease-in-out infinite;
+  }
+}
+
+/* Better defaults for focus styles on interactive elements */
+@layer base {
+  button {
+    @apply focus-glow;
+  }
+
+  input,
+  select,
+  textarea {
+    @apply focus-glow;
+  }
+}
