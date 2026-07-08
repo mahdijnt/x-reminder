@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { MoreHorizontal } from "lucide-react";
@@ -23,8 +23,8 @@ import {
 import { useSimulatedLoading } from "@/app/_components/use-simulated-loading";
 import { PageTransition } from "@/app/_components/page-transition";
 
-import type { NotificationItem, TableColumn } from "@/lib/mock-data";
-import { sampleNotifications } from "@/lib/mock-data";
+import type { NotificationItem, TableColumn } from "@/types";
+import { useNotificationsQuery } from "@/hooks/use-api-data";
 
 function chipFromTone(tone: NonNullable<NotificationItem["tone"]>): React.ComponentProps<typeof StatusChip>["status"] {
   if (tone === "success") return "success";
@@ -34,9 +34,10 @@ function chipFromTone(tone: NonNullable<NotificationItem["tone"]>): React.Compon
 }
 
 export default function NotificationsPage() {
+  const { data: seedNotifications } = useNotificationsQuery();
   const loading = useSimulatedLoading(650);
   const [items, setItems] = React.useState<NotificationItem[]>(() =>
-    sampleNotifications.map((n) => ({ ...n }))
+    seedNotifications.map((n) => ({ ...n }))
   );
   const [filter, setFilter] = React.useState<"all" | "unread">("unread");
   const [query, setQuery] = React.useState("");

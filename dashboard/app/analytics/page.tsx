@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { Calendar, Sparkles } from "lucide-react";
@@ -23,14 +23,8 @@ import {
 import { useSimulatedLoading } from "@/app/_components/use-simulated-loading";
 import { PageTransition } from "@/app/_components/page-transition";
 
-import type { AnalyticsTweetRow, TableColumn } from "@/lib/mock-data";
-import {
-  analyticsTopTweetRows,
-  sampleBarChartData,
-  sampleDonutChartData,
-  sampleLineChartData,
-  sampleStats,
-} from "@/lib/mock-data";
+import type { AnalyticsTweetRow, TableColumn } from "@/types";
+import { useAnalyticsOverview } from "@/hooks/use-api-data";
 
 function chipFromTweetState(state: AnalyticsTweetRow["state"]): React.ComponentProps<typeof StatusChip>["status"] {
   if (state === "High") return "success";
@@ -39,6 +33,13 @@ function chipFromTweetState(state: AnalyticsTweetRow["state"]): React.ComponentP
 }
 
 export default function AnalyticsPage() {
+  const { data: analytics } = useAnalyticsOverview();
+  const sampleStats = analytics.stats;
+  const sampleLineChartData = analytics.lineChart;
+  const sampleBarChartData = analytics.barChart;
+  const sampleDonutChartData = analytics.donutChart;
+  const analyticsTopTweetRows = analytics.topTweets;
+
   const loading = useSimulatedLoading(750);
   const [query, setQuery] = React.useState("");
   const [range, setRange] = React.useState<"7d" | "30d" | "90d">("30d");
@@ -55,7 +56,7 @@ export default function AnalyticsPage() {
         row.state.toLowerCase().includes(q)
       );
     });
-  }, [query]);
+  }, [query, analyticsTopTweetRows]);
 
   const columns = React.useMemo<TableColumn<AnalyticsTweetRow>[]>(
     () => [

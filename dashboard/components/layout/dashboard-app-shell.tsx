@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { usePathname } from "next/navigation";
@@ -12,13 +12,14 @@ import { AuroraBackground } from "@/components/effects/aurora-background";
 import { GradientMesh } from "@/components/effects/gradient-mesh";
 import { AnimatedLines } from "@/components/effects/animated-lines";
 import { cn } from "@/lib/utils";
+import type { NavigationItem } from "@/types";
 import {
-  sampleNotifications,
-  sampleSidebarItems,
-  sampleTopNavItems,
-  sampleUser,
-  type NavigationItem,
-} from "@/lib/mock-data";
+  useCurrentUser,
+  useNotificationsQuery,
+  useSidebarNavigation,
+  useTopNavigation,
+} from "@/hooks/use-api-data";
+import { useNotificationUiStore } from "@/stores/notification-store";
 
 function getActive(href: string, pathname: string) {
   if (!href) return false;
@@ -34,6 +35,15 @@ export function DashboardAppShell({
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+
+  const { data: sidebarData } = useSidebarNavigation();
+  const { data: topNavData } = useTopNavigation();
+  const { data: user } = useCurrentUser();
+  const { data: notificationsQuery } = useNotificationsQuery();
+  const menuItems = useNotificationUiStore((s) => s.menuItems);
+  const markAllReadInMenu = useNotificationUiStore((s) => s.markAllReadInMenu);
+
+  const notifications = menuItems ?? notificationsQuery ?? [];
 
   const pageTitle = React.useMemo(() => {
     if (!pathname) return "Dashboard";
@@ -51,20 +61,20 @@ export function DashboardAppShell({
 
   const sidebarItems: NavigationItem[] = React.useMemo(
     () =>
-      sampleSidebarItems.map((item) => ({
+      (sidebarData ?? []).map((item) => ({
         ...item,
         active: getActive(item.href, pathname),
       })),
-    [pathname]
+    [pathname, sidebarData]
   );
 
   const topNavItems: NavigationItem[] = React.useMemo(
     () =>
-      sampleTopNavItems.map((item) => ({
+      (topNavData ?? []).map((item) => ({
         ...item,
         active: getActive(item.href, pathname),
       })),
-    [pathname]
+    [pathname, topNavData]
   );
 
   return (
@@ -101,10 +111,11 @@ export function DashboardAppShell({
             <Navbar
               title={pageTitle}
               subtitle={pageSubtitle}
-              user={sampleUser}
-              notifications={sampleNotifications}
+              user={user!}
+              notifications={notifications}
               onMenuClick={() => setMobileOpen(true)}
               searchPlaceholder="Search within this page"
+              onMarkAllNotificationsRead={markAllReadInMenu}
             />
 
             <TopNavigation items={topNavItems} />

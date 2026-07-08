@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { MoreHorizontal } from "lucide-react";
@@ -24,8 +24,8 @@ import {
 import { useSimulatedLoading } from "@/app/_components/use-simulated-loading";
 import { PageTransition } from "@/app/_components/page-transition";
 
-import type { TargetAchievedRow, TableColumn } from "@/lib/mock-data";
-import { targetAchievedRows } from "@/lib/mock-data";
+import type { TargetAchievedRow, TableColumn } from "@/types";
+import { useTargetAchieved } from "@/hooks/use-api-data";
 
 function chipFromStatus(status: TargetAchievedRow["status"]): React.ComponentProps<typeof StatusChip>["status"] {
   if (status === "Achieved") return "success";
@@ -33,6 +33,7 @@ function chipFromStatus(status: TargetAchievedRow["status"]): React.ComponentPro
 }
 
 export default function TargetAchievedPage() {
+  const { data: targetAchievedRows } = useTargetAchieved();
   const loading = useSimulatedLoading(800);
   const [query, setQuery] = React.useState("");
   const [actionMessage, setActionMessage] = React.useState<string | null>(null);

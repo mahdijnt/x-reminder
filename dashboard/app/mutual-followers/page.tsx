@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { MoreHorizontal } from "lucide-react";
@@ -23,10 +23,11 @@ import {
 import { useSimulatedLoading } from "@/app/_components/use-simulated-loading";
 import { PageTransition } from "@/app/_components/page-transition";
 
-import type { MutualFollowerRow, TableColumn } from "@/lib/mock-data";
-import { mutualFollowerRows } from "@/lib/mock-data";
+import type { MutualFollowerRow, TableColumn } from "@/types";
+import { useMutualFollowers } from "@/hooks/use-api-data";
 
 export default function MutualFollowersPage() {
+  const { data: mutualFollowerRows } = useMutualFollowers();
   const loading = useSimulatedLoading(750);
   const [query, setQuery] = React.useState("");
   const [actionMessage, setActionMessage] = React.useState<string | null>(null);
@@ -43,7 +44,7 @@ export default function MutualFollowersPage() {
         row.lastMention.toLowerCase().includes(q)
       );
     });
-  }, [query]);
+  }, [query, mutualFollowerRows]);
 
   const totals = React.useMemo(() => {
     const gold = mutualFollowerRows.filter((r) => r.tier === "Gold").length;

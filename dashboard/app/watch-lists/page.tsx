@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { MoreHorizontal } from "lucide-react";
@@ -23,8 +23,8 @@ import {
 
 import { useSimulatedLoading } from "@/app/_components/use-simulated-loading";
 import { PageTransition } from "@/app/_components/page-transition";
-import type { TableColumn, WatchListRow } from "@/lib/mock-data";
-import { watchListRows } from "@/lib/mock-data";
+import type { TableColumn, WatchListRow } from "@/types";
+import { useWatchLists } from "@/hooks/use-api-data";
 
 function statusChipFromWatchList(status: WatchListRow["status"]): React.ComponentProps<typeof StatusChip>["status"] {
   if (status === "Active") return "success";
@@ -33,6 +33,7 @@ function statusChipFromWatchList(status: WatchListRow["status"]): React.Componen
 }
 
 export default function WatchListsPage() {
+  const { data: watchListRows } = useWatchLists();
   const loading = useSimulatedLoading(750);
   const [query, setQuery] = React.useState("");
   const [actionMessage, setActionMessage] = React.useState<string | null>(null);
@@ -50,14 +51,14 @@ export default function WatchListsPage() {
         row.signals.toLowerCase().includes(q)
       );
     });
-  }, [query]);
+  }, [query, watchListRows]);
 
   const totals = React.useMemo(() => {
     const active = watchListRows.filter((r) => r.status === "Active").length;
     const draft = watchListRows.filter((r) => r.status === "Draft").length;
     const paused = watchListRows.filter((r) => r.status === "Paused").length;
     return { active, draft, paused, total: watchListRows.length };
-  }, []);
+  }, [watchListRows]);
 
   const columns = React.useMemo<TableColumn<WatchListRow>[]>(
     () => [

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { Edit3, MoreHorizontal } from "lucide-react";
@@ -25,8 +25,8 @@ import {
 import { useSimulatedLoading } from "@/app/_components/use-simulated-loading";
 import { PageTransition } from "@/app/_components/page-transition";
 
-import type { TableColumn } from "@/lib/mock-data";
-import { sampleUser } from "@/lib/mock-data";
+import type { TableColumn } from "@/types";
+import { useCurrentUser } from "@/hooks/use-api-data";
 
 type ActivityRow = {
   id: string;
@@ -50,6 +50,7 @@ function chipFromActivityState(state: ActivityRow["state"]): React.ComponentProp
 }
 
 export default function ProfilePage() {
+  const { data: sampleUser } = useCurrentUser();
   const loading = useSimulatedLoading(700);
 
   const [notice, setNotice] = React.useState<string | null>(null);

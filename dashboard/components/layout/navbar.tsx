@@ -7,7 +7,7 @@ import { SearchBar } from "@/components/forms/search-bar";
 import { NotificationsMenu } from "@/components/navigation/notifications-menu";
 import { UserMenu } from "@/components/navigation/user-menu";
 import { Button } from "@/components/ui/button";
-import type { NotificationItem, UserProfile } from "@/lib/mock-data";
+import type { NotificationItem, UserProfile } from "@/types";
 
 export interface NavbarProps {
   title?: string;
@@ -16,6 +16,7 @@ export interface NavbarProps {
   notifications: NotificationItem[];
   onMenuClick?: () => void;
   searchPlaceholder?: string;
+  onMarkAllNotificationsRead?: () => void;
 }
 
 export function Navbar({
@@ -25,6 +26,7 @@ export function Navbar({
   notifications,
   onMenuClick,
   searchPlaceholder,
+  onMarkAllNotificationsRead,
 }: NavbarProps) {
   return (
     <m.header
@@ -46,7 +48,7 @@ export function Navbar({
       <div className="flex flex-1 flex-col gap-3 lg:max-w-xl lg:flex-row lg:items-center">
         <SearchBar placeholder={searchPlaceholder} containerClassName="flex-1" />
         <div className="flex items-center justify-end gap-2">
-          <NotificationsMenu items={notifications} />
+          <NotificationsMenu items={notifications} onMarkAllRead={onMarkAllNotificationsRead} />
           <UserMenu user={user} />
         </div>
       </div>

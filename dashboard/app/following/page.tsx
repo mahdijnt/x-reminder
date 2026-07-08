@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { MoreHorizontal } from "lucide-react";
@@ -23,8 +23,8 @@ import {
 import { useSimulatedLoading } from "@/app/_components/use-simulated-loading";
 import { PageTransition } from "@/app/_components/page-transition";
 
-import type { FollowingRow, TableColumn } from "@/lib/mock-data";
-import { followingRows } from "@/lib/mock-data";
+import type { FollowingRow, TableColumn } from "@/types";
+import { useFollowing } from "@/hooks/use-api-data";
 
 function chipFromNotificationState(state: FollowingRow["notificationState"]): React.ComponentProps<typeof StatusChip>["status"] {
   if (state === "Enabled") return "info";
@@ -33,6 +33,7 @@ function chipFromNotificationState(state: FollowingRow["notificationState"]): Re
 }
 
 export default function FollowingPage() {
+  const { data: followingRows } = useFollowing();
   const loading = useSimulatedLoading(750);
   const [query, setQuery] = React.useState("");
   const [actionMessage, setActionMessage] = React.useState<string | null>(null);
@@ -50,7 +51,7 @@ export default function FollowingPage() {
         row.engagement.toLowerCase().includes(q)
       );
     });
-  }, [query]);
+  }, [query, followingRows]);
 
   const totals = React.useMemo(() => {
     const enabled = followingRows.filter((r) => r.notificationState === "Enabled").length;

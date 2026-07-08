@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 
@@ -11,15 +11,8 @@ import { SectionCard } from "@/components/dashboard/section-card";
 import { LoadingSkeleton } from "@/components/feedback/loading-skeleton";
 import { StatusChip } from "@/components/feedback/status-chip";
 import { Button } from "@/components/ui/button";
-import type { SampleRow, StatDatum, TableColumn } from "@/lib/mock-data";
-import {
-  sampleBarChartData,
-  sampleDonutChartData,
-  sampleLineChartData,
-  sampleProgressItems,
-  sampleStats,
-  sampleTableRows,
-} from "@/lib/mock-data";
+import type { SampleRow, StatDatum, TableColumn } from "@/types";
+import { useDashboardOverview } from "@/hooks/use-api-data";
 
 import { useSimulatedLoading } from "@/app/_components/use-simulated-loading";
 import { PageTransition } from "@/app/_components/page-transition";
@@ -31,6 +24,14 @@ function statusChipFromRowStatus(status: SampleRow["status"]): React.ComponentPr
 }
 
 export default function DashboardPage() {
+  const { data: overview } = useDashboardOverview();
+  const sampleStats = overview.stats;
+  const sampleProgressItems = overview.progress;
+  const sampleLineChartData = overview.lineChart;
+  const sampleBarChartData = overview.barChart;
+  const sampleDonutChartData = overview.donutChart;
+  const sampleTableRows = overview.tableRows;
+
   const loading = useSimulatedLoading(700);
   const [query, setQuery] = React.useState("");
 
@@ -45,7 +46,7 @@ export default function DashboardPage() {
         row.status.toLowerCase().includes(q)
       );
     });
-  }, [query]);
+  }, [query, sampleTableRows]);
 
   const columns = React.useMemo<TableColumn<SampleRow>[]>(
     () => [
