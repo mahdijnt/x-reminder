@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # X Engagement Intelligence Manager
 
 A monorepo-style starter for an engagement intelligence system.
@@ -31,3 +32,7 @@ cd telegram-bot
 pip install -r requirements.txt
 python main.py
 ```
+=======
+# x-reminder
+X engagemnet reminder
+>>>>>>> abce8c7f1d46f4632b296dc7848a6c035d3557f0
