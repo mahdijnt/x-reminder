@@ -1,4 +1,4 @@
-﻿"""Custom application exceptions."""
+"""Custom application exceptions."""
 
 from typing import Any
 

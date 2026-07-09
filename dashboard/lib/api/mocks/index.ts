@@ -1,1 +1,1 @@
-﻿export { installMockApi } from "@/lib/api/mocks/mock-routes";
+export { installMockApi } from "@/lib/api/mocks/mock-routes";

@@ -1,1 +1,1 @@
-﻿"""Callback query handlers."""
+"""Callback query handlers."""

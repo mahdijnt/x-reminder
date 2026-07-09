@@ -1,1 +1,1 @@
-﻿"""Localization resources."""
+"""Localization resources."""

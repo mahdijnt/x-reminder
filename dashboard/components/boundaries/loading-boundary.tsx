@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { LoadingSkeleton } from "@/components/feedback/loading-skeleton";

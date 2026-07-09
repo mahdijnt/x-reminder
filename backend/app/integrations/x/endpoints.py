@@ -7,9 +7,17 @@ def api_base() -> str:
     return get_settings().X_API_BASE_URL.rstrip("/")
 
 
-OAUTH2_AUTHORIZE_URL = "https://twitter.com/i/oauth2/authorize"
-OAUTH2_TOKEN_URL = "https://api.twitter.com/2/oauth2/token"
-OAUTH2_REVOKE_URL = "https://api.twitter.com/2/oauth2/revoke"
+def oauth_authorize_url() -> str:
+    return get_settings().X_OAUTH_AUTHORIZE_URL
+
+
+def oauth_token_url() -> str:
+    return get_settings().X_OAUTH_TOKEN_URL
+
+
+def oauth_revoke_url() -> str:
+    return get_settings().X_OAUTH_REVOKE_URL
+
 
 USERS_ME = "/2/users/me"
 USER_BY_USERNAME = "/2/users/by/username/{username}"

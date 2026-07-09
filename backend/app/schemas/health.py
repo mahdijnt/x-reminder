@@ -1,4 +1,4 @@
-﻿"""Health check response schemas."""
+"""Health check response schemas."""
 
 from datetime import datetime
 

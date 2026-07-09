@@ -1,4 +1,4 @@
-﻿import {
+import {
   MOCK_AUTH_ACCOUNTS,
   MOCK_RESET_TOKEN,
 } from "@/constants/auth";

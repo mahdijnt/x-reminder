@@ -1,4 +1,4 @@
-﻿import { AUTH_COOKIE, AUTH_STORAGE_KEYS } from "@/constants/auth";
+import { AUTH_COOKIE, AUTH_STORAGE_KEYS } from "@/constants/auth";
 
 function isBrowser() {
   return typeof window !== "undefined";

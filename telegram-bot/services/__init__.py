@@ -1,1 +1,1 @@
-﻿"""Backend service clients."""
+"""Backend service clients."""

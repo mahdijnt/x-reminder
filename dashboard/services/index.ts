@@ -1,4 +1,4 @@
-﻿import { apiClient } from "@/lib/api/api-client";
+import { apiClient } from "@/lib/api/api-client";
 import type {
   ActiveAccountMetric,
   AnalyticsDashboardPayload,

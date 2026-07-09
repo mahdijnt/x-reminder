@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 import { AUTH_COOKIE, AUTH_ROUTES, PUBLIC_AUTH_PATHS } from "@/constants/auth";

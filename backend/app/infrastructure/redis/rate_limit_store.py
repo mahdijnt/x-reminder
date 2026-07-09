@@ -1,4 +1,4 @@
-﻿"""Redis-backed rate limit storage (sliding window)."""
+"""Redis-backed rate limit storage (sliding window)."""
 
 from __future__ import annotations
 

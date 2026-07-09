@@ -1,4 +1,4 @@
-﻿"""Application entrypoint for ASGI servers."""
+"""Application entrypoint for ASGI servers."""
 
 from app.factory import create_app
 

@@ -195,7 +195,7 @@ class XAPIClient:
         auth = (self._settings.X_CLIENT_ID, self._settings.X_CLIENT_SECRET)
         if self._client is None:
             self._client = httpx.AsyncClient(timeout=self._settings.X_HTTP_TIMEOUT)
-        response = await self._client.post(ep.OAUTH2_TOKEN_URL, data=data, headers=headers, auth=auth)
+        response = await self._client.post(ep.oauth_token_url(), data=data, headers=headers, auth=auth)
         if response.status_code >= 400:
             raise XAPIError(response.text, status_code=response.status_code, code="x_token_exchange_failed")
         return XOAuthTokenResponse.model_validate(response.json())
@@ -210,7 +210,7 @@ class XAPIClient:
         auth = (self._settings.X_CLIENT_ID, self._settings.X_CLIENT_SECRET)
         if self._client is None:
             self._client = httpx.AsyncClient(timeout=self._settings.X_HTTP_TIMEOUT)
-        response = await self._client.post(ep.OAUTH2_TOKEN_URL, data=data, headers=headers, auth=auth)
+        response = await self._client.post(ep.oauth_token_url(), data=data, headers=headers, auth=auth)
         if response.status_code >= 400:
             raise XAPIError(response.text, status_code=response.status_code, code="x_token_refresh_failed")
         return XOAuthTokenResponse.model_validate(response.json())
@@ -220,6 +220,6 @@ class XAPIClient:
         auth = (self._settings.X_CLIENT_ID, self._settings.X_CLIENT_SECRET)
         if self._client is None:
             self._client = httpx.AsyncClient(timeout=self._settings.X_HTTP_TIMEOUT)
-        response = await self._client.post(ep.OAUTH2_REVOKE_URL, data=data, auth=auth)
+        response = await self._client.post(ep.oauth_revoke_url(), data=data, auth=auth)
         if response.status_code >= 400:
             raise XAPIError(response.text, status_code=response.status_code, code="x_token_revoke_failed")

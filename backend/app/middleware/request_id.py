@@ -1,4 +1,4 @@
-﻿"""Assign a unique request ID to each HTTP request."""
+"""Assign a unique request ID to each HTTP request."""
 
 import uuid
 from collections.abc import Callable

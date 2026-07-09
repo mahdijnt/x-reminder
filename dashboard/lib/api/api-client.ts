@@ -1,4 +1,4 @@
-﻿import { env } from "@/config/env";
+import { env } from "@/config/env";
 import { ApiError, type ApiClientConfig, type ApiRequestOptions } from "@/lib/api/types";
 
 export type MockHandler = (path: string, options?: ApiRequestOptions & { method?: string; body?: unknown }) => Promise<unknown>;

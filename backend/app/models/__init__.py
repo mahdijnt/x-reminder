@@ -1,4 +1,4 @@
-﻿"""Domain model placeholders (persistence-ready stubs)."""
+"""Domain model placeholders (persistence-ready stubs)."""
 
 from datetime import datetime, timezone
 from uuid import UUID, uuid4

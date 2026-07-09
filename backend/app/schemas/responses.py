@@ -1,4 +1,4 @@
-﻿"""Standard API response envelope."""
+"""Standard API response envelope."""
 
 from datetime import datetime, timezone
 from typing import Any, Generic, TypeVar

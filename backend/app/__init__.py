@@ -1,3 +1,3 @@
-﻿"""x-reminder FastAPI application package."""
+"""x-reminder FastAPI application package."""
 
 __version__ = "0.1.0"

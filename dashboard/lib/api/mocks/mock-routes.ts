@@ -1,4 +1,4 @@
-﻿import { registerMockHandler } from "@/lib/api/api-client";
+import { registerMockHandler } from "@/lib/api/api-client";
 import { ApiError } from "@/lib/api/types";
 import {
   mockAuthForgotPassword,

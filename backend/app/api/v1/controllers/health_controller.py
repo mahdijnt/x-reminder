@@ -1,4 +1,4 @@
-﻿"""Thin controller delegating to HealthService."""
+"""Thin controller delegating to HealthService."""
 
 from app.schemas.health import HealthData
 from app.schemas.responses import APIResponse

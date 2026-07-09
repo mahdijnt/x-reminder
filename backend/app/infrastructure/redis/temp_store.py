@@ -1,4 +1,4 @@
-﻿"""Short-lived temporary key storage (OTP placeholders, temp tokens)."""
+"""Short-lived temporary key storage (OTP placeholders, temp tokens)."""
 
 from __future__ import annotations
 

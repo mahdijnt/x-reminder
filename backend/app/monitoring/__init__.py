@@ -1,4 +1,4 @@
-﻿"""Monitoring engine package."""
+"""Monitoring engine package."""
 
 from app.monitoring.models import JobType, JobPayload, JobStatus
 

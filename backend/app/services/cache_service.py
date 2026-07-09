@@ -1,4 +1,4 @@
-﻿"""Application-level cache with TTL and namespacing."""
+"""Application-level cache with TTL and namespacing."""
 
 from __future__ import annotations
 

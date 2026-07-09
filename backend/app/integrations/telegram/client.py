@@ -11,8 +11,6 @@ from app.core.config import Settings
 
 logger = logging.getLogger(__name__)
 
-TELEGRAM_API_BASE = "https://api.telegram.org"
-
 
 class TelegramAPIError(Exception):
     def __init__(self, message: str, *, status_code: int | None = None, description: str | None = None) -> None:
@@ -27,7 +25,7 @@ class TelegramClient:
         self._client: httpx.AsyncClient | None = None
 
     async def __aenter__(self) -> "TelegramClient":
-        self._client = httpx.AsyncClient(timeout=30.0)
+        self._client = httpx.AsyncClient(timeout=self._settings.TELEGRAM_HTTP_TIMEOUT)
         return self
 
     async def __aexit__(self, *args: object) -> None:
@@ -41,6 +39,9 @@ class TelegramClient:
             raise TelegramAPIError("TELEGRAM_BOT_TOKEN not configured", status_code=401)
         return token
 
+    def _api_base(self) -> str:
+        return self._settings.TELEGRAM_API_BASE_URL.rstrip("/")
+
     async def send_message(
         self,
         chat_id: str | int,
@@ -50,8 +51,8 @@ class TelegramClient:
         disable_web_page_preview: bool = False,
     ) -> dict[str, Any]:
         if self._client is None:
-            self._client = httpx.AsyncClient(timeout=30.0)
-        url = f"{TELEGRAM_API_BASE}/bot{self._token()}/sendMessage"
+            self._client = httpx.AsyncClient(timeout=self._settings.TELEGRAM_HTTP_TIMEOUT)
+        url = f"{self._api_base()}/bot{self._token()}/sendMessage"
         payload = {
             "chat_id": chat_id,
             "text": text,

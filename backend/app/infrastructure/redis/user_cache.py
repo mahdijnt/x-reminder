@@ -1,4 +1,4 @@
-﻿"""Placeholder user data cache (no authentication flow)."""
+"""Placeholder user data cache (no authentication flow)."""
 
 from __future__ import annotations
 

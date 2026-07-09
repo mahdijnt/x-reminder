@@ -1,4 +1,4 @@
-﻿"""Shared constants for callback data and conversation states."""
+"""Shared constants for callback data and conversation states."""
 
 CB_MENU = "menu"
 CB_LIST = "list"

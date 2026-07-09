@@ -1,4 +1,4 @@
-﻿"""Generate Sprint 12 monitoring engine files."""
+"""Generate Sprint 12 monitoring engine files."""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent

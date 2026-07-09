@@ -2,6 +2,7 @@
 
 from enum import Enum
 from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 from pydantic import Field, field_validator
@@ -16,11 +17,20 @@ class Environment(str, Enum):
     PRODUCTION = "production"
 
 
+REPO_ROOT = Path(__file__).resolve().parents[3]
+ENV_FILES = (
+    REPO_ROOT / ".env",
+    REPO_ROOT / ".env.local",
+    Path(".env"),
+    Path(".env.local"),
+)
+
+
 class Settings(BaseSettings):
     """Central application settings loaded from environment variables."""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=ENV_FILES,
         env_file_encoding="utf-8",
         case_sensitive=True,
         extra="ignore",
@@ -64,6 +74,9 @@ class Settings(BaseSettings):
     X_API_SECRET: str = ""
     X_CALLBACK_URL: str = "http://localhost:8000/api/v1/x/oauth/callback"
     X_API_BASE_URL: str = "https://api.twitter.com"
+    X_OAUTH_AUTHORIZE_URL: str = "https://twitter.com/i/oauth2/authorize"
+    X_OAUTH_TOKEN_URL: str = "https://api.twitter.com/2/oauth2/token"
+    X_OAUTH_REVOKE_URL: str = "https://api.twitter.com/2/oauth2/revoke"
     X_OAUTH_SCOPES: list[str] = Field(
         default_factory=lambda: ["tweet.read", "users.read", "follows.read", "offline.access"]
     )
@@ -74,6 +87,7 @@ class Settings(BaseSettings):
     X_SYNC_SCHEDULER_ENABLED: bool = False
     X_SYNC_INTERVAL_MINUTES: int = 30
     X_SYNC_APP_USER_IDS: list[str] = Field(default_factory=list)
+
     MONITORING_ENABLED: bool = False
     MONITORING_WORKER_ENABLED: bool = True
     MONITORING_SIX_HOUR_INTERVAL_MINUTES: int = 360
@@ -86,8 +100,6 @@ class Settings(BaseSettings):
     MONITORING_SHUTDOWN_TIMEOUT_SECONDS: int = 30
     MONITORING_POLL_BATCH_SIZE: int = 50
     MONITORING_APP_USER_IDS: list[str] = Field(default_factory=list)
-
-
 
     NOTIFICATIONS_ENABLED: bool = False
     NOTIFICATIONS_WORKER_ENABLED: bool = True
@@ -103,6 +115,8 @@ class Settings(BaseSettings):
     NOTIFICATIONS_TELEGRAM_RATE_PER_CHAT: float = 1.0
     NOTIFICATIONS_TELEGRAM_RATE_GLOBAL: float = 25.0
     TELEGRAM_BOT_TOKEN: str = ""
+    TELEGRAM_API_BASE_URL: str = "https://api.telegram.org"
+    TELEGRAM_HTTP_TIMEOUT: float = 30.0
 
     ANALYTICS_ENABLED: bool = True
     ANALYTICS_EXPORT_MAX_POINTS: int = 120
@@ -123,7 +137,6 @@ class Settings(BaseSettings):
     QDRANT_RETRY_BASE_DELAY: float = 0.5
     QDRANT_RETRY_MAX_DELAY: float = 10.0
 
-
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
     def parse_cors_origins(cls, value: Any) -> list[str]:
@@ -137,7 +150,6 @@ class Settings(BaseSettings):
         if isinstance(value, str):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
-
 
     @field_validator("MONITORING_APP_USER_IDS", mode="before")
     @classmethod
@@ -171,3 +183,6 @@ def get_settings() -> Settings:
     """Return cached settings instance."""
 
     return Settings()
+
+
+

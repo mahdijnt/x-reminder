@@ -1,0 +1,550 @@
+{
+  "converted_count": 135,
+  "converted": [
+    {
+      "path": "E:/GitHub/x-reminder/_fix_encoding.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/README.md",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/requirements.txt",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/main.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/api/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/api/v1/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/api/v1/controllers/health_controller.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/api/v1/endpoints/health.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/api/v1/endpoints/monitoring.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/api/v1/endpoints/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/core/cache.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/core/exceptions.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/core/logging.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/core/rate_limit.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/infrastructure/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/infrastructure/redis/connection.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/infrastructure/redis/rate_limit_store.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/infrastructure/redis/session_store.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/infrastructure/redis/temp_store.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/infrastructure/redis/user_cache.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/infrastructure/redis/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/middleware/request_id.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/middleware/security_headers.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/middleware/timing.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/middleware/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/models/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/monitoring/queue_manager.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/monitoring/worker_main.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/monitoring/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/monitoring/jobs/handlers.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/monitoring/jobs/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/monitoring/workers/worker.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/repositories/base.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/repositories/redis_repository.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/repositories/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/schemas/health.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/schemas/responses.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/schemas/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/services/cache_service.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/app/services/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/tools/install_sprint12.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/backend/tools/install_sprint13_part1.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components.json",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/middleware.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/postcss.config.js",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/tailwind.config.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/app/globals.css",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/app/(auth)/layout.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/app/(auth)/forgot-password/page.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/app/(auth)/login/loading.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/app/(auth)/login/page.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/app/(auth)/register/page.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/app/(auth)/reset-password/loading.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/app/(auth)/reset-password/page.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/app/(auth)/unauthorized/page.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/app/(dashboard)/layout.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/app/(dashboard)/settings/page.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/app/_components/page-section.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/app/_components/use-simulated-loading.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/auth/auth-guard.tsx",
+      "from": "cp1252"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/auth/auth-layout-shell.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/auth/role-guard.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/auth/session-expired-banner.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/boundaries/loading-boundary.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/effects/aurora-background.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/layout/dashboard-app-shell.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/layout/navbar.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/layout/sidebar.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/navigation/user-menu.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/ui/alert.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/ui/badge.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/ui/button.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/ui/dialog.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/ui/dropdown-menu.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/ui/icon.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/ui/navigation-menu.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/ui/portal.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/ui/table.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/ui/tabs.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/ui/toast.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/components/ui/toaster.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/config/env.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/constants/auth.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/constants/query-keys.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/constants/routes.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/constants/z-index.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/hooks/use-api-data.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/hooks/use-auth.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/hooks/use-toast.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/lib/query-client.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/lib/utils.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/lib/api/api-client.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/lib/api/types.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/lib/api/mocks/auth-mock.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/lib/api/mocks/index.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/lib/api/mocks/mock-routes.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/lib/auth/map-user.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/lib/auth/token-manager.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/providers/auth-provider.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/providers/notification-provider.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/providers/theme-provider.tsx",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/services/auth.service.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/services/index.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/stores/notification-store.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/stores/ui-store.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/dashboard/types/auth.ts",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/main.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/bot/app.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/bot/config.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/bot/constants.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/bot/logging.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/bot/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/components/formatters.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/components/messages.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/callbacks/menu_callbacks.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/callbacks/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/commands/add.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/commands/connect.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/commands/lists.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/commands/menu_router.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/commands/remove.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/commands/settings.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/commands/start.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/commands/status.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/commands/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/conversations/account_flows.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/handlers/conversations/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/keyboards/inline.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/keyboards/reply.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/localization/__init__.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/services/api_client.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/services/mock_backend.py",
+      "from": "utf-8-bom"
+    },
+    {
+      "path": "E:/GitHub/x-reminder/telegram-bot/services/__init__.py",
+      "from": "utf-8-bom"
+    }
+  ],
+  "bom_stripped_count": 0,
+  "bom_stripped": [],
+  "already_utf8_count": 196,
+  "failed": [],
+  "skipped_binary": []
+}

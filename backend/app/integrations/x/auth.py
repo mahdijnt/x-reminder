@@ -8,7 +8,7 @@ import secrets
 from urllib.parse import urlencode
 
 from app.core.config import Settings
-from app.integrations.x.endpoints import OAUTH2_AUTHORIZE_URL
+from app.integrations.x.endpoints import oauth_authorize_url
 
 
 def generate_pkce_pair() -> tuple[str, str]:
@@ -42,4 +42,4 @@ def build_authorization_url(
         "code_challenge": code_challenge,
         "code_challenge_method": "S256",
     }
-    return f"{OAUTH2_AUTHORIZE_URL}?{urlencode(params)}"
+    return f"{oauth_authorize_url()}?{urlencode(params)}"

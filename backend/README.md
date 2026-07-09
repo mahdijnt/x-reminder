@@ -1,4 +1,4 @@
-﻿# Backend (FastAPI)
+# Backend (FastAPI)
 
 ## Run locally
 

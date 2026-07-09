@@ -1,1 +1,1 @@
-﻿"""Infrastructure adapters (Redis, external services)."""
+"""Infrastructure adapters (Redis, external services)."""

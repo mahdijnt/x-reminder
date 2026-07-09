@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { useNotificationsQuery } from "@/hooks/use-api-data";

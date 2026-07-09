@@ -1,4 +1,4 @@
-﻿import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import type { AnalyticsDashboardPayload, AnalyticsFilters } from "@/types";
 import { queryKeys } from "@/constants/query-keys";
 import {

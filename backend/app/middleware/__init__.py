@@ -1,4 +1,4 @@
-﻿"""HTTP middleware package."""
+"""HTTP middleware package."""
 
 from app.middleware.request_id import RequestIDMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware

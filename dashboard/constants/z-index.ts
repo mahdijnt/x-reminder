@@ -1,4 +1,4 @@
-﻿export const Z_INDEX = {
+export const Z_INDEX = {
   background: 0,
   aurora: 1,
   pageContent: 10,

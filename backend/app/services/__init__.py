@@ -1,4 +1,4 @@
-﻿"""Application services."""
+"""Application services."""
 
 from app.services.health_service import HealthService
 

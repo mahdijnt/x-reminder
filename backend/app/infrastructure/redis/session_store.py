@@ -1,4 +1,4 @@
-﻿"""Redis-backed session storage."""
+"""Redis-backed session storage."""
 
 from __future__ import annotations
 

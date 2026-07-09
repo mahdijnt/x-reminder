@@ -1,4 +1,4 @@
-﻿"""Structured logging configuration."""
+"""Structured logging configuration."""
 
 import logging
 import sys

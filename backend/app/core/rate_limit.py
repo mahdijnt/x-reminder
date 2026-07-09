@@ -1,4 +1,4 @@
-﻿"""Rate limiting with optional Redis-backed sliding window."""
+"""Rate limiting with optional Redis-backed sliding window."""
 
 import logging
 from collections import defaultdict, deque

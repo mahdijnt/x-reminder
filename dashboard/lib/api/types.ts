@@ -1,4 +1,4 @@
-﻿export type ApiErrorShape = {
+export type ApiErrorShape = {
   message: string;
   code?: string;
   status?: number;

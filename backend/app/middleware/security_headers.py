@@ -1,4 +1,4 @@
-﻿"""Apply baseline security headers to all responses."""
+"""Apply baseline security headers to all responses."""
 
 from collections.abc import Callable
 

@@ -1,4 +1,4 @@
-﻿import type { AuthUser } from "@/types/auth";
+import type { AuthUser } from "@/types/auth";
 import type { UserProfile } from "@/types";
 
 export function authUserToProfile(user: AuthUser): UserProfile {

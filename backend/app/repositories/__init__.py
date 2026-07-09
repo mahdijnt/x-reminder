@@ -1,4 +1,4 @@
-﻿"""Repository layer."""
+"""Repository layer."""
 
 from app.repositories.base import BaseRepository, InMemoryRepository
 

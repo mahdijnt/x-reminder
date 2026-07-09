@@ -1,1 +1,1 @@
-﻿"""Command handlers package."""
+"""Command handlers package."""

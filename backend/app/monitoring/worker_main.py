@@ -1,4 +1,4 @@
-﻿# Standalone monitoring worker entry point.
+# Standalone monitoring worker entry point.
 
 import asyncio
 import logging

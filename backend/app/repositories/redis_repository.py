@@ -1,4 +1,4 @@
-﻿"""Generic Redis key-value repository."""
+"""Generic Redis key-value repository."""
 
 from __future__ import annotations
 

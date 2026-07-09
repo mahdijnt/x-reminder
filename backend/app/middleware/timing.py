@@ -1,4 +1,4 @@
-﻿"""Measure request processing duration."""
+"""Measure request processing duration."""
 
 import time
 from collections.abc import Callable

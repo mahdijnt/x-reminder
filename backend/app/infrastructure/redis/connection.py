@@ -1,4 +1,4 @@
-﻿"""Async Redis connection manager with pooling and reconnection."""
+"""Async Redis connection manager with pooling and reconnection."""
 
 from __future__ import annotations
 

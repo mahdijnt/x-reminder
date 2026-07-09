@@ -1,4 +1,4 @@
-﻿export const queryKeys = {
+export const queryKeys = {
   navigation: {
     all: ["navigation"] as const,
     sidebar: ["navigation", "sidebar"] as const,

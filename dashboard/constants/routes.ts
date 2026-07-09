@@ -1,4 +1,4 @@
-﻿export const routes = {
+export const routes = {
   home: "/",
   watchLists: "/watch-lists",
   following: "/following",

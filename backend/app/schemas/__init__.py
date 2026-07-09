@@ -1,4 +1,4 @@
-﻿"""Pydantic API schemas."""
+"""Pydantic API schemas."""
 
 from app.schemas.health import HealthData
 from app.schemas.responses import APIResponse, ErrorDetail

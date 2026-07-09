@@ -1,4 +1,4 @@
-﻿import type { AuthRole } from "@/types/auth";
+import type { AuthRole } from "@/types/auth";
 
 export const AUTH_STORAGE_KEYS = {
   token: "xr_auth_token",

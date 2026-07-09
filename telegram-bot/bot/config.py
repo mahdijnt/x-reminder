@@ -1,8 +1,9 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import os
 from dataclasses import dataclass
 from functools import lru_cache
+from pathlib import Path
 
 
 @dataclass(frozen=True)
@@ -17,8 +18,22 @@ class Settings:
     error_monitoring_dsn: str = ""
 
 
+def _load_env_files() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    for env_path in (repo_root / ".env", repo_root / ".env.local"):
+        if not env_path.exists():
+            continue
+        for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip())
+
+
 @lru_cache
 def get_settings() -> Settings:
+    _load_env_files()
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
     log_level = os.environ.get("BOT_LOG_LEVEL", os.environ.get("LOG_LEVEL", "INFO")).strip()
     default_locale = os.environ.get("DEFAULT_LOCALE", "en").strip().lower()

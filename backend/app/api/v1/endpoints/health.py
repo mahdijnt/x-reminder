@@ -1,4 +1,4 @@
-﻿"""Version 1 health endpoints."""
+"""Version 1 health endpoints."""
 
 from fastapi import APIRouter
 

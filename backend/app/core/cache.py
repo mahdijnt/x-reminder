@@ -1,4 +1,4 @@
-﻿"""High-level cache module entrypoint."""
+"""High-level cache module entrypoint."""
 
 from app.services.cache_service import CacheService
 

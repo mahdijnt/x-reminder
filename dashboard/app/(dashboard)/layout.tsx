@@ -1,4 +1,4 @@
-﻿import type { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import { AuthGuard } from "@/components/auth/auth-guard";
 import { DashboardAppShell } from "@/components/layout/dashboard-app-shell";
