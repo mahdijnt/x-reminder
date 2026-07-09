@@ -115,3 +115,72 @@ export type AnalyticsTweetRow = {
   impact: string;
   state: "High" | "Medium" | "Low";
 };
+
+export type AnalyticsGranularity = "daily" | "weekly" | "monthly";
+
+export type AnalyticsFilters = {
+  start_date?: string;
+  end_date?: string;
+  list_type?: string;
+  account?: string;
+  granularity?: AnalyticsGranularity;
+};
+
+export type AnalyticsKpis = {
+  follow_back_rate: number;
+  average_follow_back_time_hours: number;
+  success_rate: number;
+};
+
+export type AnalyticsSeriesPoint = {
+  label: string;
+  value: number;
+};
+
+export type ActiveAccountMetric = {
+  account_id: string;
+  account: string;
+  list_type: string;
+  follows: number;
+  follow_backs: number;
+  engagements: number;
+};
+
+export type ValuableAccountMetric = {
+  account_id: string;
+  account: string;
+  list_type: string;
+  value_score: number;
+  avg_follow_back_time_hours: number;
+  engagement_score: number;
+};
+
+export type AnalyticsReport = {
+  scope: "daily" | "weekly" | "monthly";
+  period_label: string;
+  kpis: AnalyticsKpis;
+  follower_growth: AnalyticsSeriesPoint[];
+  engagement_timeline: AnalyticsSeriesPoint[];
+  most_active_accounts: ActiveAccountMetric[];
+  most_valuable_accounts: ValuableAccountMetric[];
+};
+
+export type AnalyticsExport = {
+  format: "json" | "csv";
+  filename: string;
+  content_type: string;
+  content: string;
+};
+
+export type AnalyticsDashboardPayload = {
+  kpis: AnalyticsKpis;
+  followerGrowth: AnalyticsSeriesPoint[];
+  engagementTimeline: AnalyticsSeriesPoint[];
+  mostActive: ActiveAccountMetric[];
+  mostValuable: ValuableAccountMetric[];
+  reports: {
+    daily: AnalyticsReport;
+    weekly: AnalyticsReport;
+    monthly: AnalyticsReport;
+  };
+};

@@ -60,6 +60,90 @@ const routes: Record<string, (body?: unknown, headers?: HeadersInit) => unknown>
     donutChart: sampleDonutChartData,
     topTweets: analyticsTopTweetRows,
   }),
+
+  "GET analytics/summary": () => ({
+    success: true,
+    data: {
+      kpis: {
+        follow_back_rate: 0.58,
+        average_follow_back_time_hours: 21.7,
+        success_rate: 0.63,
+      },
+    },
+  }),
+  "GET analytics/follower-growth": () => ({ success: true, data: { series: sampleLineChartData } }),
+  "GET analytics/engagement-timeline": () => ({ success: true, data: { series: sampleBarChartData } }),
+  "GET analytics/most-active": () => ({
+    success: true,
+    data: {
+      items: watchListRows.slice(0, 5).map((item, i) => ({
+        account_id: `mock-${i}`,
+        account: item.handle.replace("@", ""),
+        list_type: "following",
+        follows: 20 + i * 4,
+        follow_backs: 13 + i * 3,
+        engagements: 42 + i * 11,
+      })),
+    },
+  }),
+  "GET analytics/most-valuable": () => ({
+    success: true,
+    data: {
+      items: watchListRows.slice(0, 5).map((item, i) => ({
+        account_id: `mock-${i}`,
+        account: item.handle.replace("@", ""),
+        list_type: "following",
+        value_score: 44 + i * 8,
+        avg_follow_back_time_hours: 8 + i * 2,
+        engagement_score: 1.4 + i * 0.2,
+      })),
+    },
+  }),
+  "GET analytics/reports/daily": () => ({
+    success: true,
+    data: {
+      scope: "daily",
+      period_label: "Daily report",
+      kpis: { follow_back_rate: 0.58, average_follow_back_time_hours: 21.7, success_rate: 0.63 },
+      follower_growth: sampleLineChartData,
+      engagement_timeline: sampleBarChartData,
+      most_active_accounts: [],
+      most_valuable_accounts: [],
+    },
+  }),
+  "GET analytics/reports/weekly": () => ({
+    success: true,
+    data: {
+      scope: "weekly",
+      period_label: "Weekly report",
+      kpis: { follow_back_rate: 0.56, average_follow_back_time_hours: 23.1, success_rate: 0.61 },
+      follower_growth: sampleLineChartData,
+      engagement_timeline: sampleBarChartData,
+      most_active_accounts: [],
+      most_valuable_accounts: [],
+    },
+  }),
+  "GET analytics/reports/monthly": () => ({
+    success: true,
+    data: {
+      scope: "monthly",
+      period_label: "Monthly report",
+      kpis: { follow_back_rate: 0.54, average_follow_back_time_hours: 24.8, success_rate: 0.6 },
+      follower_growth: sampleLineChartData,
+      engagement_timeline: sampleBarChartData,
+      most_active_accounts: [],
+      most_valuable_accounts: [],
+    },
+  }),
+  "GET analytics/export": () => ({
+    success: true,
+    data: {
+      format: "json",
+      filename: "analytics-summary.json",
+      content_type: "application/json",
+      content: JSON.stringify({ message: "mock export" }, null, 2),
+    },
+  }),
   "POST auth/login": (body) => mockAuthLogin(body as LoginCredentials),
   "POST auth/register": (body) => mockAuthRegister(body as RegisterPayload),
   "POST auth/forgot-password": (body) => mockAuthForgotPassword(body as ForgotPasswordPayload),

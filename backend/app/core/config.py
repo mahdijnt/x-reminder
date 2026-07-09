@@ -104,6 +104,10 @@ class Settings(BaseSettings):
     NOTIFICATIONS_TELEGRAM_RATE_GLOBAL: float = 25.0
     TELEGRAM_BOT_TOKEN: str = ""
 
+    ANALYTICS_ENABLED: bool = True
+    ANALYTICS_EXPORT_MAX_POINTS: int = 120
+    ANALYTICS_TOP_ACCOUNTS_LIMIT: int = 8
+
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
     def parse_cors_origins(cls, value: Any) -> list[str]:

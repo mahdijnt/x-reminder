@@ -76,6 +76,11 @@ class HealthService:
 
 
 
+        if self._settings.ANALYTICS_ENABLED:
+            checks["analytics"] = HealthCheckItem(status="ok", detail="analytics APIs enabled")
+        else:
+            checks["analytics"] = HealthCheckItem(status="disabled", detail="ANALYTICS_ENABLED=false")
+
         if self._settings.NOTIFICATIONS_ENABLED:
             if self._notification_engine is None:
                 checks["notifications"] = HealthCheckItem(status="unavailable", detail="Engine not initialized")

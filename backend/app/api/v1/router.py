@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import auth_x, health, monitoring, notifications, watch_lists, x_profile
+from app.api.v1.endpoints import analytics, auth_x, health, monitoring, notifications, watch_lists, x_profile
 
 api_router = APIRouter()
 api_router.include_router(health.router)
@@ -11,3 +11,4 @@ api_router.include_router(x_profile.router)
 api_router.include_router(watch_lists.router)
 api_router.include_router(monitoring.router)
 api_router.include_router(notifications.router)
+api_router.include_router(analytics.router)

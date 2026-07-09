@@ -18,6 +18,7 @@ from app.repositories.redis_repository import RedisRepository
 from app.repositories.x_processed_tweet_repository import ProcessedTweetRepository
 from app.repositories.x_profile_repository import XProfileRepository
 from app.repositories.x_watch_list_repository import WatchListRepository
+from app.services.analytics_service import AnalyticsService
 from app.services.cache_service import CacheService
 from app.services.health_service import HealthService
 from app.services.watch_list_service import WatchListService
@@ -157,6 +158,14 @@ async def get_watch_list_service(
     yield WatchListService(repository)
 
 
+async def get_analytics_service(
+    settings: SettingsDep,
+    profile_repository: Annotated[XProfileRepository, Depends(get_x_profile_repository)],
+    watch_list_repository: Annotated[WatchListRepository, Depends(get_watch_list_repository)],
+) -> AsyncGenerator[AnalyticsService, None]:
+    yield AnalyticsService(settings, profile_repository, watch_list_repository)
+
+
 async def get_x_sync_service(
     settings: SettingsDep,
     token_service: Annotated[XTokenService, Depends(get_x_token_service)],
@@ -218,3 +227,4 @@ XRelationshipServiceDep = Annotated[XRelationshipService, Depends(get_x_relation
 XTweetServiceDep = Annotated[XTweetService, Depends(get_x_tweet_service)]
 WatchListServiceDep = Annotated[WatchListService, Depends(get_watch_list_service)]
 XSyncServiceDep = Annotated[XSyncService, Depends(get_x_sync_service)]
+AnalyticsServiceDep = Annotated[AnalyticsService, Depends(get_analytics_service)]

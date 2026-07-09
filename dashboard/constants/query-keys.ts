@@ -13,5 +13,8 @@
   followTargets: { all: ["followTargets"] as const },
   mutualFollowers: { all: ["mutualFollowers"] as const },
   targetAchieved: { all: ["targetAchieved"] as const },
-  analytics: { overview: ["analytics", "overview"] as const },
+  analytics: {
+    overview: ["analytics", "overview"] as const,
+    dashboard: (filters: unknown) => ["analytics", "dashboard", filters] as const,
+  },
 } as const;
