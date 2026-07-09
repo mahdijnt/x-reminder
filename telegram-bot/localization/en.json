@@ -1,72 +1,75 @@
 {
-  "app_name": "X Reminder",
-  "errors": {
-    "generic": "Something went wrong. Please try again later.",
-    "cancelled": "Cancelled.",
-    "invalid_username": "Please send a valid X username (without spaces).",
-    "account_not_found": "That account is not on your list.",
-    "account_exists": "That account is already on your list."
-  },
-  "commands": {
-    "start_welcome": "Welcome to {app_name}! Use the menu below or /help to explore.",
-    "connect_ok": "Connected (mock): @{username}",
-    "connect_prompt": "Tap Connect below or use /connect to link your X account (mock OAuth).",
-    "status_title": "Status",
-    "lists_title": "Your watch lists",
-    "settings_title": "Settings"
-  },
-  "reply": {
-    "dashboard": "Dashboard",
-    "my_lists": "My Lists",
-    "add_account": "Add Account",
-    "remove_account": "Remove Account",
-    "target_achieved": "Target Achieved",
-    "settings": "Settings"
-  },
-  "menus": {
-    "main": "Main menu",
-    "dashboard": "Dashboard",
-    "watch_lists": "Watch Lists",
-    "notifications": "Notifications",
-    "target_achieved": "Target Achieved",
-    "profile": "Profile",
-    "settings": "Settings",
-    "back": "Back",
-    "refresh": "Refresh",
-    "connect_x": "Connect X"
-  },
-  "lists": {
-    "follow_targets": "Follow Targets",
-    "following": "Following",
-    "mutual": "Mutual Followers",
-    "empty": "No accounts in this list yet."
-  },
-  "flows": {
-    "add_prompt": "Send the X username to add to Follow Targets (e.g. naval).",
-    "add_success": "Added @{username} to Follow Targets.",
-    "remove_prompt": "Send the username to remove from Follow Targets.",
-    "remove_success": "Removed @{username}.",
-    "toggle_notifications_on": "Notifications enabled.",
-    "toggle_notifications_off": "Notifications disabled."
-  },
-  "dashboard": {
-    "card_title": "Summary",
-    "x_connected": "X connected",
-    "x_not_connected": "X not connected"
-  },
-  "profile": {
-    "title": "Your profile"
-  },
-  "notifications": {
-    "title": "Recent notifications",
-    "empty": "No notifications yet."
-  },
-  "target": {
-    "title": "Targets achieved",
-    "empty": "No targets achieved yet."
-  },
-  "settings": {
-    "notifications": "Toggle notifications",
-    "language": "Language (mock)"
-  }
+    "app_name":  "X Reminder",
+    "errors":  {
+                   "generic":  "Something went wrong. Please try again later.",
+                   "cancelled":  "Cancelled.",
+                   "invalid_username":  "Please send a valid X username (without spaces).",
+                   "account_not_found":  "That account is not on your list.",
+                   "account_exists":  "That account is already on your list.",
+                   "backend_unavailable":  "Service is temporarily unavailable. Please try again shortly.",
+                   "backend_request_failed":  "Request could not be completed right now. Please retry."
+               },
+    "commands":  {
+                     "start_welcome":  "Welcome to {app_name}! Use the menu below or /help to explore.",
+                     "connect_ok":  "Connected (mock): @{username}",
+                     "connect_prompt":  "Tap Connect below or use /connect to link your X account (mock OAuth).",
+                     "status_title":  "Status",
+                     "lists_title":  "Your watch lists",
+                     "settings_title":  "Settings"
+                 },
+    "reply":  {
+                  "dashboard":  "Dashboard",
+                  "my_lists":  "My Lists",
+                  "add_account":  "Add Account",
+                  "remove_account":  "Remove Account",
+                  "target_achieved":  "Target Achieved",
+                  "settings":  "Settings"
+              },
+    "menus":  {
+                  "main":  "Main menu",
+                  "dashboard":  "Dashboard",
+                  "watch_lists":  "Watch Lists",
+                  "notifications":  "Notifications",
+                  "target_achieved":  "Target Achieved",
+                  "profile":  "Profile",
+                  "settings":  "Settings",
+                  "back":  "Back",
+                  "refresh":  "Refresh",
+                  "connect_x":  "Connect X"
+              },
+    "lists":  {
+                  "follow_targets":  "Follow Targets",
+                  "following":  "Following",
+                  "mutual":  "Mutual Followers",
+                  "empty":  "No accounts in this list yet."
+              },
+    "flows":  {
+                  "add_prompt":  "Send the X username to add to Follow Targets (e.g. naval).",
+                  "add_success":  "Added @{username} to Follow Targets.",
+                  "remove_prompt":  "Send the username to remove from Follow Targets.",
+                  "remove_success":  "Removed @{username}.",
+                  "toggle_notifications_on":  "Notifications enabled.",
+                  "toggle_notifications_off":  "Notifications disabled."
+              },
+    "dashboard":  {
+                      "card_title":  "Summary",
+                      "x_connected":  "X connected",
+                      "x_not_connected":  "X not connected"
+                  },
+    "profile":  {
+                    "title":  "Your profile"
+                },
+    "notifications":  {
+                          "title":  "Recent notifications",
+                          "empty":  "No notifications yet."
+                      },
+    "target":  {
+                   "title":  "Targets achieved",
+                   "empty":  "No targets achieved yet."
+               },
+    "settings":  {
+                     "notifications":  "Toggle notifications",
+                     "language":  "Language (mock)",
+                     "language_not_supported":  "Language switching is not available yet."
+                 }
 }

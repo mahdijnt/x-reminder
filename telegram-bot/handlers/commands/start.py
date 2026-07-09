@@ -7,18 +7,18 @@ from handlers import get_api_client, telegram_id
 from keyboards.inline import main_inline_menu
 from keyboards.reply import main_reply_keyboard
 from localization.i18n import t
+from services.api_client import BackendError
 
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await get_api_client(context).get_user_profile(telegram_id(update))
+    if not update.message:
+        return
+    try:
+        await get_api_client(context).get_user_profile(telegram_id(update))
+    except BackendError:
+        await update.message.reply_text(t("errors.backend_unavailable"))
+        return
+
     text = t("commands.start_welcome", app_name=t("app_name"))
-    if update.message:
-        await update.message.reply_text(
-            text,
-            reply_markup=main_reply_keyboard(),
-            parse_mode="Markdown",
-        )
-        await update.message.reply_text(
-            t("menus.main"),
-            reply_markup=main_inline_menu(),
-        )
+    await update.message.reply_text(text, reply_markup=main_reply_keyboard(), parse_mode="Markdown")
+    await update.message.reply_text(t("menus.main"), reply_markup=main_inline_menu())
