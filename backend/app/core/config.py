@@ -150,6 +150,13 @@ class Settings(BaseSettings):
 
 
     @model_validator(mode="after")
+    def validate_production_secrets(self) -> Self:
+        weak = {"change-me-in-production", "replace-with-strong-secret"}
+        if self.is_production and self.SECRET_KEY in weak:
+            raise ValueError("SECRET_KEY must be set to a strong unique value in production")
+        return self
+
+    @model_validator(mode="after")
     def resolve_redis_url(self) -> Self:
         """Use REDIS_URL when set; otherwise compose from host/port/password/db/ssl."""
         if self.REDIS_URL:

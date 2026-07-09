@@ -5,13 +5,13 @@ description = "FastAPI backend foundation for x-reminder"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-  "fastapi==0.115.6",
+  "fastapi==0.139.0",
   "uvicorn[standard]==0.32.1",
   "pydantic==2.10.3",
   "pydantic-settings==2.6.1",
   "redis[hiredis]==5.2.1",
   "httpx==0.28.1",
-  "cryptography==44.0.0",
+  "cryptography==48.0.1",
   "apscheduler==3.10.4",
 ]
 
@@ -21,3 +21,4 @@ app = "app.main:app"
 host = "0.0.0.0"
 port = 8000
 reload = true
+

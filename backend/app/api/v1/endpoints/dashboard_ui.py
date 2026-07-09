@@ -1,54 +1,14 @@
-from __future__ import annotations
-
-import base64
-import json
-from datetime import datetime, timedelta, timezone
+﻿from __future__ import annotations
 
 from fastapi import APIRouter, Header, HTTPException, Query
 
+from app.core.access_tokens import make_access_token, parse_access_token
 from app.core.auth_context import AppUserIdDep
 from app.core.dependencies import AnalyticsServiceDep, SettingsDep, WatchListServiceDep
 from app.schemas.analytics import AnalyticsGranularity, ReportScope
 from app.schemas.responses import APIResponse
 
 router = APIRouter(tags=["dashboard-ui"])
-
-
-def _b64url_encode(data: dict) -> str:
-    raw = json.dumps(data, separators=(",", ":")).encode("utf-8")
-    return base64.urlsafe_b64encode(raw).decode("utf-8").rstrip("=")
-
-
-def _b64url_decode(token_part: str) -> dict:
-    padding = "=" * (-len(token_part) % 4)
-    raw = base64.urlsafe_b64decode(f"{token_part}{padding}".encode("utf-8"))
-    return json.loads(raw)
-
-
-def _make_token(user_id: str, role: str, remember_me: bool) -> tuple[str, int]:
-    ttl = 60 * 60 * 24 * 30 if remember_me else 60 * 60 * 8
-    exp = int((datetime.now(timezone.utc) + timedelta(seconds=ttl)).timestamp())
-    header = _b64url_encode({"alg": "none", "typ": "JWT"})
-    payload = _b64url_encode({"sub": user_id, "role": role, "exp": exp})
-    return f"{header}.{payload}.backend-signature", exp * 1000
-
-
-def _parse_user_from_auth_header(auth_header: str | None) -> dict:
-    if not auth_header or not auth_header.lower().startswith("bearer "):
-        raise HTTPException(status_code=401, detail="Missing authorization token")
-    token = auth_header.split(" ", 1)[1].strip()
-    parts = token.split(".")
-    if len(parts) < 2:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    payload = _b64url_decode(parts[1])
-    exp = int(payload.get("exp", 0))
-    if exp * 1000 <= int(datetime.now(timezone.utc).timestamp() * 1000):
-        raise HTTPException(status_code=401, detail="Token expired")
-    sub = str(payload.get("sub", "")).strip()
-    role = str(payload.get("role", "user")).strip() or "user"
-    if not sub:
-        raise HTTPException(status_code=401, detail="Invalid token subject")
-    return {"id": sub, "role": role}
 
 
 def _auth_user(user_id: str, email: str, role: str = "user") -> dict:
@@ -59,7 +19,7 @@ def _auth_user(user_id: str, email: str, role: str = "user") -> dict:
 
 
 @router.post("/auth/login")
-async def auth_login(payload: dict) -> APIResponse[dict]:
+async def auth_login(payload: dict, settings: SettingsDep) -> APIResponse[dict]:
     email = str(payload.get("email", "")).strip().lower()
     password = str(payload.get("password", "")).strip()
     remember_me = bool(payload.get("rememberMe", False))
@@ -68,12 +28,12 @@ async def auth_login(payload: dict) -> APIResponse[dict]:
     user_id = email.replace("@", "_")
     role = "admin" if email.startswith("admin") else "user"
     user = _auth_user(user_id=user_id, email=email, role=role)
-    token, expires_at = _make_token(user_id=user["id"], role=user["role"], remember_me=remember_me)
+    token, expires_at = make_access_token(user_id=user["id"], role=user["role"], remember_me=remember_me, secret=settings.SECRET_KEY)
     return APIResponse.ok(data={"accessToken": token, "expiresAt": expires_at, "user": user})
 
 
 @router.post("/auth/register")
-async def auth_register(payload: dict) -> APIResponse[dict]:
+async def auth_register(payload: dict, settings: SettingsDep) -> APIResponse[dict]:
     name = str(payload.get("name", "")).strip()
     email = str(payload.get("email", "")).strip().lower()
     password = str(payload.get("password", "")).strip()
@@ -83,12 +43,12 @@ async def auth_register(payload: dict) -> APIResponse[dict]:
     user = _auth_user(user_id=user_id, email=email, role="user")
     user["name"] = name
     user["initials"] = "".join(part[0] for part in name.split()[:2]).upper() or "U"
-    token, expires_at = _make_token(user_id=user["id"], role=user["role"], remember_me=True)
+    token, expires_at = make_access_token(user_id=user["id"], role=user["role"], remember_me=True, secret=settings.SECRET_KEY)
     return APIResponse.ok(data={"accessToken": token, "expiresAt": expires_at, "user": user}, message="Account created")
 
 
 @router.post("/auth/forgot-password")
-async def auth_forgot_password(payload: dict) -> APIResponse[dict]:
+async def auth_forgot_password(payload: dict, settings: SettingsDep) -> APIResponse[dict]:
     email = str(payload.get("email", "")).strip().lower()
     if not email:
         raise HTTPException(status_code=400, detail="Email is required")
@@ -111,8 +71,11 @@ async def auth_logout() -> APIResponse[dict]:
 
 
 @router.get("/auth/me")
-async def auth_me(authorization: str | None = Header(default=None, alias="Authorization")) -> APIResponse[dict]:
-    parsed = _parse_user_from_auth_header(authorization)
+async def auth_me(
+    settings: SettingsDep,
+    authorization: str | None = Header(default=None, alias="Authorization"),
+) -> APIResponse[dict]:
+    parsed = parse_access_token(authorization, settings.SECRET_KEY)
     user = _auth_user(user_id=parsed["id"], email=f"{parsed['id'].replace('_', '@', 1)}", role=parsed["role"])
     return APIResponse.ok(data=user)
 
@@ -225,3 +188,4 @@ async def analytics_overview(app_user_id: AppUserIdDep, analytics_service: Analy
     stats = [{"title": "Follow Back Rate", "value": f"{dataset.kpis.follow_back_rate * 100:.1f}%", "change": "+0.0%", "trend": "up", "detail": "Followers following back"}, {"title": "Avg Follow Back Time", "value": f"{dataset.kpis.average_follow_back_time_hours:.1f}h", "change": "0.0h", "trend": "neutral", "detail": "Average delay to follow back"}, {"title": "Success Rate", "value": f"{dataset.kpis.success_rate * 100:.1f}%", "change": "+0.0%", "trend": "up", "detail": "Campaign success ratio"}]
     top_tweets = [{"id": f"tw-{idx}", "tweet": f"{item.account} engagement snapshot", "metric": f"{item.engagements}", "impact": f"{item.follow_backs} follow-backs", "state": "High" if idx < 2 else ("Medium" if idx < 4 else "Low")} for idx, item in enumerate(dataset.most_active_accounts[: settings.ANALYTICS_TOP_ACCOUNTS_LIMIT])]
     return APIResponse.ok(data={"stats": stats, "lineChart": dataset.follower_growth, "barChart": dataset.engagement_timeline, "donutChart": [{"label": "Accounts", "value": len(dataset.most_active_accounts)}], "topTweets": top_tweets})
+

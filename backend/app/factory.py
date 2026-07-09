@@ -146,15 +146,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     settings = settings or get_settings()
 
+    expose_schema = settings.is_development or settings.DEBUG
     app = FastAPI(
         title=settings.APP_NAME,
         description="x-reminder backend API foundation",
         version=settings.APP_VERSION,
         debug=settings.DEBUG,
         lifespan=lifespan,
-        docs_url="/docs",
-        redoc_url="/redoc",
-        openapi_url="/openapi.json",
+        docs_url="/docs" if expose_schema else None,
+        redoc_url="/redoc" if expose_schema else None,
+        openapi_url="/openapi.json" if expose_schema else None,
     )
 
     register_exception_handlers(app)

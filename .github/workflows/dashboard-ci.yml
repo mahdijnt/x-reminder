@@ -1,4 +1,4 @@
-name: dashboard-ci
+﻿name: dashboard-ci
 on:
   push:
     paths:
@@ -23,3 +23,11 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build
+      - name: Env example key check
+        run: node scripts/validate-env.mjs
+        env:
+          NEXT_PUBLIC_API_BASE_URL: http://localhost:8000/api/v1
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+      - name: npm audit (high)
+        continue-on-error: true
+        run: npm audit --audit-level=high
