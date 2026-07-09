@@ -15,7 +15,7 @@ import type { SampleRow, StatDatum, TableColumn } from "@/types";
 import { useDashboardOverview } from "@/hooks/use-api-data";
 
 import { useSimulatedLoading } from "@/app/_components/use-simulated-loading";
-import { PageTransition } from "@/app/_components/page-transition";
+import { PageTransition } from "@/components/motion/page-transition";
 
 function statusChipFromRowStatus(status: SampleRow["status"]): React.ComponentProps<typeof StatusChip>["status"] {
   if (status === "Active") return "success";

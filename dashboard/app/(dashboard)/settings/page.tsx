@@ -7,7 +7,7 @@ import { ActionDialog } from "@/components/feedback/action-dialog";
 import { LoadingSkeleton } from "@/components/feedback/loading-skeleton";
 import { SectionCard } from "@/components/dashboard/section-card";
 import { useSimulatedLoading } from "@/app/_components/use-simulated-loading";
-import { PageTransition } from "@/app/_components/page-transition";
+import { PageTransition } from "@/components/motion/page-transition";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

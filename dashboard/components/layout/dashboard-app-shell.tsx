@@ -124,7 +124,7 @@ export function DashboardAppShell({
 
             <TopNavigation items={topNavItems} />
 
-            <main className="pb-8" aria-label="Page content">
+            <main id="main-content" className="pb-8" aria-label="Page content">
               {children}
             </main>
           </div>

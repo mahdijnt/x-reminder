@@ -1,8 +1,9 @@
-﻿import { env } from "@/config/env";
+import { env } from "@/config/env";
 
 export const appConfig = {
-  name: "X Engagement Intelligence Manager",
-  description: "Next.js dashboard UI (fake data only).",
+  name: "X Reminder Dashboard",
+  description: "Analytics and engagement dashboard for X reminder workflows.",
+  url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
   featureFlags: {
     enableRealApi: !env.useMockApi,
     enableAnalyticsExport: false,

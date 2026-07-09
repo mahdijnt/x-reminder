@@ -1,38 +1,45 @@
-<<<<<<< HEAD
-# X Engagement Intelligence Manager
+# X Reminder Monorepo
 
-A monorepo-style starter for an engagement intelligence system.
+Production-ready monorepo with three applications:
+- `backend/` FastAPI API + workers
+- `dashboard/` Next.js dashboard
+- `telegram-bot/` Telegram bot
 
-## Stack
-- `dashboard`: Next.js (React + TypeScript)
-- `backend`: FastAPI (Python)
-- `telegram-bot`: Python Telegram bot (skeleton)
+## Quick Start
 
-## Getting started
-1. Create your environment file:
-   - Copy `.env.example` to `.env`.
-
-### Dashboard
-```bash
-cd dashboard
-npm install
-npm run dev
-```
-
-### Backend
+1. Copy `.env.example` to `.env` and fill values.
+2. Run backend:
 ```bash
 cd backend
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
-
-### Telegram bot
+3. Run dashboard:
+```bash
+cd dashboard
+npm install
+npm run dev
+```
+4. Run bot:
 ```bash
 cd telegram-bot
 pip install -r requirements.txt
 python main.py
 ```
-=======
-# x-reminder
-X engagemnet reminder
->>>>>>> abce8c7f1d46f4632b296dc7848a6c035d3557f0
+
+## Production Validation
+
+```bash
+python scripts/validate_env.py
+python -m compileall backend/app
+npm --prefix dashboard run lint
+npm --prefix dashboard run build
+python -m compileall telegram-bot
+```
+
+## Deployment Docs
+
+- `docs/backend-deployment.md`
+- `docs/dashboard-deployment.md`
+- `docs/telegram-bot-deployment.md`
+- `docs/infrastructure-checklist.md`

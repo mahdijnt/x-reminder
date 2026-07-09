@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { useSimulatedLoading } from "@/app/_components/use-simulated-loading";
-import { PageTransition } from "@/app/_components/page-transition";
+import { PageTransition } from "@/components/motion/page-transition";
 
 import type { FollowTargetRow, TableColumn } from "@/types";
 import { useFollowTargets } from "@/hooks/use-api-data";

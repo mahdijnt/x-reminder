@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { useSimulatedLoading } from "@/app/_components/use-simulated-loading";
-import { PageTransition } from "@/app/_components/page-transition";
+import { PageTransition } from "@/components/motion/page-transition";
 
 import type { MutualFollowerRow, TableColumn } from "@/types";
 import { useMutualFollowers } from "@/hooks/use-api-data";

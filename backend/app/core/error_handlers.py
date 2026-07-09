@@ -12,8 +12,11 @@ from app.core.exceptions import AppException
 from app.integrations.x.exceptions import XAPIError, XRateLimitError
 from app.infrastructure.qdrant.exceptions import QdrantError
 from app.schemas.responses import APIResponse, ErrorDetail
+from app.core.config import get_settings
+from app.monitoring.error_reporter import ErrorReporter
 
 logger = logging.getLogger(__name__)
+error_reporter = ErrorReporter(get_settings())
 
 
 def _error_body(code: str, message: str, details: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -87,6 +90,7 @@ def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(_request: Request, exc: Exception) -> JSONResponse:
         logger.exception("unhandled_exception", exc_info=exc)
+        error_reporter.capture_exception(exc, context={"scope": "fastapi_unhandled"})
         return JSONResponse(
             status_code=500,
             content=_error_body("internal_server_error", "An unexpected error occurred"),

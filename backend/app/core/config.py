@@ -36,8 +36,8 @@ class Settings(BaseSettings):
 
     CORS_ORIGINS: list[str] = Field(default_factory=lambda: ["http://localhost:3000"])
     CORS_ALLOW_CREDENTIALS: bool = True
-    CORS_ALLOW_METHODS: list[str] = Field(default_factory=lambda: ["*"])
-    CORS_ALLOW_HEADERS: list[str] = Field(default_factory=lambda: ["*"])
+    CORS_ALLOW_METHODS: list[str] = Field(default_factory=lambda: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
+    CORS_ALLOW_HEADERS: list[str] = Field(default_factory=lambda: ["Authorization", "Content-Type", "X-Request-ID"])
 
     LOG_LEVEL: str = "INFO"
     LOG_JSON: bool = False
@@ -107,6 +107,9 @@ class Settings(BaseSettings):
     ANALYTICS_ENABLED: bool = True
     ANALYTICS_EXPORT_MAX_POINTS: int = 120
     ANALYTICS_TOP_ACCOUNTS_LIMIT: int = 8
+
+    ERROR_MONITORING_PROVIDER: str = "none"
+    ERROR_MONITORING_DSN: str = ""
 
     QDRANT_URL: str = ""
     QDRANT_API_KEY: str = ""

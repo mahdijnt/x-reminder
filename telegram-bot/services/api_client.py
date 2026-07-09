@@ -80,7 +80,10 @@ class MockApiClient:
         return await self._backend.connect_x(telegram_id)
 
 
-def create_api_client(use_mock: bool = True) -> ApiClient:
-    if not use_mock:
-        raise NotImplementedError("HTTP backend client is not implemented yet")
-    return MockApiClient()
+def create_api_client(use_mock: bool = True, settings: object | None = None) -> ApiClient:
+    if use_mock:
+        return MockApiClient()
+    if settings is None:
+        raise ValueError("settings are required when use_mock is False")
+    from services.http_backend import HttpApiClient
+    return HttpApiClient(settings)
