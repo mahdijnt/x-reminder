@@ -19,4 +19,8 @@ class ProcessedTweetRecord(BaseModel):
     tweet_id: str
     author_id: str
     processed_time: datetime
-    notification_status: Literal["pending", "sent", "skipped"] = "pending"
+    notification_status: Literal["pending", "sent", "skipped", "failed"] = "pending"
+    list_type: str | None = None
+    username: str | None = None
+    url: str | None = None
+    tweet_created_at: datetime | None = None

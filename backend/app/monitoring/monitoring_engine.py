@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 class MonitoringEngine:
-    def __init__(self, settings: Settings, repository: RedisRepository) -> None:
+    def __init__(self, settings: Settings, repository: RedisRepository, notification_service=None) -> None:
         self._settings = settings
         self._repository = repository
         self._metrics = MonitoringMetrics(repository)
@@ -68,6 +68,7 @@ class MonitoringEngine:
             processed_repo,
             self._last_poll,
             self._metrics,
+            notification_service=notification_service,
         )
         handlers = build_handlers(polling_engine, sync_service)
         self._task_manager = TaskManager(self._queue, self._retry_queue, self._history, self._metrics, handlers)

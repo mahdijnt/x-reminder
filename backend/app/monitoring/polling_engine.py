@@ -9,6 +9,7 @@ from app.monitoring.metrics import MonitoringMetrics
 from app.monitoring.models import PollListType
 from app.repositories.x_processed_tweet_repository import ProcessedTweetRepository
 from app.services.watch_list_service import WatchListService
+from app.models.x.tweet import FilteredTweet
 from app.services.x_tweet_service import XTweetService
 
 logger = logging.getLogger(__name__)
@@ -29,6 +30,7 @@ class PollingEngine:
         processed_repo: ProcessedTweetRepository,
         last_poll_store: LastPollStore,
         metrics: MonitoringMetrics,
+        notification_service=None,
     ) -> None:
         self._settings = settings
         self._tweet_service = tweet_service
@@ -36,6 +38,7 @@ class PollingEngine:
         self._processed_repo = processed_repo
         self._last_poll_store = last_poll_store
         self._metrics = metrics
+        self._notification_service = notification_service
 
     async def _entries_for(self, app_user_id: str, list_type: PollListType):
         if list_type == PollListType.FOLLOW_TARGETS:
@@ -75,8 +78,30 @@ class PollingEngine:
                             },
                         )
                         continue
-                    await self._processed_repo.touch_pending(app_user_id, item.tweet_id, item.author_id)
+                    await self._processed_repo.touch_pending(
+                        app_user_id,
+                        item.tweet_id,
+                        item.author_id,
+                        list_type=list_type.value,
+                        username=item.username,
+                        url=item.url,
+                        tweet_created_at=item.created_at,
+                    )
                     new_processed += 1
+                    if self._notification_service is not None:
+                        tweet = FilteredTweet(
+                            tweet_id=item.tweet_id,
+                            author_id=item.author_id,
+                            username=item.username,
+                            text=item.text,
+                            created_at=item.created_at,
+                            url=item.url,
+                        )
+                        await self._notification_service.enqueue_tweet_notification(
+                            app_user_id,
+                            tweet,
+                            list_type=list_type.value,
+                        )
 
                 page_token = result.next_token
                 if not page_token:

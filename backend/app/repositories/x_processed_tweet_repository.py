@@ -28,11 +28,60 @@ class ProcessedTweetRepository:
     async def is_processed(self, app_user_id: str, tweet_id: str) -> bool:
         return (await self._repository.exists(self._keys.x_processed_tweet(app_user_id, tweet_id))) > 0
 
-    async def touch_pending(self, app_user_id: str, tweet_id: str, author_id: str) -> bool:
+    async def touch_pending(
+        self,
+        app_user_id: str,
+        tweet_id: str,
+        author_id: str,
+        *,
+        list_type: str | None = None,
+        username: str | None = None,
+        url: str | None = None,
+        tweet_created_at: datetime | None = None,
+    ) -> bool:
         record = ProcessedTweetRecord(
             tweet_id=tweet_id,
             author_id=author_id,
             processed_time=datetime.now(timezone.utc),
             notification_status="pending",
+            list_type=list_type,
+            username=username,
+            url=url,
+            tweet_created_at=tweet_created_at,
         )
-        return await self.mark_processed(app_user_id, record)
+        ok = await self.mark_processed(app_user_id, record)
+        if ok:
+            member = f"{app_user_id}:{tweet_id}"
+            await self._repository.zadd(
+                self._keys.notifications_pending_index(),
+                {member: datetime.now(timezone.utc).timestamp()},
+            )
+        return ok
+
+    async def set_notification_status(self, app_user_id: str, tweet_id: str, status: str) -> bool:
+        record = await self.get(app_user_id, tweet_id)
+        if record is None:
+            return False
+        record.notification_status = status  # type: ignore[assignment]
+        ok = await self.mark_processed(app_user_id, record)
+        if status != "pending":
+            member = f"{app_user_id}:{tweet_id}"
+            await self._repository.zrem(self._keys.notifications_pending_index(), member)
+        return ok
+
+    async def list_pending(self, app_user_id: str, *, limit: int = 50) -> list[dict]:
+        members = await self._repository.zrevrange(self._keys.notifications_pending_index(), 0, limit * 5)
+        out: list[dict] = []
+        for member in members:
+            if not member.startswith(f"{app_user_id}:"):
+                continue
+            tweet_id = member.split(":", 1)[1]
+            record = await self.get(app_user_id, tweet_id)
+            if record is None or record.notification_status != "pending":
+                await self._repository.zrem(self._keys.notifications_pending_index(), member)
+                continue
+            out.append({"record": record, "meta": {"list_type": record.list_type or "following"}})
+            if len(out) >= limit:
+                break
+        return out
+

@@ -4,7 +4,7 @@ import logging
 from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
@@ -50,6 +50,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     sync_scheduler = None
     monitoring_engine = None
+    notification_engine = None
     if settings.X_SYNC_SCHEDULER_ENABLED:
         repository = RedisRepository(redis_manager)
         token_store = XTokenStore(repository, settings)
@@ -71,11 +72,25 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         sync_scheduler.start()
         app.state.x_sync_scheduler = sync_scheduler
 
+
+    if settings.NOTIFICATIONS_ENABLED:
+        from app.notifications.engine import NotificationEngine
+        from app.repositories.redis_repository import RedisRepository as _RedisRepository
+
+        notification_engine = NotificationEngine(settings, _RedisRepository(redis_manager), redis_manager)
+        notification_engine.start()
+        app.state.notification_engine = notification_engine
+
     if settings.MONITORING_ENABLED:
         from app.monitoring.monitoring_engine import MonitoringEngine
         from app.repositories.redis_repository import RedisRepository
 
-        monitoring_engine = MonitoringEngine(settings, RedisRepository(redis_manager))
+        notification_service = notification_engine.service if notification_engine is not None else None
+        monitoring_engine = MonitoringEngine(
+            settings,
+            RedisRepository(redis_manager),
+            notification_service=notification_service,
+        )
         monitoring_engine.start()
         app.state.monitoring_engine = monitoring_engine
 
@@ -84,6 +99,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     if sync_scheduler is not None:
         sync_scheduler.shutdown()
+
+    if notification_engine is not None:
+        await notification_engine.shutdown()
 
     if monitoring_engine is not None:
         await monitoring_engine.shutdown()
@@ -124,12 +142,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
     @app.get("/healthz", response_model=APIResponse[HealthData], tags=["health"])
-    async def healthz() -> APIResponse[HealthData]:
+    async def healthz(request: Request) -> APIResponse[HealthData]:
         redis_manager = get_redis_manager(settings)
         service = HealthService(
             settings=settings,
             repository=InMemoryRepository(),
             redis_manager=redis_manager,
+            monitoring_engine=getattr(request.app.state, "monitoring_engine", None),
+            notification_engine=getattr(request.app.state, "notification_engine", None),
         )
         data = await service.get_health()
         message = "Service is healthy" if data.status == "ok" else "Service is degraded"

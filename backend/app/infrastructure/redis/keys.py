@@ -80,6 +80,38 @@ class RedisKeys:
 
 
 
+    def notifications_queue(self) -> str:
+        return self._key("notifications", "queue")
+
+    def notifications_queue_priority(self, level: str) -> str:
+        return self._key("notifications", "queue", "priority", level)
+
+    def notifications_retry(self) -> str:
+        return self._key("notifications", "retry")
+
+    def notifications_failures(self) -> str:
+        return self._key("notifications", "failures")
+
+    def notifications_failure_item(self, failure_id: str) -> str:
+        return self._key("notifications", "failures", "item", failure_id)
+
+    def notifications_history(self, notification_id: str) -> str:
+        return self._key("notifications", "history", notification_id)
+
+    def notifications_history_index(self) -> str:
+        return self._key("notifications", "history", "index")
+
+    def notifications_metrics(self) -> str:
+        return self._key("notifications", "metrics")
+
+    def notifications_dedup(self, user_id: str, tweet_id: str) -> str:
+        return self._key("notifications", "dedup", user_id, tweet_id)
+
+    def notifications_pending_index(self) -> str:
+        return self._key("notifications", "pending")
+
+
+
 def get_redis_keys(settings: Settings | None = None) -> RedisKeys:
     if settings is not None:
         return RedisKeys(prefix=settings.REDIS_KEY_PREFIX)

@@ -179,6 +179,10 @@ def _monitoring_engine_from_request(request: Request):
     return getattr(request.app.state, "monitoring_engine", None)
 
 
+def _notification_engine_from_request(request: Request):
+    return getattr(request.app.state, "notification_engine", None)
+
+
 async def get_health_service(
     request: Request,
     settings: SettingsDep,
@@ -190,6 +194,7 @@ async def get_health_service(
         repository=repository,
         redis_manager=manager,
         monitoring_engine=_monitoring_engine_from_request(request),
+        notification_engine=_notification_engine_from_request(request),
     )
 
 

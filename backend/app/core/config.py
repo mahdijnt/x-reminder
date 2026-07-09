@@ -88,6 +88,22 @@ class Settings(BaseSettings):
     MONITORING_APP_USER_IDS: list[str] = Field(default_factory=list)
 
 
+
+    NOTIFICATIONS_ENABLED: bool = False
+    NOTIFICATIONS_WORKER_ENABLED: bool = True
+    NOTIFICATIONS_QUEUE_NAME: str = "notifications:jobs"
+    NOTIFICATIONS_RETRY_MAX_ATTEMPTS: int = 5
+    NOTIFICATIONS_RETRY_BASE_DELAY_SECONDS: int = 60
+    NOTIFICATIONS_FAILURE_QUEUE_TTL_SECONDS: int = 2592000
+    NOTIFICATIONS_HISTORY_TTL_SECONDS: int = 604800
+    NOTIFICATIONS_BATCH_WINDOW_SECONDS: int = 30
+    NOTIFICATIONS_BATCH_MAX_SIZE: int = 5
+    NOTIFICATIONS_WORKER_CONCURRENCY: int = 2
+    NOTIFICATIONS_SHUTDOWN_TIMEOUT_SECONDS: int = 30
+    NOTIFICATIONS_TELEGRAM_RATE_PER_CHAT: float = 1.0
+    NOTIFICATIONS_TELEGRAM_RATE_GLOBAL: float = 25.0
+    TELEGRAM_BOT_TOKEN: str = ""
+
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
     def parse_cors_origins(cls, value: Any) -> list[str]:
