@@ -58,7 +58,7 @@ export default function FollowingPage() {
     const pending = followingRows.filter((r) => r.notificationState === "Pending").length;
     const muted = followingRows.filter((r) => r.notificationState === "Muted").length;
     return { enabled, pending, muted, total: followingRows.length };
-  }, []);
+  }, [followingRows]);
 
   const columns = React.useMemo<TableColumn<FollowingRow>[]>(
     () => [
@@ -143,7 +143,7 @@ export default function FollowingPage() {
         ),
       },
     ],
-    []
+    [setActionMessage]
   );
 
   return (

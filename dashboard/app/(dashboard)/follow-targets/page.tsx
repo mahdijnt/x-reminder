@@ -58,7 +58,7 @@ export default function FollowTargetsPage() {
     const review = followTargetRows.filter((r) => r.status === "Review").length;
     const scheduled = followTargetRows.filter((r) => r.status === "Scheduled").length;
     return { qualified, review, scheduled, total: followTargetRows.length };
-  }, []);
+  }, [followTargetRows]);
 
   const columns = React.useMemo<TableColumn<FollowTargetRow>[]>(
     () => [
@@ -144,7 +144,7 @@ export default function FollowTargetsPage() {
         ),
       },
     ],
-    []
+    [setActionMessage]
   );
 
   return (

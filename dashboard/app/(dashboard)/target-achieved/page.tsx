@@ -50,13 +50,13 @@ export default function TargetAchievedPage() {
         row.status.toLowerCase().includes(q)
       );
     });
-  }, [query]);
+  }, [query, targetAchievedRows]);
 
   const totals = React.useMemo(() => {
     const achieved = targetAchievedRows.filter((r) => r.status === "Achieved").length;
     const archived = targetAchievedRows.filter((r) => r.status === "Archived").length;
     return { achieved, archived, total: targetAchievedRows.length };
-  }, []);
+  }, [targetAchievedRows]);
 
   const columns = React.useMemo<TableColumn<TargetAchievedRow>[]>(
     () => [
@@ -138,7 +138,7 @@ export default function TargetAchievedPage() {
         ),
       },
     ],
-    []
+    [setActionMessage]
   );
 
   return (

@@ -50,7 +50,7 @@ export default function MutualFollowersPage() {
     const gold = mutualFollowerRows.filter((r) => r.tier === "Gold").length;
     const standard = mutualFollowerRows.filter((r) => r.tier === "Standard").length;
     return { gold, standard, total: mutualFollowerRows.length };
-  }, []);
+  }, [mutualFollowerRows]);
 
   const columns = React.useMemo<TableColumn<MutualFollowerRow>[]>(
     () => [
@@ -124,7 +124,7 @@ export default function MutualFollowersPage() {
         ),
       },
     ],
-    []
+    [setActionMessage]
   );
 
   return (

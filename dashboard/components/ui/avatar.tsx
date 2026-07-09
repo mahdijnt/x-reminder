@@ -1,5 +1,6 @@
 "use client";
 
+import Image, { type ImageProps } from "next/image";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -33,18 +34,21 @@ const Avatar = React.forwardRef<
 ));
 Avatar.displayName = "Avatar";
 
-const AvatarImage = React.forwardRef<
-  HTMLImageElement,
-  React.ImgHTMLAttributes<HTMLImageElement>
->(({ className, alt = "Avatar", ...props }, ref) => (
-  <img
-    ref={ref}
-    alt={alt}
-    className={cn("aspect-square h-full w-full object-cover", className)}
-    {...props}
-  />
-));
-AvatarImage.displayName = "AvatarImage";
+type AvatarImageProps = Omit<ImageProps, "alt"> & {
+  alt?: string;
+  className?: string;
+};
+
+function AvatarImage({ className, alt = "Avatar", sizes = "40px", ...props }: AvatarImageProps) {
+  return (
+    <Image
+      alt={alt}
+      sizes={sizes}
+      className={cn("aspect-square h-full w-full object-cover", className)}
+      {...props}
+    />
+  );
+}
 
 export interface AvatarFallbackProps
   extends React.HTMLAttributes<HTMLSpanElement> {

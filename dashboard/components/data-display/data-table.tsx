@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import type { TableColumn } from "@/lib/mock-data";
+import type { TableColumn } from "@/types";
 
 export interface DataTableProps<T> {
   columns: TableColumn<T>[];
