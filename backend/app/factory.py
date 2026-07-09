@@ -49,6 +49,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         )
 
     sync_scheduler = None
+    monitoring_engine = None
     if settings.X_SYNC_SCHEDULER_ENABLED:
         repository = RedisRepository(redis_manager)
         token_store = XTokenStore(repository, settings)
@@ -70,10 +71,23 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         sync_scheduler.start()
         app.state.x_sync_scheduler = sync_scheduler
 
+    if settings.MONITORING_ENABLED:
+        from app.monitoring.monitoring_engine import MonitoringEngine
+        from app.repositories.redis_repository import RedisRepository
+
+        monitoring_engine = MonitoringEngine(settings, RedisRepository(redis_manager))
+        monitoring_engine.start()
+        app.state.monitoring_engine = monitoring_engine
+
+
     yield
 
     if sync_scheduler is not None:
         sync_scheduler.shutdown()
+
+    if monitoring_engine is not None:
+        await monitoring_engine.shutdown()
+
 
     await redis_manager.disconnect()
 

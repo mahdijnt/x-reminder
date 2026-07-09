@@ -14,10 +14,12 @@ class HealthService:
         settings: Settings,
         repository: InMemoryRepository,
         redis_manager: RedisManager | None = None,
+        monitoring_engine=None,
     ) -> None:
         self._settings = settings
         self._repository = repository
         self._redis_manager = redis_manager
+        self._monitoring_engine = monitoring_engine
 
     async def get_health(self) -> HealthData:
         _ = await self._repository.list_all()
@@ -52,6 +54,24 @@ class HealthService:
                 status="missing_config",
                 detail="Set X_CLIENT_ID, X_CLIENT_SECRET, and X_CALLBACK_URL",
             )
+
+
+        if self._settings.MONITORING_ENABLED:
+            if self._monitoring_engine is None:
+                checks["monitoring"] = HealthCheckItem(status="unavailable", detail="Engine not initialized")
+                overall = "degraded" if overall == "ok" else overall
+            else:
+                status = await self._monitoring_engine.status()
+                ok = status.get("scheduler_running") and status.get("worker_running")
+                checks["monitoring"] = HealthCheckItem(
+                    status="ok" if ok else "degraded",
+                    detail=f"queue_depth={status.get('queue_depth', 0)}",
+                )
+                if not ok:
+                    overall = "degraded"
+        else:
+            checks["monitoring"] = HealthCheckItem(status="disabled", detail="MONITORING_ENABLED=false")
+
 
         return HealthData(
             status=overall,

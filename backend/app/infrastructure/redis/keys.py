@@ -60,6 +60,24 @@ class RedisKeys:
 
     def x_processed_tweet(self, app_user_id: str, tweet_id: str) -> str:
         return self._key("x", "processed", app_user_id, tweet_id)
+    def monitoring_queue(self) -> str:
+        return self._key("monitoring", "queue")
+
+    def monitoring_retry(self) -> str:
+        return self._key("monitoring", "retry")
+
+    def monitoring_job(self, job_id: str) -> str:
+        return self._key("monitoring", "job", job_id)
+
+    def monitoring_job_index(self) -> str:
+        return self._key("monitoring", "job_index")
+
+    def monitoring_metrics(self) -> str:
+        return self._key("monitoring", "metrics")
+
+    def monitoring_last_poll(self, app_user_id: str, list_type: str) -> str:
+        return self._key("monitoring", "last_poll", app_user_id, list_type)
+
 
 
 def get_redis_keys(settings: Settings | None = None) -> RedisKeys:

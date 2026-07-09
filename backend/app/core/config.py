@@ -74,6 +74,19 @@ class Settings(BaseSettings):
     X_SYNC_SCHEDULER_ENABLED: bool = False
     X_SYNC_INTERVAL_MINUTES: int = 30
     X_SYNC_APP_USER_IDS: list[str] = Field(default_factory=list)
+    MONITORING_ENABLED: bool = False
+    MONITORING_WORKER_ENABLED: bool = True
+    MONITORING_SIX_HOUR_INTERVAL_MINUTES: int = 360
+    MONITORING_REALTIME_INTERVAL_SECONDS: int = 120
+    MONITORING_QUEUE_NAME: str = "monitoring:jobs"
+    MONITORING_RETRY_MAX_ATTEMPTS: int = 5
+    MONITORING_RETRY_BASE_DELAY_SECONDS: int = 30
+    MONITORING_JOB_HISTORY_TTL_SECONDS: int = 604800
+    MONITORING_WORKER_CONCURRENCY: int = 2
+    MONITORING_SHUTDOWN_TIMEOUT_SECONDS: int = 30
+    MONITORING_POLL_BATCH_SIZE: int = 50
+    MONITORING_APP_USER_IDS: list[str] = Field(default_factory=list)
+
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
@@ -85,6 +98,14 @@ class Settings(BaseSettings):
     @field_validator("X_OAUTH_SCOPES", mode="before")
     @classmethod
     def parse_x_oauth_scopes(cls, value: Any) -> list[str]:
+        if isinstance(value, str):
+            return [item.strip() for item in value.split(",") if item.strip()]
+        return value
+
+
+    @field_validator("MONITORING_APP_USER_IDS", mode="before")
+    @classmethod
+    def parse_monitoring_users(cls, value: Any) -> list[str]:
         if isinstance(value, str):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value

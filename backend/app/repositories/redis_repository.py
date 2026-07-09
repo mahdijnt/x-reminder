@@ -159,3 +159,95 @@ class RedisRepository:
 
     async def set_json(self, key: str, value: Any, *, ex: int | None = None) -> bool:
         return await self.set(key, json.dumps(value), ex=ex)
+
+    async def rpush(self, key: str, value: str) -> bool:
+        async def _op(client: Redis) -> bool:
+            await client.rpush(key, value)
+            return True
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return False
+
+    async def lpop(self, key: str) -> str | None:
+        async def _op(client: Redis) -> str | None:
+            return await client.lpop(key)
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return None
+
+    async def llen(self, key: str) -> int:
+        async def _op(client: Redis) -> int:
+            return int(await client.llen(key))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return 0
+
+    async def zadd(self, key: str, mapping: dict[str, float]) -> bool:
+        async def _op(client: Redis) -> bool:
+            await client.zadd(key, mapping)
+            return True
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return False
+
+    async def zrem(self, key: str, member: str) -> int:
+        async def _op(client: Redis) -> int:
+            return int(await client.zrem(key, member))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return 0
+
+    async def zrangebyscore(
+        self,
+        key: str,
+        min_score: float,
+        max_score: float,
+        *,
+        start: int = 0,
+        num: int = -1,
+    ) -> list[str]:
+        async def _op(client: Redis) -> list[str]:
+            return list(await client.zrangebyscore(key, min_score, max_score, start=start, num=num))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return []
+
+    async def zcard(self, key: str) -> int:
+        async def _op(client: Redis) -> int:
+            return int(await client.zcard(key))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return 0
+
+    async def zrevrange(self, key: str, start: int, end: int) -> list[str]:
+        async def _op(client: Redis) -> list[str]:
+            return list(await client.zrevrange(key, start, end))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return []
+
+    async def hincrby(self, name: str, key: str, amount: int = 1) -> int:
+        async def _op(client: Redis) -> int:
+            return int(await client.hincrby(name, key, amount))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return 0
+

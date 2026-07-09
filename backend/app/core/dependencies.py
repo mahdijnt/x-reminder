@@ -175,12 +175,22 @@ async def get_x_sync_service(
     )
 
 
+def _monitoring_engine_from_request(request: Request):
+    return getattr(request.app.state, "monitoring_engine", None)
+
+
 async def get_health_service(
+    request: Request,
     settings: SettingsDep,
     repository: Annotated[InMemoryRepository, Depends(get_health_repository)],
     manager: RedisManagerDep,
 ) -> AsyncGenerator[HealthService, None]:
-    yield HealthService(settings=settings, repository=repository, redis_manager=manager)
+    yield HealthService(
+        settings=settings,
+        repository=repository,
+        redis_manager=manager,
+        monitoring_engine=_monitoring_engine_from_request(request),
+    )
 
 
 async def get_rate_limiter_dep(
