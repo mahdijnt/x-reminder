@@ -4,7 +4,7 @@ import logging
 
 from app.core.config import Settings
 from app.models.x.watch_list import WatchListType
-from app.monitoring.last_poll_store import LastPollStore
+from app.monitoring.last_poll_store import LastPollStore, max_tweet_id
 from app.monitoring.metrics import MonitoringMetrics
 from app.monitoring.models import PollListType
 from app.repositories.x_processed_tweet_repository import ProcessedTweetRepository
@@ -59,17 +59,35 @@ class PollingEngine:
         new_processed = 0
 
         for entry in entries[:batch_size]:
+            since_id = await self._last_poll_store.get_last_processed_tweet_id(
+                app_user_id,
+                list_type.value,
+                entry.x_user_id,
+            )
             page_token = None
+            cursor_high: str | None = since_id
+            incremental = since_id is not None
             while True:
                 result = await self._tweet_service.fetch_user_tweets(
                     app_user_id,
                     entry.x_user_id,
+                    since_id=since_id if page_token is None else None,
                     pagination_token=page_token,
                     record_processed=False,
                 )
                 for item in result.items:
                     tweets_fetched += 1
-                    if await self._processed_repo.is_processed(app_user_id, item.tweet_id):
+                    cursor_high = max_tweet_id(cursor_high, item.tweet_id)
+                    claimed = await self._processed_repo.try_claim_pending(
+                        app_user_id,
+                        item.tweet_id,
+                        item.author_id,
+                        list_type=list_type.value,
+                        username=item.username,
+                        url=item.url,
+                        tweet_created_at=item.created_at,
+                    )
+                    if not claimed:
                         duplicates_skipped += 1
                         logger.info(
                             "monitoring_duplicate_skipped",
@@ -80,15 +98,6 @@ class PollingEngine:
                             },
                         )
                         continue
-                    await self._processed_repo.touch_pending(
-                        app_user_id,
-                        item.tweet_id,
-                        item.author_id,
-                        list_type=list_type.value,
-                        username=item.username,
-                        url=item.url,
-                        tweet_created_at=item.created_at,
-                    )
                     new_processed += 1
                     if self._tweet_memory_service is not None and self._settings.QDRANT_ENABLED:
                         from app.schemas.ai import TweetStoreRequest
@@ -119,8 +128,16 @@ class PollingEngine:
                         )
 
                 page_token = result.next_token
-                if not page_token:
+                if incremental or not page_token:
                     break
+
+            if cursor_high and cursor_high != since_id:
+                await self._last_poll_store.set_last_processed_tweet_id(
+                    app_user_id,
+                    list_type.value,
+                    entry.x_user_id,
+                    cursor_high,
+                )
 
         await self._last_poll_store.set_now(app_user_id, list_type.value)
         await self._metrics.incr("tweets_fetched", tweets_fetched)

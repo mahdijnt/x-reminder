@@ -42,10 +42,20 @@ class MonitoringWorker:
             self._tasks.append(asyncio.create_task(self._loop(idx), name=f"monitoring-worker-{idx}"))
         logger.info("monitoring_workers_started", extra={"concurrency": concurrency})
 
-    async def stop(self) -> None:
+    def request_stop(self) -> None:
         self._stop.set()
+
+    async def stop(self) -> None:
+        self.request_stop()
+        timeout = float(self._settings.MONITORING_SHUTDOWN_TIMEOUT_SECONDS)
+        idle = await self.wait_idle(timeout)
+        if not idle:
+            logger.warning(
+                "monitoring_worker_shutdown_timeout",
+                extra={"in_flight": self._in_flight},
+            )
         if self._tasks:
-            await asyncio.wait(self._tasks, timeout=self._settings.MONITORING_SHUTDOWN_TIMEOUT_SECONDS)
+            await asyncio.wait(self._tasks, timeout=1.0 if idle else 0.0)
         for task in self._tasks:
             if not task.done():
                 task.cancel()

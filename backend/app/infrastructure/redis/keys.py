@@ -82,6 +82,9 @@ class RedisKeys:
     def monitoring_last_poll(self, app_user_id: str, list_type: str) -> str:
         return self._key("monitoring", "last_poll", app_user_id, list_type)
 
+    def monitoring_last_processed_tweet(self, app_user_id: str, list_type: str, x_user_id: str) -> str:
+        return self._key("monitoring", "last_tweet", app_user_id, list_type, x_user_id)
+
 
 
     def notifications_queue(self) -> str:

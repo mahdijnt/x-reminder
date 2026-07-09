@@ -115,10 +115,6 @@ class MonitoringEngine:
             return
         self._cron.shutdown(wait=False)
         await self._worker.stop()
-        timeout = float(self._settings.MONITORING_SHUTDOWN_TIMEOUT_SECONDS)
-        idle = await self._worker.wait_idle(timeout)
-        if not idle:
-            logger.warning("monitoring_shutdown_timeout", extra={"in_flight": self._worker.in_flight})
         logger.info("monitoring_engine_stopped")
 
     async def status(self) -> dict:
