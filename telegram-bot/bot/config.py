@@ -12,7 +12,6 @@ class Settings:
     log_level: str = "INFO"
     default_locale: str = "en"
     backend_base_url: str = "http://localhost:8000/api/v1"
-    use_mock_backend: bool = False
     api_timeout_seconds: float = 10.0
     api_retry_attempts: int = 3
     api_retry_base_delay_seconds: float = 0.5
@@ -58,14 +57,12 @@ def get_settings() -> Settings:
         "BACKEND_BASE_URL",
         os.environ.get("BOT_BACKEND_BASE_URL", "http://localhost:8000/api/v1"),
     ).strip()
-    use_mock = _as_bool(os.environ.get("USE_MOCK_BACKEND", "false"), default=False)
 
     return Settings(
         telegram_bot_token=token,
         log_level=log_level,
         default_locale=default_locale,
         backend_base_url=backend_base_url,
-        use_mock_backend=use_mock,
         api_timeout_seconds=float(os.environ.get("BOT_API_TIMEOUT_SECONDS", "10").strip()),
         api_retry_attempts=int(os.environ.get("BOT_API_RETRY_ATTEMPTS", "3").strip()),
         api_retry_base_delay_seconds=float(os.environ.get("BOT_API_RETRY_BASE_DELAY_SECONDS", "0.5").strip()),
@@ -78,3 +75,4 @@ def get_settings() -> Settings:
         error_monitoring_provider=os.environ.get("BOT_ERROR_MONITORING_PROVIDER", "none").strip().lower(),
         error_monitoring_dsn=os.environ.get("BOT_ERROR_MONITORING_DSN", "").strip(),
     )
+

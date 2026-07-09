@@ -4,7 +4,7 @@ import Link from "next/link";
 import { m } from "framer-motion";
 
 import { cn } from "@/lib/utils";
-import type { NavigationItem } from "@/lib/mock-data";
+import type { NavigationItem } from "@/types";
 
 export interface TopNavigationProps {
   items: NavigationItem[];
@@ -39,3 +39,4 @@ export function TopNavigation({ items, className }: TopNavigationProps) {
     </m.nav>
   );
 }
+

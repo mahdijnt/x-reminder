@@ -12,7 +12,7 @@ export default function UnauthorizedPage() {
     <AuthLayoutShell title="Unauthorized" subtitle="You do not have permission to view this page.">
       <div className="space-y-4">
         <p className="text-sm text-muted-foreground">
-          This route is protected by role checks. Switch to an admin mock account or return to the dashboard.
+          This route is protected by role checks. Sign in with an authorized account or return to the dashboard.
         </p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button asChild className="flex-1">
@@ -26,3 +26,4 @@ export default function UnauthorizedPage() {
     </AuthLayoutShell>
   );
 }
+

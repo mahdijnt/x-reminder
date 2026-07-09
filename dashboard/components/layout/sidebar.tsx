@@ -8,7 +8,7 @@ import { m } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { NavigationItem } from "@/lib/mock-data";
+import type { NavigationItem } from "@/types";
 
 export interface SidebarProps {
   items: NavigationItem[];
@@ -96,3 +96,4 @@ export function Sidebar({
     </m.aside>
   );
 }
+

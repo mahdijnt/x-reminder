@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import type { NotificationItem } from "@/lib/mock-data";
+import type { NotificationItem } from "@/types";
 
 export interface NotificationsMenuProps {
   items: NotificationItem[];
@@ -74,3 +74,4 @@ export function NotificationsMenu({ items, onMarkAllRead }: NotificationsMenuPro
     </DropdownMenu>
   );
 }
+

@@ -10,7 +10,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import type { BreadcrumbItem as BreadcrumbItemType } from "@/lib/mock-data";
+import type { BreadcrumbItem as BreadcrumbItemType } from "@/types";
 
 export interface AppBreadcrumbsProps {
   items: BreadcrumbItemType[];
@@ -40,3 +40,4 @@ export function AppBreadcrumbs({ items }: AppBreadcrumbsProps) {
     </Breadcrumb>
   );
 }
+

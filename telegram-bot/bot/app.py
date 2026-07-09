@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 
 def build_application(settings: Settings, api_client: ApiClient | None = None) -> Application:
-    client = api_client or create_api_client(use_mock=settings.use_mock_backend, settings=settings)
+    client = api_client or create_api_client(settings=settings)
     application = Application.builder().token(settings.telegram_bot_token).build()
     application.bot_data["api_client"] = client
 
@@ -75,5 +75,6 @@ def build_application(settings: Settings, api_client: ApiClient | None = None) -
     application.add_handler(MessageHandler(filters.Regex(f"^({reply_labels})$"), reply_menu_router))
 
     application.add_error_handler(global_error_handler)
-    logger.info("bot_application_handlers_registered", extra={"use_mock_backend": settings.use_mock_backend})
+    logger.info("bot_application_handlers_registered")
     return application
+

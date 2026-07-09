@@ -22,7 +22,7 @@ export const AUTH_ROUTES = {
 
 export const PUBLIC_AUTH_PATHS = Object.values(AUTH_ROUTES);
 
-export type MockAuthAccount = {
+export type SeedAuthAccount = {
   id: string;
   email: string;
   password: string;
@@ -30,24 +30,3 @@ export type MockAuthAccount = {
   role: AuthRole;
   initials: string;
 };
-
-export const MOCK_AUTH_ACCOUNTS: MockAuthAccount[] = [
-  {
-    id: "usr_admin",
-    email: "admin@example.com",
-    password: "admin123",
-    name: "Ava Admin",
-    role: "admin",
-    initials: "AA",
-  },
-  {
-    id: "usr_member",
-    email: "user@example.com",
-    password: "user123",
-    name: "Uma User",
-    role: "user",
-    initials: "UU",
-  },
-];
-
-export const MOCK_RESET_TOKEN = "mock-reset-token";

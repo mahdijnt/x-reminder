@@ -45,7 +45,7 @@ export function clearStoredToken() {
   clearSessionCookie();
 }
 
-export function decodeMockJwt(token: string): { sub: string; exp: number; role: string } | null {
+export function decodeJwtPayload(token: string): { sub: string; exp: number; role: string } | null {
   try {
     const [, payload] = token.split(".");
     if (!payload) return null;
@@ -56,15 +56,8 @@ export function decodeMockJwt(token: string): { sub: string; exp: number; role: 
   }
 }
 
-export function createMockJwt(userId: string, role: string, rememberMe: boolean) {
-  const exp = Math.floor(Date.now() / 1000) + (rememberMe ? AUTH_COOKIE.maxAgeRemember : AUTH_COOKIE.maxAgeSession);
-  const header = btoa(JSON.stringify({ alg: "none", typ: "JWT" }));
-  const payload = btoa(JSON.stringify({ sub: userId, role, exp }));
-  return `${header}.${payload}.mock-signature`;
-}
-
 export function isTokenExpired(token: string) {
-  const decoded = decodeMockJwt(token);
+  const decoded = decodeJwtPayload(token);
   if (!decoded?.exp) return true;
   return decoded.exp * 1000 <= Date.now();
 }

@@ -1,17 +1,9 @@
 import { env } from "@/config/env";
 import { ApiError, type ApiClientConfig, type ApiRequestOptions } from "@/lib/api/types";
 
-export type MockHandler = (path: string, options?: ApiRequestOptions & { method?: string; body?: unknown }) => Promise<unknown>;
-
-let mockHandler: MockHandler | null = null;
-
-export function registerMockHandler(handler: MockHandler) {
-  mockHandler = handler;
-}
-
 const defaultConfig: ApiClientConfig = {
   baseUrl: env.apiBaseUrl,
-  useMock: env.useMockApi,
+  useMock: false,
   mockDelayMs: 0,
 };
 
@@ -25,9 +17,31 @@ function buildUrl(baseUrl: string, path: string, params?: ApiRequestOptions["par
   return url.toString();
 }
 
-async function delay(ms: number) {
-  if (ms <= 0) return;
-  await new Promise((resolve) => setTimeout(resolve, ms));
+function appUserIdFromToken(token: string | null): string | null {
+  if (!token) return null;
+  try {
+    const [, payload] = token.split(".");
+    if (!payload) return null;
+    const json = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+    const parsed = JSON.parse(json) as { sub?: string };
+    return parsed.sub ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function getRuntimeHeaders(existing?: HeadersInit): HeadersInit {
+  if (typeof window === "undefined") return existing ?? {};
+
+  const sessionToken = window.sessionStorage.getItem("xr_auth_token");
+  const localToken = window.localStorage.getItem("xr_auth_token");
+  const token = sessionToken || localToken;
+  const appUserId = appUserIdFromToken(token) ?? "web-user";
+
+  return {
+    "X-App-User-Id": appUserId,
+    ...existing,
+  };
 }
 
 async function request<T>(
@@ -37,25 +51,12 @@ async function request<T>(
   options?: ApiRequestOptions,
   config: ApiClientConfig = defaultConfig
 ): Promise<T> {
-  if (config.useMock) {
-    if (!mockHandler) {
-      throw new ApiError({ message: "Mock handler not registered", code: "MOCK_NOT_CONFIGURED" });
-    }
-    await delay(config.mockDelayMs ?? 0);
-    try {
-      return (await mockHandler(path, { ...options, method, body })) as T;
-    } catch (err) {
-      if (err instanceof ApiError) throw err;
-      throw new ApiError({ message: err instanceof Error ? err.message : "Mock request failed" });
-    }
-  }
-
   const url = buildUrl(config.baseUrl, path, options?.params);
   const response = await fetch(url, {
     method,
     headers: {
       "Content-Type": "application/json",
-      ...options?.headers,
+      ...getRuntimeHeaders(options?.headers),
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
     signal: options?.signal,
@@ -64,8 +65,9 @@ async function request<T>(
   if (!response.ok) {
     let message = `Request failed with status ${response.status}`;
     try {
-      const payload = (await response.json()) as { message?: string };
+      const payload = (await response.json()) as { message?: string; detail?: string };
       if (payload?.message) message = payload.message;
+      if (payload?.detail) message = payload.detail;
     } catch {
       // ignore parse errors
     }

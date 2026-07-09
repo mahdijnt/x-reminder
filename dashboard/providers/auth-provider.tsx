@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await authService.logout();
     } catch {
-      // ignore mock logout failures
+      // ignore logout failures
     }
     applySession(null);
     if (typeof window !== "undefined") {
@@ -146,3 +146,4 @@ export function useAuthContext() {
   }
   return ctx;
 }
+

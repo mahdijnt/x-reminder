@@ -34,7 +34,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <AuthLayoutShell title="Create account" subtitle="Start with a mock workspace account.">
+    <AuthLayoutShell title="Create account" subtitle="Create your workspace account.">
       <form className="space-y-4" onSubmit={onSubmit}>
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="name">Name</label>
@@ -57,3 +57,4 @@ export default function RegisterPage() {
     </AuthLayoutShell>
   );
 }
+

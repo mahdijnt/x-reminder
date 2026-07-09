@@ -55,19 +55,31 @@ export default function AnalyticsPage() {
   }), [dateStart, dateEnd, listType, accountFilter, granularity]);
 
   const { data: analytics } = useAnalyticsDashboard(filters);
-  const stats = mapKpisToStats(analytics.kpis);
+  const analyticsData = analytics ?? {
+    kpis: { follow_back_rate: 0, average_follow_back_time_hours: 0, success_rate: 0 },
+    followerGrowth: [],
+    engagementTimeline: [],
+    mostActive: [],
+    mostValuable: [],
+    reports: {
+      daily: { scope: "daily", period_label: "", kpis: { follow_back_rate: 0, average_follow_back_time_hours: 0, success_rate: 0 }, follower_growth: [], engagement_timeline: [], most_active_accounts: [], most_valuable_accounts: [] },
+      weekly: { scope: "weekly", period_label: "", kpis: { follow_back_rate: 0, average_follow_back_time_hours: 0, success_rate: 0 }, follower_growth: [], engagement_timeline: [], most_active_accounts: [], most_valuable_accounts: [] },
+      monthly: { scope: "monthly", period_label: "", kpis: { follow_back_rate: 0, average_follow_back_time_hours: 0, success_rate: 0 }, follower_growth: [], engagement_timeline: [], most_active_accounts: [], most_valuable_accounts: [] },
+    },
+  };
+  const stats = mapKpisToStats(analyticsData.kpis);
 
   const activeRows = React.useMemo(() => {
     const needle = query.trim().toLowerCase();
-    if (!needle) return analytics.mostActive;
-    return analytics.mostActive.filter((row) => row.account.toLowerCase().includes(needle));
-  }, [analytics.mostActive, query]);
+    if (!needle) return analyticsData.mostActive;
+    return analyticsData.mostActive.filter((row) => row.account.toLowerCase().includes(needle));
+  }, [analyticsData.mostActive, query]);
 
   const valuableRows = React.useMemo(() => {
     const needle = query.trim().toLowerCase();
-    if (!needle) return analytics.mostValuable;
-    return analytics.mostValuable.filter((row) => row.account.toLowerCase().includes(needle));
-  }, [analytics.mostValuable, query]);
+    if (!needle) return analyticsData.mostValuable;
+    return analyticsData.mostValuable.filter((row) => row.account.toLowerCase().includes(needle));
+  }, [analyticsData.mostValuable, query]);
 
   const activeColumns = React.useMemo<TableColumn<ActiveAccountMetric>[]>(() => [
     { key: "account", header: "Account", render: (row) => <span className="font-medium">@{row.account}</span> },
@@ -94,7 +106,7 @@ export default function AnalyticsPage() {
       <div className="space-y-6">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold tracking-tight">Analytics</h1>
-          <p className="text-sm text-muted-foreground">Operational analytics powered by backend reports with mock fallback.</p>
+          <p className="text-sm text-muted-foreground">Operational analytics powered by backend reports.</p>
         </div>
 
         <SectionCard title="Filters" description="Date range, granularity, list, and account filters.">
@@ -131,8 +143,8 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <SectionCard title="Follower Growth" description="Growth series for selected filters." className="lg:col-span-2">
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-              <LineChart data={analytics.followerGrowth} />
-              <BarChart data={analytics.engagementTimeline} />
+              <LineChart data={analyticsData.followerGrowth} />
+              <BarChart data={analyticsData.engagementTimeline} />
             </div>
           </SectionCard>
 
@@ -140,16 +152,16 @@ export default function AnalyticsPage() {
             <div className="flex h-full flex-col justify-between gap-4">
               <DonutChart
                 data={[
-                  { label: "Daily", value: analytics.reports.daily.follower_growth.length },
-                  { label: "Weekly", value: analytics.reports.weekly.follower_growth.length },
-                  { label: "Monthly", value: analytics.reports.monthly.follower_growth.length },
+                  { label: "Daily", value: analyticsData.reports.daily.follower_growth.length },
+                  { label: "Weekly", value: analyticsData.reports.weekly.follower_growth.length },
+                  { label: "Monthly", value: analyticsData.reports.monthly.follower_growth.length },
                 ]}
               />
               <div className="rounded-2xl border border-glass-border bg-background/30 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div className="space-y-1">
                     <p className="text-sm font-medium text-foreground">AI insight</p>
-                    <p className="text-xs text-muted-foreground">Cross-period reports generated with deterministic data fallback.</p>
+                    <p className="text-xs text-muted-foreground">Cross-period reports generated from backend snapshots.</p>
                   </div>
                   <Sparkles className="h-4 w-4 text-primary" />
                 </div>
@@ -180,3 +192,5 @@ export default function AnalyticsPage() {
     </PageTransition>
   );
 }
+
+

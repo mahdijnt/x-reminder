@@ -7,13 +7,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AuthLayoutShell } from "@/components/auth/auth-layout-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AUTH_ROUTES, MOCK_RESET_TOKEN } from "@/constants/auth";
+import { AUTH_ROUTES } from "@/constants/auth";
 import { authService } from "@/services/auth.service";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [token, setToken] = React.useState(searchParams.get("token") || MOCK_RESET_TOKEN);
+  const [token, setToken] = React.useState(searchParams.get("token") || "");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const [message, setMessage] = React.useState<string | null>(null);
@@ -35,7 +35,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <AuthLayoutShell title="Reset password" subtitle="Enter your mock reset token and a new password.">
+    <AuthLayoutShell title="Reset password" subtitle="Enter your reset token and a new password.">
       <form className="space-y-4" onSubmit={onSubmit}>
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="token">Reset token</label>
@@ -47,7 +47,7 @@ export default function ResetPasswordPage() {
         </div>
         {error ? <p className="text-sm text-destructive">{error}</p> : null}
         {message ? <p className="text-sm text-muted-foreground">{message}</p> : null}
-        <Button type="submit" className="w-full" disabled={pending}>{pending ? "Updating…" : "Update password"}</Button>
+        <Button type="submit" className="w-full" disabled={pending}>{pending ? "Updating..." : "Update password"}</Button>
         <p className="text-center text-sm text-muted-foreground">
           <Link href={AUTH_ROUTES.login} className="text-primary hover:underline">Back to sign in</Link>
         </p>

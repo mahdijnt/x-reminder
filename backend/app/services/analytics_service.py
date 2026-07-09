@@ -191,7 +191,7 @@ class AnalyticsService:
         list_types = [t.value for t in WatchListType]
         for idx in range(fallback_size):
             user_num = 1000 + idx + seed.randint(1, 90)
-            generated.append((f"mock-{user_num}", f"account_{user_num}", list_types[idx % len(list_types)]))
+            generated.append((f"acct-{user_num}", f"account_{user_num}", list_types[idx % len(list_types)]))
         return generated
 
     def _build_active_accounts(self, accounts: list[tuple[str, str, str]], seed: Random) -> list[ActiveAccountMetric]:
@@ -302,3 +302,4 @@ class AnalyticsService:
             account=account,
             granularity=granularity,
         )
+

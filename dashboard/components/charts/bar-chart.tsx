@@ -4,7 +4,7 @@ import { m } from "framer-motion";
 
 import { ChartContainer } from "@/components/ui/chart-container";
 import { cn } from "@/lib/utils";
-import type { ChartPoint } from "@/lib/mock-data";
+import type { ChartPoint } from "@/types";
 
 export interface BarChartProps {
   data: ChartPoint[];
@@ -40,3 +40,4 @@ export function BarChart({ data, className }: BarChartProps) {
     </ChartContainer>
   );
 }
+
