@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import random
+import time
 from collections.abc import Awaitable, Callable
 from typing import TypeVar
 
@@ -33,19 +35,25 @@ async def with_retry(
             return await operation()
         except (XAPIError, XRateLimitError) as exc:
             status = exc.status_code
-            if status in NON_RETRYABLE_STATUS:
+            if status in NON_RETRYABLE_STATUS or status not in RETRYABLE_STATUS or attempt >= max_attempts:
                 raise
-            if status not in RETRYABLE_STATUS:
-                raise
-            if attempt >= max_attempts:
-                raise
+
             delay = min(max_delay, base_delay * (2 ** (attempt - 1)))
-            if isinstance(exc, XRateLimitError) and exc.details.get("reset_at"):
-                delay = max(delay, float(exc.details["reset_at"]) - __import__("time").time())
+            reset_at = exc.details.get("reset_at") if isinstance(exc, XRateLimitError) else None
+            if reset_at is not None:
+                delay = max(delay, float(reset_at) - time.time())
+
+            jittered_delay = delay * random.uniform(0.9, 1.1)
             logger.warning(
                 "x_api_retry",
-                extra={"operation": operation_name, "attempt": attempt, "delay": delay, "error": str(exc)},
+                extra={
+                    "operation": operation_name,
+                    "attempt": attempt,
+                    "delay": round(max(0.0, jittered_delay), 3),
+                    "status_code": status,
+                    "error": str(exc),
+                },
             )
-            await asyncio.sleep(max(0.0, delay))
+            await asyncio.sleep(max(0.0, jittered_delay))
 
     raise RuntimeError("retry loop exhausted")

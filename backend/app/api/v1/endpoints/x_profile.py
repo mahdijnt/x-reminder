@@ -67,12 +67,20 @@ async def get_user_tweets(
     tweet_service: XTweetServiceDep,
     since_id: str | None = Query(default=None),
     pagination_token: str | None = Query(default=None),
+    include_replies: bool = Query(default=False),
+    include_retweets: bool = Query(default=False),
+    include_quotes: bool = Query(default=False),
+    original_only: bool = Query(default=True),
 ) -> APIResponse[TweetListResponse]:
     data = await tweet_service.fetch_user_tweets(
         app_user_id,
         user_id,
         since_id=since_id,
         pagination_token=pagination_token,
+        include_replies=include_replies,
+        include_retweets=include_retweets,
+        include_quotes=include_quotes,
+        original_only=original_only,
         record_processed=True,
     )
     return APIResponse.ok(data=data)

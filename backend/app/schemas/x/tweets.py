@@ -10,7 +10,7 @@ class TweetItem(BaseModel):
     author_id: str
     username: str
     text: str
-    created_at: datetime
+    created_at: datetime | None = None
     url: str
 
 

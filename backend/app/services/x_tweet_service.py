@@ -5,7 +5,6 @@ from __future__ import annotations
 from app.core.config import Settings
 from app.integrations.x.client import XAPIClient
 from app.infrastructure.x.rate_limit_state import XRateLimitStateStore
-from app.models.x.tweet import FilteredTweet
 from app.repositories.x_processed_tweet_repository import ProcessedTweetRepository
 from app.schemas.x.tweets import TweetItem, TweetListResponse
 from app.services.x_token_service import XTokenService
@@ -25,14 +24,40 @@ class XTweetService:
         self._processed_repo = processed_repo
 
     @staticmethod
-    def _is_original_tweet(tweet) -> bool:
-        if tweet.in_reply_to_user_id:
-            return False
-        refs = tweet.referenced_tweets or []
-        for ref in refs:
+    def _tweet_flags(tweet) -> tuple[bool, bool, bool]:
+        is_reply = bool(tweet.in_reply_to_user_id)
+        is_retweet = False
+        is_quote = False
+        for ref in tweet.referenced_tweets or []:
             ref_type = ref.get("type")
-            if ref_type in {"retweeted", "quoted", "replied_to"}:
-                return False
+            if ref_type == "retweeted":
+                is_retweet = True
+            elif ref_type == "quoted":
+                is_quote = True
+            elif ref_type == "replied_to":
+                is_reply = True
+        return is_reply, is_retweet, is_quote
+
+    @classmethod
+    def _include_tweet(
+        cls,
+        tweet,
+        *,
+        include_replies: bool,
+        include_retweets: bool,
+        include_quotes: bool,
+        original_only: bool,
+    ) -> bool:
+        is_reply, is_retweet, is_quote = cls._tweet_flags(tweet)
+        is_original = not is_reply and not is_retweet and not is_quote
+        if original_only:
+            return is_original
+        if is_reply and not include_replies:
+            return False
+        if is_retweet and not include_retweets:
+            return False
+        if is_quote and not include_quotes:
+            return False
         return True
 
     def _username_map(self, includes: dict | None) -> dict[str, str]:
@@ -46,6 +71,10 @@ class XTweetService:
         *,
         since_id: str | None = None,
         pagination_token: str | None = None,
+        include_replies: bool = False,
+        include_retweets: bool = False,
+        include_quotes: bool = False,
+        original_only: bool = True,
         record_processed: bool = False,
     ) -> TweetListResponse:
         access = await self._token_service.get_access_token(app_user_id)
@@ -59,8 +88,15 @@ class XTweetService:
         usernames = self._username_map(response.includes)
         items: list[TweetItem] = []
         for tweet in response.data or []:
-            if not self._is_original_tweet(tweet):
+            if not self._include_tweet(
+                tweet,
+                include_replies=include_replies,
+                include_retweets=include_retweets,
+                include_quotes=include_quotes,
+                original_only=original_only,
+            ):
                 continue
+
             author_id = tweet.author_id or user_id
             username = usernames.get(author_id, "")
             url = f"https://x.com/{username}/status/{tweet.id}" if username else f"https://x.com/i/web/status/{tweet.id}"
@@ -74,7 +110,14 @@ class XTweetService:
             )
             items.append(item)
             if record_processed:
-                await self._processed_repo.touch_pending(app_user_id, tweet.id, author_id)
+                await self._processed_repo.touch_pending(
+                    app_user_id,
+                    tweet.id,
+                    author_id,
+                    username=username or None,
+                    url=url,
+                    tweet_created_at=tweet.created_at,
+                )
 
         next_token = response.meta.next_token if response.meta else None
         return TweetListResponse(items=items, next_token=next_token)

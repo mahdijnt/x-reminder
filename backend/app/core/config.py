@@ -94,6 +94,7 @@ class Settings(BaseSettings):
     X_RETRY_MAX_ATTEMPTS: int = 3
     X_RETRY_BASE_DELAY: float = 1.0
     X_RETRY_MAX_DELAY: float = 30.0
+    X_TOKEN_ENCRYPTION_KEY: str | None = None
     X_SYNC_SCHEDULER_ENABLED: bool = False
     X_SYNC_INTERVAL_MINUTES: int = 30
     X_SYNC_APP_USER_IDS: list[str] = Field(default_factory=list)

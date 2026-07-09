@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import logging
+import time
+from json import JSONDecodeError
 from typing import TYPE_CHECKING, Any
 
 import httpx
@@ -77,7 +79,10 @@ class XAPIClient:
                 await self._rate_limit_store.save(endpoint_key, rate_info)
 
             if response.status_code == 429:
-                raise XRateLimitError(reset_at=rate_info.reset)
+                retry_after = None
+                if rate_info.reset is not None:
+                    retry_after = max(0, int(rate_info.reset - time.time()))
+                raise XRateLimitError(reset_at=rate_info.reset, retry_after=retry_after)
             if response.status_code == 404:
                 raise XNotFoundError(response.text or "Not found")
             if response.status_code >= 400:
@@ -87,7 +92,15 @@ class XAPIClient:
                     details={"endpoint": endpoint_key},
                 )
 
-            return response.json()
+            try:
+                return response.json()
+            except JSONDecodeError as exc:
+                raise XAPIError(
+                    "Invalid JSON payload received from X API",
+                    code="x_invalid_payload",
+                    status_code=502,
+                    details={"endpoint": endpoint_key},
+                ) from exc
 
         logger.info("x_api_call", extra={"method": method, "endpoint": endpoint_key})
         return await with_retry(_do, settings=self._settings, operation_name=endpoint_key)

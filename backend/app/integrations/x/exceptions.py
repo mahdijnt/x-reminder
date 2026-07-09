@@ -33,11 +33,14 @@ class XRateLimitError(XAPIError):
         message: str = "X API rate limit exceeded",
         *,
         reset_at: int | None = None,
+        retry_after: int | None = None,
         **kwargs: Any,
     ) -> None:
         details = dict(kwargs.pop("details", None) or {})
         if reset_at is not None:
             details["reset_at"] = reset_at
+        if retry_after is not None:
+            details["retry_after"] = retry_after
         super().__init__(
             message,
             code=kwargs.pop("code", "x_rate_limit"),

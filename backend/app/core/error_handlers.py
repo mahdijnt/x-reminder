@@ -28,9 +28,14 @@ def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(XRateLimitError)
     async def x_rate_limit_handler(_request: Request, exc: XRateLimitError) -> JSONResponse:
         logger.warning("x_rate_limit_exceeded", extra={"details": exc.details})
+        headers: dict[str, str] = {}
+        retry_after = exc.details.get("retry_after") or exc.details.get("reset_at")
+        if retry_after is not None:
+            headers["Retry-After"] = str(retry_after)
         return JSONResponse(
             status_code=exc.status_code,
             content=_error_body(exc.code, exc.message, exc.details),
+            headers=headers,
         )
 
     @app.exception_handler(XAPIError)
