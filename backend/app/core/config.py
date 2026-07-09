@@ -3,9 +3,10 @@
 from enum import Enum
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from urllib.parse import quote
+from typing import Any, Self
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -56,7 +57,12 @@ class Settings(BaseSettings):
     RATE_LIMIT_REQUESTS: int = 100
     RATE_LIMIT_WINDOW_SECONDS: int = 60
 
-    REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_URL: str | None = None
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
+    REDIS_PASSWORD: str = ""
+    REDIS_DB: int = 0
+    REDIS_SSL: bool = False
     REDIS_ENABLED: bool = True
     REDIS_KEY_PREFIX: str = "xreminder"
     REDIS_MAX_CONNECTIONS: int = 10
@@ -66,6 +72,10 @@ class Settings(BaseSettings):
     REDIS_RETRY_MAX_ATTEMPTS: int = 3
     REDIS_RETRY_BASE_DELAY: float = 0.5
     REDIS_RETRY_MAX_DELAY: float = 10.0
+    REDIS_TTL_SESSION: int = 86400
+    REDIS_TTL_CACHE: int = 300
+    REDIS_TTL_TEMP: int = 300
+    REDIS_TTL_SCHEDULER_LOCK: int = 60
 
     X_CLIENT_ID: str = ""
     X_CLIENT_SECRET: str = ""
@@ -136,6 +146,20 @@ class Settings(BaseSettings):
     QDRANT_RETRY_MAX_ATTEMPTS: int = 3
     QDRANT_RETRY_BASE_DELAY: float = 0.5
     QDRANT_RETRY_MAX_DELAY: float = 10.0
+
+
+    @model_validator(mode="after")
+    def resolve_redis_url(self) -> Self:
+        """Use REDIS_URL when set; otherwise compose from host/port/password/db/ssl."""
+        if self.REDIS_URL:
+            return self
+        scheme = "rediss" if self.REDIS_SSL else "redis"
+        auth = ""
+        if self.REDIS_PASSWORD:
+            auth = ":" + quote(self.REDIS_PASSWORD, safe="") + "@"
+        composed = f"{scheme}://{auth}{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
+        object.__setattr__(self, "REDIS_URL", composed)
+        return self
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod

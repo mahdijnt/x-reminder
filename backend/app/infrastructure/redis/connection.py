@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import time
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, TypeVar
 
 import redis.asyncio as aioredis
 from redis.asyncio import ConnectionPool, Redis
-from redis.exceptions import RedisError
+from redis.exceptions import AuthenticationError, RedisError
+from redis.exceptions import TimeoutError as RedisTimeoutError
 
 from app.core.config import Settings, get_settings
 from app.core.exceptions import RedisConnectionError, RedisUnavailableError
@@ -104,6 +106,71 @@ class RedisManager:
             return self._client
         return None
 
+
+    def pool_status(self) -> dict[str, Any]:
+        """Return best-effort connection pool metrics."""
+        if self._pool is None:
+            return {
+                "status": "disconnected",
+                "max_connections": self._settings.REDIS_MAX_CONNECTIONS,
+                "in_use": 0,
+                "available": 0,
+                "exhausted": False,
+            }
+        in_use = len(getattr(self._pool, "_in_use_connections", set()) or [])
+        available = len(getattr(self._pool, "_available_connections", []) or [])
+        max_conn = self._settings.REDIS_MAX_CONNECTIONS
+        return {
+            "status": "connected" if self.is_connected else "disconnected",
+            "max_connections": max_conn,
+            "in_use": in_use,
+            "available": available,
+            "exhausted": self.is_connected and in_use >= max_conn and available == 0,
+        }
+
+    async def health_snapshot(self) -> dict[str, Any]:
+        """Collect connectivity, latency, pool, and server version for health checks."""
+        pool = self.pool_status()
+        if not self._settings.REDIS_ENABLED:
+            return {
+                "connected": False,
+                "latency_ms": None,
+                "pool": pool,
+                "server_version": None,
+                "detail": "REDIS_ENABLED=false",
+            }
+        client = await self.ensure_client()
+        if client is None:
+            return {
+                "connected": False,
+                "latency_ms": None,
+                "pool": pool,
+                "server_version": None,
+                "detail": "Redis client unavailable",
+            }
+        started = time.perf_counter()
+        try:
+            await client.ping()
+            latency_ms = round((time.perf_counter() - started) * 1000, 2)
+            info = await client.info(section="server")
+            version = info.get("redis_version") if isinstance(info, dict) else None
+            return {
+                "connected": True,
+                "latency_ms": latency_ms,
+                "pool": pool,
+                "server_version": version,
+                "detail": None,
+            }
+        except RedisError as exc:
+            _log_redis_error("redis_health_failed", exc)
+            return {
+                "connected": False,
+                "latency_ms": None,
+                "pool": self.pool_status(),
+                "server_version": None,
+                "detail": str(exc),
+            }
+
     async def execute(
         self,
         operation: Callable[[Redis], Awaitable[T]],
@@ -126,14 +193,7 @@ class RedisManager:
                 return await operation(client)
             except RedisError as exc:
                 last_error = exc
-                logger.warning(
-                    "redis_operation_failed",
-                    extra={
-                        "event": "redis_operation_failed",
-                        "attempt": attempt,
-                        "error": str(exc),
-                    },
-                )
+                _log_redis_error("redis_operation_failed", exc, attempt=attempt)
                 await self._teardown_unlocked()
                 if attempt < attempts:
                     await asyncio.sleep(_backoff_delay(self._settings, attempt))
@@ -221,3 +281,16 @@ def _sanitize_url(url: str) -> str:
             creds, host = rest.rsplit("@", 1)
             return f"{scheme}://***@{host}"
     return url
+
+
+def _log_redis_error(event: str, exc: Exception, **extra: Any) -> None:
+    payload: dict[str, Any] = {"event": event, "error": str(exc), **extra}
+    if isinstance(exc, AuthenticationError):
+        payload["reason"] = "auth_failure"
+        logger.error(event, extra=payload)
+    elif isinstance(exc, RedisTimeoutError):
+        payload["reason"] = "timeout"
+        logger.warning(event, extra=payload)
+    else:
+        payload["reason"] = "connection_or_command"
+        logger.warning(event, extra=payload)

@@ -22,6 +22,7 @@ from app.repositories.x_watch_list_repository import WatchListRepository
 from app.services.analytics_service import AnalyticsService
 from app.services.cache_service import CacheService
 from app.services.health_service import HealthService
+from app.services.redis_health_service import RedisHealthService
 from app.services.watch_list_service import WatchListService
 from app.services.x_oauth_service import XOAuthService
 from app.services.x_profile_service import XProfileService
@@ -311,7 +312,15 @@ async def get_rate_limiter_dep(
     yield get_rate_limiter(settings, redis_manager=manager)
 
 
+async def get_redis_health_service(
+    settings: SettingsDep,
+    manager: RedisManagerDep,
+) -> AsyncGenerator[RedisHealthService, None]:
+    yield RedisHealthService(settings, manager)
+
+
 HealthServiceDep = Annotated[HealthService, Depends(get_health_service)]
+RedisHealthServiceDep = Annotated[RedisHealthService, Depends(get_redis_health_service)]
 RedisRepositoryDep = Annotated[RedisRepository, Depends(get_redis_repository)]
 CacheServiceDep = Annotated[CacheService, Depends(get_cache_service)]
 SessionStoreDep = Annotated[SessionStore, Depends(get_session_store)]

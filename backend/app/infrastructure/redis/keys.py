@@ -4,7 +4,7 @@ from app.core.config import Settings, get_settings
 
 
 class RedisTTL:
-    """Default TTL values in seconds."""
+    """Default TTL values in seconds (overridable via settings)."""
 
     CACHE_SHORT = 60
     CACHE_DEFAULT = 300
@@ -39,6 +39,10 @@ class RedisKeys:
 
     def user(self, user_id: str) -> str:
         return self._key("user", user_id)
+
+
+    def scheduler_lock(self, name: str) -> str:
+        return self._key("scheduler", "lock", name)
 
     def temp(self, purpose: str, token_id: str) -> str:
         return self._key("temp", purpose, token_id)
@@ -116,3 +120,18 @@ def get_redis_keys(settings: Settings | None = None) -> RedisKeys:
     if settings is not None:
         return RedisKeys(prefix=settings.REDIS_KEY_PREFIX)
     return RedisKeys()
+
+
+class ConfigurableRedisTTL:
+    def __init__(self, settings: Settings) -> None:
+        self.cache_default = settings.REDIS_TTL_CACHE
+        self.session = settings.REDIS_TTL_SESSION
+        self.temp_token = settings.REDIS_TTL_TEMP
+        self.scheduler_lock = settings.REDIS_TTL_SCHEDULER_LOCK
+        self.cache_short = min(settings.REDIS_TTL_CACHE, 60) or 60
+        self.cache_long = max(settings.REDIS_TTL_CACHE, 3600)
+        self.user_cache = settings.REDIS_TTL_CACHE * 2
+
+
+def get_redis_ttl(settings: Settings | None = None) -> ConfigurableRedisTTL:
+    return ConfigurableRedisTTL(settings or get_settings())

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import logging
 from typing import Any
 
@@ -10,6 +9,11 @@ from redis.asyncio import Redis
 
 from app.infrastructure.redis.connection import RedisManager
 from app.core.exceptions import RedisConnectionError, RedisUnavailableError
+from app.infrastructure.redis.serialization import (
+    RedisSerializationError,
+    serialize_json,
+    try_deserialize_json,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -151,14 +155,17 @@ class RedisRepository:
         raw = await self.get(key)
         if raw is None:
             return None
-        try:
-            return json.loads(raw)
-        except json.JSONDecodeError:
+        parsed = try_deserialize_json(raw)
+        if parsed is None and raw:
             logger.warning("redis_json_decode_failed", extra={"key": key})
-            return None
+        return parsed
 
     async def set_json(self, key: str, value: Any, *, ex: int | None = None) -> bool:
-        return await self.set(key, json.dumps(value), ex=ex)
+        try:
+            payload = serialize_json(value)
+        except RedisSerializationError:
+            return False
+        return await self.set(key, payload, ex=ex)
 
     async def rpush(self, key: str, value: str) -> bool:
         async def _op(client: Redis) -> bool:
@@ -251,3 +258,25 @@ class RedisRepository:
         except (RedisUnavailableError, RedisConnectionError):
             return 0
 
+
+
+    async def incr(self, key: str, amount: int = 1) -> int:
+        async def _op(client: Redis) -> int:
+            return int(await client.incrby(key, amount))
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return 0
+
+    async def delete_by_pattern(self, pattern: str, *, count: int = 100) -> int:
+        async def _op(client: Redis) -> int:
+            deleted = 0
+            async for key in client.scan_iter(match=pattern, count=count):
+                deleted += int(await client.delete(key))
+            return deleted
+
+        try:
+            return await self._manager.execute(_op)
+        except (RedisUnavailableError, RedisConnectionError):
+            return 0

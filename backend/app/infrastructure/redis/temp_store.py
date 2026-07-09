@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from app.infrastructure.redis.keys import RedisKeys, RedisTTL, get_redis_keys
+from app.infrastructure.redis.keys import RedisKeys, get_redis_keys, get_redis_ttl
 from app.repositories.redis_repository import RedisRepository
 
 logger = logging.getLogger(__name__)
@@ -18,11 +18,11 @@ class TempStore:
         self,
         repository: RedisRepository,
         keys: RedisKeys | None = None,
-        default_ttl: int = RedisTTL.TEMP_TOKEN,
+        default_ttl: int | None = None,
     ) -> None:
         self._repository = repository
         self._keys = keys or get_redis_keys()
-        self._default_ttl = default_ttl
+        self._default_ttl = default_ttl if default_ttl is not None else get_redis_ttl().temp_token
 
     async def put(
         self,

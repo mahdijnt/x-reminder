@@ -17,13 +17,14 @@ from app.infrastructure.qdrant.connection import get_qdrant_manager
 from app.infrastructure.qdrant.collections import CollectionsManager
 from app.middleware import RequestIDMiddleware, SecurityHeadersMiddleware, TimingMiddleware
 from app.repositories.base import InMemoryRepository
-from app.schemas.health import HealthData
+from app.schemas.health import HealthData, RedisHealthData
 from app.schemas.responses import APIResponse
 from app.repositories.redis_repository import RedisRepository
 from app.repositories.x_profile_repository import XProfileRepository
 from app.repositories.x_watch_list_repository import WatchListRepository
 from app.scheduler.x_sync_jobs import XSyncScheduler
 from app.services.health_service import HealthService
+from app.services.redis_health_service import RedisHealthService
 from app.services.x_profile_service import XProfileService
 from app.services.x_relationship_service import XRelationshipService
 from app.services.x_sync_service import XSyncService
@@ -185,6 +186,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         )
         data = await service.get_health()
         message = "Service is healthy" if data.status == "ok" else "Service is degraded"
+        return APIResponse.ok(data=data, message=message)
+
+
+
+    @app.get("/health/redis", response_model=APIResponse[RedisHealthData], tags=["health"])
+    async def health_redis(request: Request) -> APIResponse[RedisHealthData]:
+        redis_manager = getattr(request.app.state, "redis_manager", None) or get_redis_manager(settings)
+        service = RedisHealthService(settings, redis_manager)
+        data = await service.get_health()
+        message = "Redis is connected" if data.connected else "Redis is unavailable"
         return APIResponse.ok(data=data, message=message)
 
     app.state.settings = settings

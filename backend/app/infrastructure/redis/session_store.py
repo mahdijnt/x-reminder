@@ -6,7 +6,7 @@ import json
 import logging
 from typing import Any
 
-from app.infrastructure.redis.keys import RedisKeys, RedisTTL, get_redis_keys
+from app.infrastructure.redis.keys import RedisKeys, get_redis_keys, get_redis_ttl
 from app.repositories.redis_repository import RedisRepository
 
 logger = logging.getLogger(__name__)
@@ -19,11 +19,20 @@ class SessionStore:
         self,
         repository: RedisRepository,
         keys: RedisKeys | None = None,
-        default_ttl: int = RedisTTL.SESSION,
+        default_ttl: int | None = None,
     ) -> None:
         self._repository = repository
         self._keys = keys or get_redis_keys()
-        self._default_ttl = default_ttl
+        self._default_ttl = default_ttl if default_ttl is not None else get_redis_ttl().session
+
+    async def create_session(
+        self,
+        session_id: str,
+        data: dict[str, Any],
+        *,
+        ttl: int | None = None,
+    ) -> bool:
+        return await self.save(session_id, data, ttl=ttl)
 
     async def save(
         self,
@@ -39,10 +48,17 @@ class SessionStore:
             ex=ttl if ttl is not None else self._default_ttl,
         )
 
-    async def get(self, session_id: str) -> dict[str, Any] | None:
+    async def get(
+        self,
+        session_id: str,
+        *,
+        sliding: bool = True,
+    ) -> dict[str, Any] | None:
         key = self._keys.session(session_id)
         payload = await self._repository.get_json(key)
         if isinstance(payload, dict):
+            if sliding:
+                await self.refresh_ttl(session_id)
             return payload
         return None
 
@@ -57,3 +73,9 @@ class SessionStore:
 
     async def exists(self, session_id: str) -> bool:
         return (await self._repository.exists(self._keys.session(session_id))) > 0
+
+
+    async def refresh_session(self, session_id: str, ttl: int | None = None) -> bool:
+        if not await self.exists(session_id):
+            return False
+        return await self.refresh_ttl(session_id, ttl=ttl)
