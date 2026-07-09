@@ -1,4 +1,4 @@
-﻿"""Application configuration via Pydantic Settings."""
+"""Application configuration via Pydantic Settings."""
 
 from enum import Enum
 from functools import lru_cache
@@ -57,9 +57,41 @@ class Settings(BaseSettings):
     REDIS_RETRY_BASE_DELAY: float = 0.5
     REDIS_RETRY_MAX_DELAY: float = 10.0
 
+    X_CLIENT_ID: str = ""
+    X_CLIENT_SECRET: str = ""
+    X_BEARER_TOKEN: str = ""
+    X_API_KEY: str = ""
+    X_API_SECRET: str = ""
+    X_CALLBACK_URL: str = "http://localhost:8000/api/v1/x/oauth/callback"
+    X_API_BASE_URL: str = "https://api.twitter.com"
+    X_OAUTH_SCOPES: list[str] = Field(
+        default_factory=lambda: ["tweet.read", "users.read", "follows.read", "offline.access"]
+    )
+    X_HTTP_TIMEOUT: float = 30.0
+    X_RETRY_MAX_ATTEMPTS: int = 3
+    X_RETRY_BASE_DELAY: float = 1.0
+    X_RETRY_MAX_DELAY: float = 30.0
+    X_SYNC_SCHEDULER_ENABLED: bool = False
+    X_SYNC_INTERVAL_MINUTES: int = 30
+    X_SYNC_APP_USER_IDS: list[str] = Field(default_factory=list)
+
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
     def parse_cors_origins(cls, value: Any) -> list[str]:
+        if isinstance(value, str):
+            return [item.strip() for item in value.split(",") if item.strip()]
+        return value
+
+    @field_validator("X_OAUTH_SCOPES", mode="before")
+    @classmethod
+    def parse_x_oauth_scopes(cls, value: Any) -> list[str]:
+        if isinstance(value, str):
+            return [item.strip() for item in value.split(",") if item.strip()]
+        return value
+
+    @field_validator("X_SYNC_APP_USER_IDS", mode="before")
+    @classmethod
+    def parse_x_sync_users(cls, value: Any) -> list[str]:
         if isinstance(value, str):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
@@ -71,6 +103,10 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         return self.ENVIRONMENT == Environment.PRODUCTION
+
+    @property
+    def x_oauth_configured(self) -> bool:
+        return bool(self.X_CLIENT_ID and self.X_CLIENT_SECRET and self.X_CALLBACK_URL)
 
 
 @lru_cache

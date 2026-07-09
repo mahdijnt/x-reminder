@@ -1,4 +1,4 @@
-﻿"""Health check business service."""
+"""Health check business service."""
 
 from datetime import datetime, timezone
 
@@ -44,6 +44,14 @@ class HealthService:
                     overall = "degraded"
         else:
             checks["redis"] = HealthCheckItem(status="disabled", detail="REDIS_ENABLED=false")
+
+        if self._settings.x_oauth_configured:
+            checks["x_oauth"] = HealthCheckItem(status="configured")
+        else:
+            checks["x_oauth"] = HealthCheckItem(
+                status="missing_config",
+                detail="Set X_CLIENT_ID, X_CLIENT_SECRET, and X_CALLBACK_URL",
+            )
 
         return HealthData(
             status=overall,

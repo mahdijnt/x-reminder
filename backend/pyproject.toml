@@ -1,4 +1,4 @@
-﻿[project]
+[project]
 name = "x-reminder-backend"
 version = "0.1.0"
 description = "FastAPI backend foundation for x-reminder"
@@ -10,6 +10,9 @@ dependencies = [
   "pydantic==2.10.3",
   "pydantic-settings==2.6.1",
   "redis[hiredis]==5.2.1",
+  "httpx==0.28.1",
+  "cryptography==44.0.0",
+  "apscheduler==3.10.4",
 ]
 
 [tool.uvicorn]

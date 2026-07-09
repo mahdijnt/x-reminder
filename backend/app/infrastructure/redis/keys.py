@@ -1,4 +1,4 @@
-﻿"""Centralized Redis key builders and TTL constants."""
+"""Centralized Redis key builders and TTL constants."""
 
 from app.core.config import Settings, get_settings
 
@@ -42,6 +42,24 @@ class RedisKeys:
 
     def temp(self, purpose: str, token_id: str) -> str:
         return self._key("temp", purpose, token_id)
+
+    def x_oauth_tokens(self, app_user_id: str) -> str:
+        return self._key("x", "oauth", app_user_id)
+
+    def x_rate_limit(self, endpoint: str) -> str:
+        return self._key("x", "ratelimit", endpoint)
+
+    def x_profile(self, app_user_id: str) -> str:
+        return self._key("x", "profile", app_user_id)
+
+    def x_last_scan(self, app_user_id: str) -> str:
+        return self._key("x", "last_scan", app_user_id)
+
+    def x_watch_list(self, app_user_id: str, list_type: str) -> str:
+        return self._key("x", "watchlist", app_user_id, list_type)
+
+    def x_processed_tweet(self, app_user_id: str, tweet_id: str) -> str:
+        return self._key("x", "processed", app_user_id, tweet_id)
 
 
 def get_redis_keys(settings: Settings | None = None) -> RedisKeys:
