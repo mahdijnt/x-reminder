@@ -9,16 +9,38 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AUTH_ROUTES } from "@/constants/auth";
 import { useAuth } from "@/hooks/use-auth";
+import { setStoredToken } from "@/lib/auth/token-manager";
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, isAuthenticated, status } = useAuth();
-  const [email, setEmail] = React.useState("user@example.com");
-  const [password, setPassword] = React.useState("user123");
+  const { login, isAuthenticated, status, refreshSession } = useAuth();
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const [rememberMe, setRememberMe] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [pending, setPending] = React.useState(false);
+
+  React.useEffect(() => {
+    const xAuth = searchParams.get("x_auth");
+    if (xAuth === "success") {
+      const cookieToken = document.cookie
+        .split(";")
+        .map((part) => part.trim())
+        .find((part) => part.startsWith("xr_auth_token="))
+        ?.split("=")[1];
+      if (cookieToken) {
+        setStoredToken(decodeURIComponent(cookieToken), true);
+      }
+      void refreshSession().then(() => {
+        router.replace(searchParams.get("redirect") || "/");
+      });
+      return;
+    }
+    if (xAuth === "error") {
+      setError("X authorization failed. Please try again.");
+    }
+  }, [refreshSession, router, searchParams]);
 
   React.useEffect(() => {
     if (status === "authenticated" && isAuthenticated) {
@@ -40,9 +62,24 @@ export default function LoginPage() {
     }
   }
 
+  function continueWithX() {
+    const redirect = searchParams.get("redirect") || "/";
+    const url = new URL(AUTH_ROUTES.xLogin, window.location.origin);
+    url.searchParams.set("redirect", redirect);
+    window.location.href = url.toString();
+  }
+
   return (
     <AuthLayoutShell title="Welcome back" subtitle="Sign in to access your dashboard workspace.">
-      <form className="space-y-4" onSubmit={onSubmit}>
+      <div className="space-y-4">
+        <Button type="button" variant="outline" className="w-full" onClick={continueWithX}>
+          Continue with X
+        </Button>
+        <div className="relative text-center text-xs text-muted-foreground">
+          <span className="bg-background px-2">or sign in with email</span>
+        </div>
+      </div>
+      <form className="mt-4 space-y-4" onSubmit={onSubmit}>
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="email">Email</label>
           <Input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -62,9 +99,6 @@ export default function LoginPage() {
         <Button type="submit" className="w-full" disabled={pending}>{pending ? "Signing in…" : "Sign in"}</Button>
         <p className="text-center text-sm text-muted-foreground">
           No account? <Link href={AUTH_ROUTES.register} className="text-primary hover:underline">Create one</Link>
-        </p>
-        <p className="rounded-lg border border-white/10 bg-white/5 p-3 text-xs text-muted-foreground">
-          Demo: user@example.com / user123 or admin@example.com / admin123
         </p>
       </form>
     </AuthLayoutShell>

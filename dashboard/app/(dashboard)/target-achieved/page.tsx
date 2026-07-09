@@ -104,7 +104,7 @@ export default function TargetAchievedPage() {
               {row.status === "Achieved" ? (
                 <ActionDialog
                   title="Archive target"
-                  description={`Archive ${row.targetName}. (Fake action)`}
+                  description={`Archive ${row.targetName}.`}
                   cancelLabel="Cancel"
                   confirmLabel="Archive"
                   trigger={<DropdownMenuItem>Archive</DropdownMenuItem>}
@@ -113,7 +113,7 @@ export default function TargetAchievedPage() {
               ) : (
                 <ActionDialog
                   title="Re-open target"
-                  description={`Re-open ${row.targetName} for tracking. (Fake action)`}
+                  description={`Re-open ${row.targetName} for tracking.`}
                   cancelLabel="Cancel"
                   confirmLabel="Re-open"
                   trigger={<DropdownMenuItem>Re-open</DropdownMenuItem>}
@@ -123,7 +123,7 @@ export default function TargetAchievedPage() {
 
               <ActionDialog
                 title="Mark as reviewed"
-                description={`Simulate review acknowledgement for ${row.targetName}. (Fake action)`}
+                description={`Review acknowledgement for ${row.targetName}.`}
                 cancelLabel="Cancel"
                 confirmLabel="Reviewed"
                 trigger={<DropdownMenuItem>Mark reviewed</DropdownMenuItem>}
@@ -202,7 +202,7 @@ export default function TargetAchievedPage() {
                 </Alert>
               ) : null}
 
-              <DataTable columns={columns} rows={filteredRows} caption="Target achievement records (fake)." />
+              <DataTable columns={columns} rows={filteredRows} caption="Target achievement records." />
 
               <p className="text-xs text-muted-foreground">
                 Showing {filteredRows.length} of {targetAchievedRows.length}.

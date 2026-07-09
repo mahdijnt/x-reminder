@@ -11,6 +11,11 @@ function isAuthPath(pathname: string) {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith("/api/auth")) {
+    return NextResponse.next();
+  }
+
   const hasSession = request.cookies.has(AUTH_COOKIE.name);
 
   if (isAuthPath(pathname)) {

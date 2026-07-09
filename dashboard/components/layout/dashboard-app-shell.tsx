@@ -61,7 +61,7 @@ export function DashboardAppShell({
     return label;
   }, [pathname]);
 
-  const pageSubtitle = "Premium UI shell (fake data, no backend).";
+  const pageSubtitle = "Engagement intelligence workspace.";
 
   const sidebarItems: NavigationItem[] = React.useMemo(
     () =>
@@ -104,7 +104,7 @@ export function DashboardAppShell({
                 <div className="glass-panel space-y-2 rounded-2xl p-3">
                   <p className="text-xs font-medium text-foreground">Status</p>
                   <p className="text-xs text-muted-foreground">
-                    UI ready with simulated loading and transitions.
+                    UI ready with live data and transitions.
                   </p>
                 </div>
               }

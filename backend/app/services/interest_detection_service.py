@@ -39,7 +39,7 @@ class InterestDetectionService:
 
         if not texts:
             logger.info("interest_detection_fallback", extra={"user_id": user_id})
-            return InterestProfile(user_id=user_id, topics={"general": 1.0}, source="mock")
+            return InterestProfile(user_id=user_id, topics={"general": 1.0}, source="empty")
 
         topics: dict[str, float] = {}
         for text in texts:

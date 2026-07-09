@@ -32,7 +32,7 @@ class SemanticSearchService:
         score_threshold: float | None = None,
     ) -> list[SearchHit]:
         if not self._settings.QDRANT_ENABLED:
-            return self._mock_hits(query, SearchType.TWEETS, limit)
+            return []
 
         vector = await self._embeddings.embed_text(query)
         filters = self._repository.build_user_filter(user_id)
@@ -53,7 +53,7 @@ class SemanticSearchService:
         score_threshold: float | None = None,
     ) -> list[SearchHit]:
         if not self._settings.QDRANT_ENABLED:
-            return self._mock_hits(query, SearchType.ACCOUNTS, limit)
+            return []
 
         vector = await self._embeddings.embed_text(query)
         hits = await self._repository.search(

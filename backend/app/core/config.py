@@ -44,6 +44,7 @@ class Settings(BaseSettings):
 
     API_V1_PREFIX: str = "/api/v1"
     SECRET_KEY: str = Field(default="change-me-in-production", min_length=8)
+    JWT_SECRET: str | None = None
 
     CORS_ORIGINS: list[str] = Field(default_factory=lambda: ["http://localhost:3000"])
     CORS_ALLOW_CREDENTIALS: bool = True

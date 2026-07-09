@@ -99,7 +99,7 @@ export default function NotificationsPage() {
               {row.unread ? (
                 <ActionDialog
                   title="Mark as read"
-                  description={`Mark “${row.title}” as read. (Fake action)`}
+                  description={`Mark “${row.title}” as read.`}
                   cancelLabel="Cancel"
                   confirmLabel="Read"
                   trigger={<DropdownMenuItem>Mark as read</DropdownMenuItem>}
@@ -111,7 +111,7 @@ export default function NotificationsPage() {
               ) : (
                 <ActionDialog
                   title="Mark as unread"
-                  description={`Mark “${row.title}” as unread. (Fake action)`}
+                  description={`Mark “${row.title}” as unread.`}
                   cancelLabel="Cancel"
                   confirmLabel="Unread"
                   trigger={<DropdownMenuItem>Mark as unread</DropdownMenuItem>}
@@ -124,7 +124,7 @@ export default function NotificationsPage() {
 
               <ActionDialog
                 title="Dismiss"
-                description={`Dismiss “${row.title}”. (Fake action)`}
+                description={`Dismiss “${row.title}”.`}
                 cancelLabel="Cancel"
                 confirmLabel="Dismiss"
                 trigger={<DropdownMenuItem>Dismiss</DropdownMenuItem>}
@@ -173,7 +173,7 @@ export default function NotificationsPage() {
 
               <ActionDialog
                 title="Mark all as read"
-                description="Simulate marking all notifications read. (Fake action)"
+                description="Mark all notifications read."
                 cancelLabel="Cancel"
                 confirmLabel="Mark read"
                 trigger={<Button type="button" variant="glass">Mark all read</Button>}
@@ -205,7 +205,7 @@ export default function NotificationsPage() {
                 </div>
               </div>
 
-              <DataTable columns={columns} rows={filtered} caption="Notification list (fake)." />
+              <DataTable columns={columns} rows={filtered} caption="Notification list." />
             </div>
           )}
         </SectionCard>

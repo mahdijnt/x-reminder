@@ -12,6 +12,7 @@ class XOAuthCallbackData(BaseModel):
     connected: bool = True
     x_user_id: str | None = None
     username: str | None = None
+    app_user_id: str | None = None
 
 
 class XOAuthDisconnectData(BaseModel):

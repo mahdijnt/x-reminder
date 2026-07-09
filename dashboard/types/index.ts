@@ -26,6 +26,11 @@ export type UserProfile = {
   email: string;
   role: string;
   initials: string;
+  x_username?: string;
+  bio?: string;
+  avatar_url?: string;
+  followers_count?: number;
+  following_count?: number;
 };
 
 export type StatDatum = {

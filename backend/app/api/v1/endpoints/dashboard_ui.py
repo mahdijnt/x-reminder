@@ -1,10 +1,8 @@
 ﻿from __future__ import annotations
 
 from fastapi import APIRouter, Header, HTTPException, Query
-
-from app.core.access_tokens import make_access_token, parse_access_token
 from app.core.auth_context import AppUserIdDep
-from app.core.dependencies import AnalyticsServiceDep, SettingsDep, WatchListServiceDep
+from app.core.dependencies import AnalyticsServiceDep, AuthServiceDep, SettingsDep, WatchListServiceDep, XProfileServiceDep
 from app.schemas.analytics import AnalyticsGranularity, ReportScope
 from app.schemas.responses import APIResponse
 
@@ -19,32 +17,25 @@ def _auth_user(user_id: str, email: str, role: str = "user") -> dict:
 
 
 @router.post("/auth/login")
-async def auth_login(payload: dict, settings: SettingsDep) -> APIResponse[dict]:
+async def auth_login(payload: dict, auth_service: AuthServiceDep) -> APIResponse[dict]:
     email = str(payload.get("email", "")).strip().lower()
     password = str(payload.get("password", "")).strip()
     remember_me = bool(payload.get("rememberMe", False))
     if not email or not password:
         raise HTTPException(status_code=400, detail="Email and password are required")
-    user_id = email.replace("@", "_")
-    role = "admin" if email.startswith("admin") else "user"
-    user = _auth_user(user_id=user_id, email=email, role=role)
-    token, expires_at = make_access_token(user_id=user["id"], role=user["role"], remember_me=remember_me, secret=settings.SECRET_KEY)
-    return APIResponse.ok(data={"accessToken": token, "expiresAt": expires_at, "user": user})
+    data = await auth_service.login(email, password, remember_me=remember_me)
+    return APIResponse.ok(data=data)
 
 
 @router.post("/auth/register")
-async def auth_register(payload: dict, settings: SettingsDep) -> APIResponse[dict]:
+async def auth_register(payload: dict, auth_service: AuthServiceDep) -> APIResponse[dict]:
     name = str(payload.get("name", "")).strip()
     email = str(payload.get("email", "")).strip().lower()
     password = str(payload.get("password", "")).strip()
     if not name or not email or not password:
         raise HTTPException(status_code=400, detail="Name, email and password are required")
-    user_id = email.replace("@", "_")
-    user = _auth_user(user_id=user_id, email=email, role="user")
-    user["name"] = name
-    user["initials"] = "".join(part[0] for part in name.split()[:2]).upper() or "U"
-    token, expires_at = make_access_token(user_id=user["id"], role=user["role"], remember_me=True, secret=settings.SECRET_KEY)
-    return APIResponse.ok(data={"accessToken": token, "expiresAt": expires_at, "user": user}, message="Account created")
+    data = await auth_service.register(name, email, password)
+    return APIResponse.ok(data=data, message="Account created")
 
 
 @router.post("/auth/forgot-password")
@@ -66,17 +57,14 @@ async def auth_reset_password(payload: dict) -> APIResponse[dict]:
 
 
 @router.post("/auth/logout")
-async def auth_logout() -> APIResponse[dict]:
-    return APIResponse.ok(data={"ok": True}, message="Logged out")
+async def auth_logout(auth_service: AuthServiceDep, authorization: str | None = Header(default=None, alias="Authorization")) -> APIResponse[dict]:
+    data = await auth_service.logout(authorization)
+    return APIResponse.ok(data=data, message="Logged out")
 
 
 @router.get("/auth/me")
-async def auth_me(
-    settings: SettingsDep,
-    authorization: str | None = Header(default=None, alias="Authorization"),
-) -> APIResponse[dict]:
-    parsed = parse_access_token(authorization, settings.SECRET_KEY)
-    user = _auth_user(user_id=parsed["id"], email=f"{parsed['id'].replace('_', '@', 1)}", role=parsed["role"])
+async def auth_me(auth_service: AuthServiceDep, authorization: str | None = Header(default=None, alias="Authorization")) -> APIResponse[dict]:
+    user = await auth_service.get_me(authorization)
     return APIResponse.ok(data=user)
 
 
@@ -96,9 +84,35 @@ async def navigation_breadcrumbs() -> APIResponse[list[dict]]:
 
 
 @router.get("/user/current")
-async def user_current(app_user_id: AppUserIdDep) -> APIResponse[dict]:
-    user = _auth_user(app_user_id, f"{app_user_id}@example.com")
-    return APIResponse.ok(data={"name": user["name"], "email": user["email"], "role": "Product Lead", "initials": user["initials"]})
+async def user_current(
+    app_user_id: AppUserIdDep,
+    auth_service: AuthServiceDep,
+    profile_service: XProfileServiceDep,
+    authorization: str | None = Header(default=None, alias="Authorization"),
+) -> APIResponse[dict]:
+    try:
+        user = await auth_service.get_me(authorization)
+    except Exception:
+        user = _auth_user(app_user_id, f"{app_user_id}@example.com")
+    try:
+        profile = await profile_service.get_cached_profile(app_user_id)
+        if profile is None:
+            profile = await profile_service.get_authenticated_profile(app_user_id)
+        if profile is not None:
+            user.update(
+                {
+                    "name": profile.name,
+                    "x_username": profile.username,
+                    "bio": profile.description,
+                    "avatar_url": profile.profile_image_url,
+                    "followers_count": profile.followers_count,
+                    "following_count": profile.following_count,
+                    "initials": "".join(part[0] for part in (profile.name or profile.username).split()[:2]).upper() or user.get("initials", "U"),
+                }
+            )
+    except Exception:
+        pass
+    return APIResponse.ok(data={"name": user.get("name"), "email": user.get("email"), "role": user.get("role", "user"), "initials": user.get("initials", "U"), "x_username": user.get("x_username"), "bio": user.get("bio"), "avatar_url": user.get("avatar_url"), "followers_count": user.get("followers_count"), "following_count": user.get("following_count")})
 
 
 def _watch_item_to_row(item: dict, idx: int) -> dict:

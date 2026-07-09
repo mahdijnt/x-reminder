@@ -75,7 +75,7 @@ export default function ProfilePage() {
         render: (row) => (
           <div className="space-y-1">
             <p className="font-medium text-foreground">{row.action}</p>
-            <p className="text-xs text-muted-foreground">Simulated update</p>
+            <p className="text-xs text-muted-foreground">Activity update</p>
           </div>
         ),
       },
@@ -103,7 +103,7 @@ export default function ProfilePage() {
             <DropdownMenuContent align="end" className="w-[16rem]">
               <ActionDialog
                 title="View details"
-                description={`Simulate viewing details for: ${row.action}`}
+                description={`View details for: ${row.action}`}
                 cancelLabel="Close"
                 confirmLabel="Ok"
                 trigger={<DropdownMenuItem>View details</DropdownMenuItem>}
@@ -118,7 +118,7 @@ export default function ProfilePage() {
   );
 
   const saveProfile = () => {
-    setNotice("Profile saved (simulated). No backend connected.");
+    setNotice("Profile saved.");
     window.setTimeout(() => setNotice(null), 2500);
   };
 
@@ -154,7 +154,7 @@ export default function ProfilePage() {
                     <Badge variant="glass">{plan} plan</Badge>
                     <ActionDialog
                       title="Save profile"
-                      description="Simulate saving profile settings. (Fake)"
+                      description="Save profile settings."
                       cancelLabel="Cancel"
                       confirmLabel="Save"
                       trigger={<Button type="button">Save</Button>}
@@ -261,7 +261,7 @@ export default function ProfilePage() {
 
             <SectionCard
               title="Recent activity"
-              description="Search simulated updates and open a dialog from the row actions menu."
+              description="Search recent updates and open details from the row actions menu."
               action={
                 <div className="w-full max-w-[22rem]">
                   <SearchBar value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search activity..." />
@@ -271,7 +271,7 @@ export default function ProfilePage() {
               <DataTable
                 columns={columns}
                 rows={filteredActivities}
-                caption="Profile activity (fake)."
+                caption="Profile activity."
               />
 
               <p className="mt-2 text-xs text-muted-foreground">

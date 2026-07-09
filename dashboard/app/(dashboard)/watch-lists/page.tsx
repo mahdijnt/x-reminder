@@ -122,7 +122,7 @@ export default function WatchListsPage() {
             <DropdownMenuContent align="end" className="w-[16rem]">
               <ActionDialog
                 title="Add to Following"
-                description={`Queue a follow request for ${row.handle}. (Fake action)`}
+                description={`Queue a follow request for ${row.handle}.`}
                 cancelLabel="Not now"
                 confirmLabel="Add"
                 trigger={<DropdownMenuItem>Add to Following</DropdownMenuItem>}
@@ -132,7 +132,7 @@ export default function WatchListsPage() {
               {row.status === "Active" ? (
                 <ActionDialog
                   title="Pause watch"
-                  description={`Pause monitoring for ${row.handle}. (Fake action)`}
+                  description={`Pause monitoring for ${row.handle}.`}
                   cancelLabel="Cancel"
                   confirmLabel="Pause"
                   trigger={<DropdownMenuItem>Pause</DropdownMenuItem>}
@@ -141,7 +141,7 @@ export default function WatchListsPage() {
               ) : (
                 <ActionDialog
                   title="Resume watch"
-                  description={`Resume monitoring for ${row.handle}. (Fake action)`}
+                  description={`Resume monitoring for ${row.handle}.`}
                   cancelLabel="Cancel"
                   confirmLabel="Resume"
                   trigger={<DropdownMenuItem>Resume</DropdownMenuItem>}
@@ -151,7 +151,7 @@ export default function WatchListsPage() {
 
               <ActionDialog
                 title="Remove from list"
-                description={`Remove ${row.handle} from your watch list. (Fake action)`}
+                description={`Remove ${row.handle} from your watch list.`}
                 cancelLabel="Cancel"
                 confirmLabel="Remove"
                 trigger={<DropdownMenuItem className="text-danger">Remove</DropdownMenuItem>}
@@ -214,7 +214,7 @@ export default function WatchListsPage() {
 
         <SectionCard
           title="Watched accounts"
-          description="Search, filter in-memory, and manage entries with fake dialogs."
+          description="Search, filter, and manage watch list entries."
           action={
             <div className="w-full max-w-[22rem]">
               <SearchBar value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by name, handle, status..." />

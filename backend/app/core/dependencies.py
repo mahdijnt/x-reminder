@@ -20,6 +20,7 @@ from app.repositories.x_processed_tweet_repository import ProcessedTweetReposito
 from app.repositories.x_profile_repository import XProfileRepository
 from app.repositories.x_watch_list_repository import WatchListRepository
 from app.services.analytics_service import AnalyticsService
+from app.services.auth_service import AuthService
 from app.services.cache_service import CacheService
 from app.services.health_service import HealthService
 from app.services.redis_health_service import RedisHealthService
@@ -285,6 +286,15 @@ async def get_watch_list_service(
     yield WatchListService(repository)
 
 
+async def get_auth_service(
+    settings: SettingsDep,
+    session_store: Annotated[SessionStore, Depends(get_session_store)],
+    token_store: Annotated[XTokenStore, Depends(get_x_token_store)],
+    profile_service: Annotated[XProfileService, Depends(get_x_profile_service)],
+) -> AsyncGenerator[AuthService, None]:
+    yield AuthService(settings, session_store, token_store, profile_service)
+
+
 async def get_analytics_service(
     settings: SettingsDep,
     profile_repository: Annotated[XProfileRepository, Depends(get_x_profile_repository)],
@@ -358,6 +368,7 @@ SessionStoreDep = Annotated[SessionStore, Depends(get_session_store)]
 UserCacheDep = Annotated[UserCache, Depends(get_user_cache)]
 RateLimiterDep = Annotated[RateLimiter, Depends(get_rate_limiter_dep)]
 
+AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 XOAuthServiceDep = Annotated[XOAuthService, Depends(get_x_oauth_service)]
 XProfileServiceDep = Annotated[XProfileService, Depends(get_x_profile_service)]
 XRelationshipServiceDep = Annotated[XRelationshipService, Depends(get_x_relationship_service)]

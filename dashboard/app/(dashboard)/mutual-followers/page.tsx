@@ -95,7 +95,7 @@ export default function MutualFollowersPage() {
             <DropdownMenuContent align="end" className="w-[17rem]">
               <ActionDialog
                 title="Follow back"
-                description={`Simulate following back ${row.handle}. (Fake action)`}
+                description={`Follow back ${row.handle}.`}
                 cancelLabel="Cancel"
                 confirmLabel="Follow back"
                 trigger={<DropdownMenuItem>Follow back</DropdownMenuItem>}
@@ -104,7 +104,7 @@ export default function MutualFollowersPage() {
 
               <ActionDialog
                 title="Send message"
-                description={`Simulate sending a DM to ${row.handle}. (Fake action)`}
+                description={`Send a DM to ${row.handle}.`}
                 cancelLabel="Cancel"
                 confirmLabel="Send"
                 trigger={<DropdownMenuItem>Send message</DropdownMenuItem>}
@@ -113,7 +113,7 @@ export default function MutualFollowersPage() {
 
               <ActionDialog
                 title="Remove mutual"
-                description={`Stop tracking mutual relationship for ${row.handle}. (Fake action)`}
+                description={`Stop tracking mutual relationship for ${row.handle}.`}
                 cancelLabel="Cancel"
                 confirmLabel="Remove"
                 trigger={<DropdownMenuItem>Remove</DropdownMenuItem>}
@@ -188,7 +188,7 @@ export default function MutualFollowersPage() {
                 </Alert>
               ) : null}
 
-              <DataTable columns={columns} rows={filteredRows} caption="Mutual follower records (fake data)." />
+              <DataTable columns={columns} rows={filteredRows} caption="Mutual follower records." />
 
               <p className="text-xs text-muted-foreground">
                 Showing {filteredRows.length} of {mutualFollowerRows.length}.

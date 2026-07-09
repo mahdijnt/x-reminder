@@ -4,7 +4,7 @@ import logging
 from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
 
-from fastapi import FastAPI, Request
+from fastapi import APIRouter, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
@@ -172,6 +172,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.add_middleware(RequestIDMiddleware)
 
     app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+
+    # PRD-compatible auth routes without API version prefix (e.g. /api/auth/x/login)
+    from app.api.v1.endpoints import auth as auth_endpoints
+
+    prd_auth_router = APIRouter()
+    prd_auth_router.include_router(auth_endpoints.router)
+    app.include_router(prd_auth_router, prefix="/api")
 
     @app.get("/healthz", response_model=APIResponse[HealthData], tags=["health"])
     async def healthz(request: Request) -> APIResponse[HealthData]:

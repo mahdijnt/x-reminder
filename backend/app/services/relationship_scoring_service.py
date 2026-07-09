@@ -29,9 +29,9 @@ class RelationshipScoringService:
             return RelationshipScore(
                 user_id=user_id,
                 account_id=account_id,
-                score=0.35,
-                factors={"mock": 1.0},
-                source="mock",
+                score=0.0,
+                factors={},
+                source="empty",
             )
 
         memory = await self._repository.get_by_id(

@@ -162,7 +162,7 @@ export default function DashboardPage() {
             <DataTable
               columns={columns}
               rows={filteredRows}
-              caption="Fake campaign records (no backend)."
+              caption="Monitored account overview."
             />
           )}
 

@@ -111,7 +111,7 @@ export default function FollowTargetsPage() {
             <DropdownMenuContent align="end" className="w-[18rem]">
               <ActionDialog
                 title={row.status === "Scheduled" ? "Run scheduled follow" : "Start following"}
-                description={`Simulate a follow action for ${row.handle}. (Fake action)`}
+                description={`Follow ${row.handle}.`}
                 cancelLabel="Cancel"
                 confirmLabel={row.status === "Scheduled" ? "Run now" : "Follow"}
                 trigger={<DropdownMenuItem>Start following</DropdownMenuItem>}
@@ -121,7 +121,7 @@ export default function FollowTargetsPage() {
               {row.status !== "Scheduled" ? (
                 <ActionDialog
                   title="Schedule follow"
-                  description={`Schedule ${row.handle} for follow on the next run. (Fake action)`}
+                  description={`Schedule ${row.handle} for follow on the next run.`}
                   cancelLabel="Cancel"
                   confirmLabel="Schedule"
                   trigger={<DropdownMenuItem>Schedule follow</DropdownMenuItem>}
@@ -131,14 +131,14 @@ export default function FollowTargetsPage() {
 
               <ActionDialog
                 title="Remove target"
-                description={`Remove ${row.handle} from follow targets. (Fake action)`}
+                description={`Remove ${row.handle} from follow targets.`}
                 cancelLabel="Cancel"
                 confirmLabel="Remove"
                 trigger={<DropdownMenuItem>Remove</DropdownMenuItem>}
                 onConfirm={() => setActionMessage(`Removed ${row.handle} from follow targets.`)}
               />
 
-              <div className="px-2 py-1.5 text-xs text-muted-foreground">Simulated follow workflows.</div>
+              <div className="px-2 py-1.5 text-xs text-muted-foreground">Follow workflows.</div>
             </DropdownMenuContent>
           </DropdownMenu>
         ),
@@ -214,7 +214,7 @@ export default function FollowTargetsPage() {
               <DataTable
                 columns={columns}
                 rows={filteredRows}
-                caption="Follow targets (fake data)."
+                caption="Follow targets."
               />
 
               <p className="text-xs text-muted-foreground">

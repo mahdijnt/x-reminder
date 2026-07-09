@@ -111,7 +111,7 @@ export default function FollowingPage() {
               {row.notificationState === "Enabled" ? (
                 <ActionDialog
                   title="Mute notifications"
-                  description={`Mute engagement notifications for ${row.handle}. (Fake action)`}
+                  description={`Mute engagement notifications for ${row.handle}.`}
                   cancelLabel="Cancel"
                   confirmLabel="Mute"
                   trigger={<DropdownMenuItem>Mute notifications</DropdownMenuItem>}
@@ -120,7 +120,7 @@ export default function FollowingPage() {
               ) : (
                 <ActionDialog
                   title="Enable notifications"
-                  description={`Enable engagement notifications for ${row.handle}. (Fake action)`}
+                  description={`Enable engagement notifications for ${row.handle}.`}
                   cancelLabel="Cancel"
                   confirmLabel="Enable"
                   trigger={<DropdownMenuItem>Enable notifications</DropdownMenuItem>}
@@ -130,7 +130,7 @@ export default function FollowingPage() {
 
               <ActionDialog
                 title="Unfollow"
-                description={`Stop following ${row.handle}. (Fake action)`}
+                description={`Stop following ${row.handle}.`}
                 cancelLabel="Cancel"
                 confirmLabel="Unfollow"
                 trigger={<DropdownMenuItem>Unfollow</DropdownMenuItem>}
@@ -189,7 +189,7 @@ export default function FollowingPage() {
 
         <SectionCard
           title="Followed accounts"
-          description="Pure UI: notifications + follow actions are simulated."
+          description="Manage notifications and follow actions."
           action={
             <div className="w-full max-w-[22rem]">
               <SearchBar value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by name, handle, engagement..." />
@@ -213,7 +213,7 @@ export default function FollowingPage() {
               <DataTable
                 columns={columns}
                 rows={filteredRows}
-                caption="Followed account records (no backend)."
+                caption="Followed account records."
               />
 
               <p className="text-xs text-muted-foreground">

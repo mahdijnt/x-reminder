@@ -18,6 +18,8 @@ export const AUTH_ROUTES = {
   forgotPassword: "/forgot-password",
   resetPassword: "/reset-password",
   unauthorized: "/unauthorized",
+  xLogin: "/api/auth/x/login",
+  xCallback: "/api/auth/x/callback",
 } as const;
 
 export const PUBLIC_AUTH_PATHS = Object.values(AUTH_ROUTES);

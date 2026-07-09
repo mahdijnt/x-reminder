@@ -46,7 +46,7 @@ class ConversationMemoryService:
 
     async def get_recent_context(self, session_id: str, *, limit: int = 20) -> dict:
         if not self._settings.QDRANT_ENABLED:
-            return {"session_id": session_id, "messages": [], "mock": True}
+            return {"session_id": session_id, "messages": []}
 
         record = await self._repository.get_by_id(
             self._settings.QDRANT_COLLECTION_CONVERSATIONS,

@@ -35,9 +35,9 @@ async def x_oauth_callback(
     code: str = Query(..., min_length=1),
     state: str = Query(..., min_length=1),
 ) -> APIResponse[XOAuthCallbackData]:
-    stored, username = await oauth_service.handle_callback(code, state)
+    app_user_id, stored, username = await oauth_service.handle_callback(code, state)
     return APIResponse.ok(
-        data=XOAuthCallbackData(connected=True, x_user_id=stored.x_user_id, username=username),
+        data=XOAuthCallbackData(connected=True, x_user_id=stored.x_user_id, username=username, app_user_id=app_user_id),
         message="X account connected",
     )
 

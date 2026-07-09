@@ -6,6 +6,15 @@ export type AuthUser = {
   email: string;
   role: AuthRole;
   initials: string;
+  x_user_id?: string;
+  x_username?: string;
+  display_name?: string;
+  bio?: string;
+  avatar_url?: string;
+  followers_count?: number;
+  following_count?: number;
+  verified?: boolean;
+  created_at?: string;
 };
 
 export type AuthSession = {

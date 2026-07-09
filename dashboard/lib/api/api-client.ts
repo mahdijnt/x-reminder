@@ -7,6 +7,13 @@ const defaultConfig: ApiClientConfig = {
   mockDelayMs: 0,
 };
 
+type ApiEnvelope<T> = {
+  success?: boolean;
+  message?: string;
+  code?: string;
+  data?: T;
+};
+
 function buildUrl(baseUrl: string, path: string, params?: ApiRequestOptions["params"]) {
   const url = new URL(path.startsWith("http") ? path : `${baseUrl.replace(/\/$/, "")}/${path.replace(/^\//, "")}`);
   if (params) {
@@ -15,6 +22,14 @@ function buildUrl(baseUrl: string, path: string, params?: ApiRequestOptions["par
     }
   }
   return url.toString();
+}
+
+function unwrapResponse<T>(payload: T | ApiEnvelope<T>): T {
+  if (payload && typeof payload === "object" && "data" in (payload as Record<string, unknown>)) {
+    const envelope = payload as ApiEnvelope<T>;
+    if (envelope.data !== undefined) return envelope.data;
+  }
+  return payload as T;
 }
 
 function appUserIdFromToken(token: string | null): string | null {
@@ -30,16 +45,27 @@ function appUserIdFromToken(token: string | null): string | null {
   }
 }
 
+function getStoredAuthToken(): string | null {
+  if (typeof window === "undefined") return null;
+  const sessionToken = window.sessionStorage.getItem("xr_auth_token");
+  const localToken = window.localStorage.getItem("xr_auth_token");
+  return sessionToken || localToken;
+}
+
 function getRuntimeHeaders(existing?: HeadersInit): HeadersInit {
   if (typeof window === "undefined") return existing ?? {};
 
-  const sessionToken = window.sessionStorage.getItem("xr_auth_token");
-  const localToken = window.localStorage.getItem("xr_auth_token");
-  const token = sessionToken || localToken;
+  const token = getStoredAuthToken();
   const appUserId = appUserIdFromToken(token) ?? "web-user";
 
-  return {
+  const headers: Record<string, string> = {
     "X-App-User-Id": appUserId,
+  };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  return {
+    ...headers,
     ...existing,
   };
 }
@@ -58,6 +84,7 @@ async function request<T>(
       "Content-Type": "application/json",
       ...getRuntimeHeaders(options?.headers),
     },
+    credentials: "include",
     body: body !== undefined ? JSON.stringify(body) : undefined,
     signal: options?.signal,
   });
@@ -75,7 +102,8 @@ async function request<T>(
   }
 
   if (response.status === 204) return undefined as T;
-  return (await response.json()) as T;
+  const json = (await response.json()) as T | ApiEnvelope<T>;
+  return unwrapResponse(json);
 }
 
 export const apiClient = {

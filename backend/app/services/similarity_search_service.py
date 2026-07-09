@@ -56,16 +56,7 @@ class SimilaritySearchService:
         score_threshold: float | None,
     ) -> list[SearchHit]:
         if not self._settings.QDRANT_ENABLED:
-            return [
-                SearchHit(
-                    type=SearchType.ACCOUNTS,
-                    id="mock-account",
-                    score=0.4,
-                    title="mock",
-                    text=f"Similar mock account for {query}",
-                    payload={"mock": True},
-                )
-            ]
+            return []
 
         vector = await self._embeddings.embed_text(query)
         hits = await self._repository.search(

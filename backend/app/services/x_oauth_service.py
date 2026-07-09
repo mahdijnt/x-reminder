@@ -40,7 +40,7 @@ class XOAuthService:
         url = build_authorization_url(self._settings, state=state, code_challenge=challenge)
         return url, state
 
-    async def handle_callback(self, code: str, state: str) -> tuple[StoredXTokens, str | None]:
+    async def handle_callback(self, code: str, state: str) -> tuple[str, StoredXTokens, str | None]:
         session = await self._temp_store.get_json(PKCE_PURPOSE, state)
         if not session:
             raise XAPIError("Invalid or expired OAuth state", code="x_oauth_state_invalid", status_code=400)
@@ -65,7 +65,7 @@ class XOAuthService:
         await self._temp_store.delete(PKCE_PURPOSE, state)
         username = me.data.username
         logger.info("x_oauth_connected", extra={"app_user_id": app_user_id, "x_user_id": stored.x_user_id})
-        return stored, username
+        return app_user_id, stored, username
 
     async def disconnect(self, app_user_id: str) -> bool:
         tokens = await self._token_store.get_tokens(app_user_id)

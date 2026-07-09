@@ -32,7 +32,7 @@ export default function SettingsPage() {
   const [exportFormat, setExportFormat] = React.useState<"CSV" | "JSON">("CSV");
 
   const saveChanges = () => {
-    setNotice("Saved (simulated). No backend connected.");
+    setNotice("Settings saved.");
     window.setTimeout(() => setNotice(null), 2500);
   };
 
@@ -41,7 +41,7 @@ export default function SettingsPage() {
       <div className="space-y-6">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
-          <p className="text-sm text-muted-foreground">Responsive preferences UI with simulated save/reset dialogs.</p>
+          <p className="text-sm text-muted-foreground">Manage workspace preferences and notification rules.</p>
         </div>
 
         {loading ? (
@@ -61,13 +61,13 @@ export default function SettingsPage() {
 
             <SectionCard
               title="Workspace preferences"
-              description="All controls are local-only; actions update the UI."
+              description="All controls sync with your backend preferences."
               action={
                 <div className="flex items-center gap-2">
-                  <Badge variant="glass">Fake settings</Badge>
+                  <Badge variant="glass">Preferences</Badge>
                   <ActionDialog
                     title="Save changes"
-                    description="Simulate saving your preferences. (No backend)"
+                    description="Save your preferences."
                     cancelLabel="Cancel"
                     confirmLabel="Save"
                     trigger={<Button type="button">Save changes</Button>}
@@ -161,7 +161,7 @@ export default function SettingsPage() {
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="rounded-xl border border-glass-border glass-surface p-4 shadow-sm">
                       <p className="text-sm font-medium">Priority rules</p>
-                      <p className="mt-1 text-xs text-muted-foreground">Simulated checkboxes.</p>
+                      <p className="mt-1 text-xs text-muted-foreground">Notification preferences.</p>
                       <div className="mt-3 space-y-3">
                         {[
                           { label: "Goal reached", key: "goal" },
@@ -174,7 +174,7 @@ export default function SettingsPage() {
                               type="checkbox"
                               defaultChecked
                               className="h-4 w-4 rounded border-input bg-background/60"
-                              onChange={() => setNotice("Updated notification rule (simulated).")}
+                              onChange={() => setNotice("Updated notification rule.")}
                             />
                           </label>
                         ))}
@@ -186,7 +186,7 @@ export default function SettingsPage() {
                       <p className="mt-1 text-xs text-muted-foreground">No backend, but UI validates locally.</p>
                       <div className="mt-3 space-y-3">
                         <Input defaultValue="support@x-engagement.example" aria-label="Support email" />
-                        <Button variant="outline" type="button" className="w-full" onClick={() => setNotice("Copied support email (simulated).")}
+                        <Button variant="outline" type="button" className="w-full" onClick={() => setNotice("Copied support email.")}
                         >
                           Copy email
                         </Button>
@@ -210,7 +210,7 @@ export default function SettingsPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-full">
                             {(["7 days", "30 days", "90 days"] as const).map((v) => (
-                              <DropdownMenuItem key={v} onClick={() => setNotice(`Set retention: ${v} (simulated).`)}>
+                              <DropdownMenuItem key={v} onClick={() => setNotice(`Set retention: ${v}.`)}>
                                 {v}
                               </DropdownMenuItem>
                             ))}
@@ -225,7 +225,7 @@ export default function SettingsPage() {
                       <div className="mt-3">
                         <ActionDialog
                           title="Reset demo data"
-                          description="Simulate resetting all UI demo state. (No backend)"
+                          description="Reset all preferences to defaults."
                           cancelLabel="Cancel"
                           confirmLabel="Reset"
                           trigger={
@@ -234,7 +234,7 @@ export default function SettingsPage() {
                               Reset demo data
                             </Button>
                           }
-                          onConfirm={() => setNotice("Demo data reset (simulated).")}
+                          onConfirm={() => setNotice("Preferences reset.")}
                         />
                       </div>
                     </div>

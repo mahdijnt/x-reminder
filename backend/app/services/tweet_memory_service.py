@@ -46,16 +46,7 @@ class TweetMemoryService:
 
     async def search_similar_tweets(self, query: str, *, user_id: str | None = None, limit: int = 10) -> list[SearchHit]:
         if not self._settings.QDRANT_ENABLED:
-            return [
-                SearchHit(
-                    type=SearchType.TWEETS,
-                    id="mock-tweet",
-                    score=0.4,
-                    title="mock",
-                    text=f"Similar mock tweet for {query}",
-                    payload={"mock": True},
-                )
-            ]
+            return []
 
         vector = await self._embeddings.embed_text(query)
         hits = await self._repository.search(
