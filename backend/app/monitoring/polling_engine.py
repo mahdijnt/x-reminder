@@ -31,6 +31,7 @@ class PollingEngine:
         last_poll_store: LastPollStore,
         metrics: MonitoringMetrics,
         notification_service=None,
+        tweet_memory_service=None,
     ) -> None:
         self._settings = settings
         self._tweet_service = tweet_service
@@ -39,6 +40,7 @@ class PollingEngine:
         self._last_poll_store = last_poll_store
         self._metrics = metrics
         self._notification_service = notification_service
+        self._tweet_memory_service = tweet_memory_service
 
     async def _entries_for(self, app_user_id: str, list_type: PollListType):
         if list_type == PollListType.FOLLOW_TARGETS:
@@ -88,6 +90,19 @@ class PollingEngine:
                         tweet_created_at=item.created_at,
                     )
                     new_processed += 1
+                    if self._tweet_memory_service is not None and self._settings.QDRANT_ENABLED:
+                        from app.schemas.ai import TweetStoreRequest
+
+                        await self._tweet_memory_service.store_tweet(
+                            TweetStoreRequest(
+                                tweet_id=item.tweet_id,
+                                user_id=item.author_id,
+                                text=item.text,
+                                username=item.username,
+                                created_at=item.created_at,
+                            )
+                        )
+
                     if self._notification_service is not None:
                         tweet = FilteredTweet(
                             tweet_id=item.tweet_id,

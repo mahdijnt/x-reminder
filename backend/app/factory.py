@@ -13,6 +13,8 @@ from app.core.config import Settings, get_settings
 from app.core.error_handlers import register_exception_handlers
 from app.core.logging import configure_logging
 from app.infrastructure.redis.connection import get_redis_manager
+from app.infrastructure.qdrant.connection import get_qdrant_manager
+from app.infrastructure.qdrant.collections import CollectionsManager
 from app.middleware import RequestIDMiddleware, SecurityHeadersMiddleware, TimingMiddleware
 from app.repositories.base import InMemoryRepository
 from app.schemas.health import HealthData
@@ -40,11 +42,25 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     redis_manager = get_redis_manager(settings)
     app.state.redis_manager = redis_manager
 
+    qdrant_manager = get_qdrant_manager(settings)
+    app.state.qdrant_manager = qdrant_manager
+
     try:
         await redis_manager.connect()
     except Exception as exc:
         logger.warning(
             "redis_startup_connect_failed",
+            extra={"error": str(exc)},
+        )
+
+    try:
+        await qdrant_manager.connect()
+        if settings.QDRANT_ENABLED and qdrant_manager.is_connected:
+            client = qdrant_manager.get_client()
+            await CollectionsManager(settings).ensure_all(client)
+    except Exception as exc:
+        logger.warning(
+            "qdrant_startup_connect_failed",
             extra={"error": str(exc)},
         )
 
@@ -86,10 +102,22 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         from app.repositories.redis_repository import RedisRepository
 
         notification_service = notification_engine.service if notification_engine is not None else None
+        tweet_memory_service = None
+        if settings.QDRANT_ENABLED:
+            from app.integrations.embeddings.service import EmbeddingsService
+            from app.repositories.qdrant_repository import QdrantRepository
+            from app.services.tweet_memory_service import TweetMemoryService
+
+            tweet_memory_service = TweetMemoryService(
+                settings,
+                QdrantRepository(settings, qdrant_manager),
+                EmbeddingsService(settings),
+            )
         monitoring_engine = MonitoringEngine(
             settings,
             RedisRepository(redis_manager),
             notification_service=notification_service,
+            tweet_memory_service=tweet_memory_service,
         )
         monitoring_engine.start()
         app.state.monitoring_engine = monitoring_engine
@@ -106,6 +134,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     if monitoring_engine is not None:
         await monitoring_engine.shutdown()
 
+
+    await qdrant_manager.disconnect()
 
     await redis_manager.disconnect()
 
@@ -144,12 +174,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/healthz", response_model=APIResponse[HealthData], tags=["health"])
     async def healthz(request: Request) -> APIResponse[HealthData]:
         redis_manager = get_redis_manager(settings)
+        qdrant_manager = get_qdrant_manager(settings)
         service = HealthService(
             settings=settings,
             repository=InMemoryRepository(),
             redis_manager=redis_manager,
             monitoring_engine=getattr(request.app.state, "monitoring_engine", None),
             notification_engine=getattr(request.app.state, "notification_engine", None),
+            qdrant_manager=qdrant_manager,
         )
         data = await service.get_health()
         message = "Service is healthy" if data.status == "ok" else "Service is degraded"

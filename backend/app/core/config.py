@@ -108,6 +108,19 @@ class Settings(BaseSettings):
     ANALYTICS_EXPORT_MAX_POINTS: int = 120
     ANALYTICS_TOP_ACCOUNTS_LIMIT: int = 8
 
+    QDRANT_URL: str = ""
+    QDRANT_API_KEY: str = ""
+    QDRANT_ENABLED: bool = False
+    QDRANT_COLLECTION_TWEETS: str = "tweets"
+    QDRANT_COLLECTION_ACCOUNTS: str = "accounts"
+    QDRANT_COLLECTION_CONVERSATIONS: str = "conversations"
+    QDRANT_VECTOR_SIZE: int = 384
+    QDRANT_TIMEOUT_SECONDS: float = 30.0
+    QDRANT_RETRY_MAX_ATTEMPTS: int = 3
+    QDRANT_RETRY_BASE_DELAY: float = 0.5
+    QDRANT_RETRY_MAX_DELAY: float = 10.0
+
+
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
     def parse_cors_origins(cls, value: Any) -> list[str]:

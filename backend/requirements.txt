@@ -6,3 +6,4 @@ redis[hiredis]==5.2.1
 httpx==0.28.1
 cryptography==44.0.0
 apscheduler==3.10.4
+qdrant-client==1.12.1

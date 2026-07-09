@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 
 from app.core.config import Settings
 from app.infrastructure.redis.connection import RedisManager
+from app.infrastructure.qdrant.connection import QdrantManager
 from app.repositories.base import InMemoryRepository
 from app.schemas.health import HealthCheckItem, HealthData
 
@@ -16,12 +17,14 @@ class HealthService:
         redis_manager: RedisManager | None = None,
         monitoring_engine=None,
         notification_engine=None,
+        qdrant_manager: QdrantManager | None = None,
     ) -> None:
         self._settings = settings
         self._repository = repository
         self._redis_manager = redis_manager
         self._monitoring_engine = monitoring_engine
         self._notification_engine = notification_engine
+        self._qdrant_manager = qdrant_manager
 
     async def get_health(self) -> HealthData:
         _ = await self._repository.list_all()
@@ -74,6 +77,32 @@ class HealthService:
         else:
             checks["monitoring"] = HealthCheckItem(status="disabled", detail="MONITORING_ENABLED=false")
 
+
+
+
+        if self._settings.QDRANT_ENABLED:
+            if self._qdrant_manager is None:
+                checks["qdrant"] = HealthCheckItem(
+                    status="unavailable",
+                    detail="Qdrant manager not initialized",
+                )
+                overall = "degraded"
+            else:
+                qdrant_ok = await self._qdrant_manager.ping()
+                if qdrant_ok:
+                    count = self._qdrant_manager.collection_count
+                    checks["qdrant"] = HealthCheckItem(
+                        status="ok",
+                        detail=f"collections={count if count is not None else 'unknown'}",
+                    )
+                else:
+                    checks["qdrant"] = HealthCheckItem(
+                        status="unavailable",
+                        detail="Qdrant ping failed or not connected",
+                    )
+                    overall = "degraded"
+        else:
+            checks["qdrant"] = HealthCheckItem(status="disabled", detail="QDRANT_ENABLED=false")
 
 
         if self._settings.ANALYTICS_ENABLED:

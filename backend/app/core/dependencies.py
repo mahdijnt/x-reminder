@@ -8,6 +8,7 @@ from fastapi import Depends, Request
 from app.core.config import Settings, get_settings
 from app.core.rate_limit import RateLimiter, get_rate_limiter
 from app.infrastructure.redis.connection import RedisManager, get_redis_manager
+from app.infrastructure.qdrant.connection import QdrantManager, get_qdrant_manager
 from app.infrastructure.redis.session_store import SessionStore
 from app.infrastructure.redis.temp_store import TempStore
 from app.infrastructure.redis.user_cache import UserCache
@@ -28,6 +29,16 @@ from app.services.x_relationship_service import XRelationshipService
 from app.services.x_sync_service import XSyncService
 from app.services.x_token_service import XTokenService
 from app.services.x_tweet_service import XTweetService
+from app.ai.recommendation_engine import StubRecommendationEngine
+from app.integrations.embeddings.service import EmbeddingsService
+from app.repositories.qdrant_repository import QdrantRepository
+from app.services.conversation_memory_service import ConversationMemoryService
+from app.services.interest_detection_service import InterestDetectionService
+from app.services.relationship_scoring_service import RelationshipScoringService
+from app.services.semantic_search_service import SemanticSearchService
+from app.services.smart_search_service import SmartSearchService
+from app.services.topic_detection_service import TopicDetectionService
+from app.services.tweet_memory_service import TweetMemoryService
 
 SettingsDep = Annotated[Settings, Depends(get_settings)]
 
@@ -40,6 +51,90 @@ def _manager_from_request(request: Request) -> RedisManager:
 
 
 RedisManagerDep = Annotated[RedisManager, Depends(_manager_from_request)]
+
+def _qdrant_manager_from_request(request: Request) -> QdrantManager:
+    manager = getattr(request.app.state, "qdrant_manager", None)
+    if manager is not None:
+        return manager
+    return get_qdrant_manager()
+
+
+QdrantManagerDep = Annotated[QdrantManager, Depends(_qdrant_manager_from_request)]
+
+
+def _build_embeddings(settings: Settings) -> EmbeddingsService:
+    return EmbeddingsService(settings)
+
+
+def _build_qdrant_repository(settings: Settings, manager: QdrantManager) -> QdrantRepository:
+    return QdrantRepository(settings, manager)
+
+
+async def get_embeddings_service(settings: SettingsDep) -> AsyncGenerator[EmbeddingsService, None]:
+    yield _build_embeddings(settings)
+
+
+async def get_qdrant_repository(
+    settings: SettingsDep,
+    manager: QdrantManagerDep,
+) -> AsyncGenerator[QdrantRepository, None]:
+    yield _build_qdrant_repository(settings, manager)
+
+
+async def get_semantic_search_service(
+    settings: SettingsDep,
+    repository: Annotated[QdrantRepository, Depends(get_qdrant_repository)],
+    embeddings: Annotated[EmbeddingsService, Depends(get_embeddings_service)],
+) -> AsyncGenerator[SemanticSearchService, None]:
+    yield SemanticSearchService(settings, repository, embeddings)
+
+
+async def get_topic_detection_service(
+    settings: SettingsDep,
+    embeddings: Annotated[EmbeddingsService, Depends(get_embeddings_service)],
+) -> AsyncGenerator[TopicDetectionService, None]:
+    yield TopicDetectionService(settings, embeddings)
+
+
+async def get_smart_search_service(
+    settings: SettingsDep,
+    semantic: Annotated[SemanticSearchService, Depends(get_semantic_search_service)],
+    topics: Annotated[TopicDetectionService, Depends(get_topic_detection_service)],
+) -> AsyncGenerator[SmartSearchService, None]:
+    yield SmartSearchService(settings, semantic, topics)
+
+
+async def get_interest_detection_service(
+    settings: SettingsDep,
+    repository: Annotated[QdrantRepository, Depends(get_qdrant_repository)],
+    topics: Annotated[TopicDetectionService, Depends(get_topic_detection_service)],
+) -> AsyncGenerator[InterestDetectionService, None]:
+    yield InterestDetectionService(settings, repository, topics)
+
+
+async def get_relationship_scoring_service(settings: SettingsDep) -> AsyncGenerator[RelationshipScoringService, None]:
+    yield RelationshipScoringService(settings)
+
+
+async def get_tweet_memory_service(
+    settings: SettingsDep,
+    repository: Annotated[QdrantRepository, Depends(get_qdrant_repository)],
+    embeddings: Annotated[EmbeddingsService, Depends(get_embeddings_service)],
+) -> AsyncGenerator[TweetMemoryService, None]:
+    yield TweetMemoryService(settings, repository, embeddings)
+
+
+async def get_conversation_memory_service(
+    settings: SettingsDep,
+    repository: Annotated[QdrantRepository, Depends(get_qdrant_repository)],
+    embeddings: Annotated[EmbeddingsService, Depends(get_embeddings_service)],
+) -> AsyncGenerator[ConversationMemoryService, None]:
+    yield ConversationMemoryService(settings, repository, embeddings)
+
+
+async def get_recommendation_engine() -> AsyncGenerator[StubRecommendationEngine, None]:
+    yield StubRecommendationEngine()
+
 
 
 async def get_health_repository() -> AsyncGenerator[InMemoryRepository, None]:
@@ -197,6 +292,7 @@ async def get_health_service(
     settings: SettingsDep,
     repository: Annotated[InMemoryRepository, Depends(get_health_repository)],
     manager: RedisManagerDep,
+    qdrant_manager: QdrantManagerDep,
 ) -> AsyncGenerator[HealthService, None]:
     yield HealthService(
         settings=settings,
@@ -204,6 +300,7 @@ async def get_health_service(
         redis_manager=manager,
         monitoring_engine=_monitoring_engine_from_request(request),
         notification_engine=_notification_engine_from_request(request),
+        qdrant_manager=qdrant_manager,
     )
 
 
@@ -228,3 +325,15 @@ XTweetServiceDep = Annotated[XTweetService, Depends(get_x_tweet_service)]
 WatchListServiceDep = Annotated[WatchListService, Depends(get_watch_list_service)]
 XSyncServiceDep = Annotated[XSyncService, Depends(get_x_sync_service)]
 AnalyticsServiceDep = Annotated[AnalyticsService, Depends(get_analytics_service)]
+
+
+EmbeddingsServiceDep = Annotated[EmbeddingsService, Depends(get_embeddings_service)]
+QdrantRepositoryDep = Annotated[QdrantRepository, Depends(get_qdrant_repository)]
+SemanticSearchServiceDep = Annotated[SemanticSearchService, Depends(get_semantic_search_service)]
+TopicDetectionServiceDep = Annotated[TopicDetectionService, Depends(get_topic_detection_service)]
+SmartSearchServiceDep = Annotated[SmartSearchService, Depends(get_smart_search_service)]
+InterestDetectionServiceDep = Annotated[InterestDetectionService, Depends(get_interest_detection_service)]
+RelationshipScoringServiceDep = Annotated[RelationshipScoringService, Depends(get_relationship_scoring_service)]
+TweetMemoryServiceDep = Annotated[TweetMemoryService, Depends(get_tweet_memory_service)]
+ConversationMemoryServiceDep = Annotated[ConversationMemoryService, Depends(get_conversation_memory_service)]
+RecommendationEngineDep = Annotated[StubRecommendationEngine, Depends(get_recommendation_engine)]

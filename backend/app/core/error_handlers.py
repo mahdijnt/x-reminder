@@ -10,6 +10,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.core.exceptions import AppException
 from app.integrations.x.exceptions import XAPIError, XRateLimitError
+from app.infrastructure.qdrant.exceptions import QdrantError
 from app.schemas.responses import APIResponse, ErrorDetail
 
 logger = logging.getLogger(__name__)
@@ -32,6 +33,15 @@ def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(XAPIError)
     async def x_api_error_handler(_request: Request, exc: XAPIError) -> JSONResponse:
         logger.warning("x_api_error", extra={"code": exc.code, "status": exc.status_code, "details": exc.details})
+        return JSONResponse(
+            status_code=exc.status_code,
+            content=_error_body(exc.code, exc.message, exc.details),
+        )
+
+
+    @app.exception_handler(QdrantError)
+    async def qdrant_error_handler(_request: Request, exc: QdrantError) -> JSONResponse:
+        logger.warning("qdrant_error", extra={"code": exc.code, "details": exc.details})
         return JSONResponse(
             status_code=exc.status_code,
             content=_error_body(exc.code, exc.message, exc.details),
