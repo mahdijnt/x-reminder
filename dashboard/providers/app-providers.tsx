@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/providers/auth-provider";
 import { NotificationProvider } from "@/providers/notification-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { TelegramViewport } from "@/components/layout/telegram-viewport";
 
 function reportFrontendError(error: Error, info?: string) {
   const provider = process.env.NEXT_PUBLIC_SENTRY_DSN ? "sentry" : "none";
@@ -21,5 +22,5 @@ function reportFrontendError(error: Error, info?: string) {
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   const [queryClient] = React.useState(() => getQueryClient());
-  return <ErrorBoundary onError={reportFrontendError}><QueryClientProvider client={queryClient}><ThemeProvider><AuthProvider><NotificationProvider><SessionExpiredBanner />{children}<Toaster /></NotificationProvider></AuthProvider></ThemeProvider></QueryClientProvider></ErrorBoundary>;
+  return <ErrorBoundary onError={reportFrontendError}><QueryClientProvider client={queryClient}><ThemeProvider><AuthProvider><NotificationProvider><TelegramViewport /><SessionExpiredBanner />{children}<Toaster /></NotificationProvider></AuthProvider></ThemeProvider></QueryClientProvider></ErrorBoundary>;
 }

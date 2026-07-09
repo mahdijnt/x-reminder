@@ -18,6 +18,7 @@ export interface SidebarProps {
   onToggleCollapse?: () => void;
   footer?: React.ReactNode;
   className?: string;
+  onNavigate?: () => void;
 }
 
 export function Sidebar({
@@ -28,13 +29,14 @@ export function Sidebar({
   onToggleCollapse,
   footer,
   className,
+  onNavigate,
 }: SidebarProps) {
   return (
     <m.aside
       layout
       transition={{ type: "spring", stiffness: 240, damping: 26, mass: 0.8 }}
       className={cn(
-        "glass-panel relative z-sidebar flex h-full min-h-[32rem] flex-col overflow-x-hidden overflow-y-auto rounded-[1.75rem] p-4 shadow-lg",
+        "glass-panel relative z-sidebar flex h-full min-h-0 max-h-[min(85dvh,100%)] flex-col overflow-x-hidden overflow-y-auto rounded-[1.75rem] p-4 shadow-lg lg:min-h-[32rem] lg:max-h-none",
         collapsed ? "w-20" : "w-full",
         className
       )}
@@ -48,25 +50,27 @@ export function Sidebar({
           <p className={cn("text-sm font-semibold text-foreground", collapsed && "sr-only")}>{title}</p>
           <p className={cn("text-xs text-muted-foreground", collapsed && "sr-only")}>{subtitle}</p>
         </m.div>
-        <Button
-          variant="ghost"
-          size="icon"
-          type="button"
-          onClick={onToggleCollapse}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="border border-white/8 bg-white/5 transition-all duration-300 hover:bg-white/10"
-        >
-          <m.span
-            animate={{ rotate: collapsed ? 180 : 0 }}
-            transition={{ duration: 0.28, ease: "easeOut" }}
-            className="inline-flex"
+        {onToggleCollapse ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            type="button"
+            onClick={onToggleCollapse}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="shrink-0 border border-white/8 bg-white/5 transition-all duration-300 hover:bg-white/10 max-sm:min-h-11 max-sm:min-w-11"
           >
-            {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
-          </m.span>
-        </Button>
+            <m.span
+              animate={{ rotate: collapsed ? 180 : 0 }}
+              transition={{ duration: 0.28, ease: "easeOut" }}
+              className="inline-flex"
+            >
+              {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+            </m.span>
+          </Button>
+        ) : null}
       </div>
 
-      <nav className="flex-1 space-y-2">
+      <nav className="flex-1 space-y-2" aria-label="Main navigation">
         {items.map((item, index) => (
           <m.div
             key={item.title}
@@ -76,8 +80,9 @@ export function Sidebar({
           >
             <Link
               href={item.href}
+              onClick={() => onNavigate?.()}
               className={cn(
-                "group relative flex items-center justify-between overflow-hidden rounded-xl px-3 py-2.5 text-sm transition-all duration-300",
+                "group relative flex min-h-11 items-center justify-between overflow-hidden rounded-xl px-3 py-2.5 text-sm transition-all duration-300 touch-manipulation",
                 item.active
                   ? "bg-primary/16 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_14px_30px_-24px_rgba(59,130,246,0.9)]"
                   : "text-muted-foreground hover:bg-white/7 hover:text-foreground"

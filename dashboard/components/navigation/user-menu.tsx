@@ -43,7 +43,7 @@ export function UserMenu({ user, imageSrc, actions = defaultActions }: UserMenuP
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-full">
+      <DropdownMenuTrigger className="inline-flex rounded-full p-0.5 touch-manipulation max-sm:min-h-11 max-sm:min-w-11 max-sm:items-center max-sm:justify-center">
         <Avatar className="h-10 w-10 cursor-pointer">
           {imageSrc ? <AvatarImage src={imageSrc} alt={user.name} /> : null}
           <AvatarFallback name={user.name} fallback={user.initials} />

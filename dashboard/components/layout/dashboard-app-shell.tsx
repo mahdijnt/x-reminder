@@ -82,14 +82,14 @@ export function DashboardAppShell({
   );
 
   return (
-    <div className="relative isolate min-h-screen overflow-x-hidden">
+    <div className="relative isolate min-h-screen min-h-[100dvh] overflow-x-hidden">
       <AuroraBackground className="z-aurora" />
       <GradientMesh className="z-aurora opacity-60" />
       <AnimatedLines className="z-aurora mix-blend-screen" />
 
       <div className="pointer-events-none absolute inset-0 z-aurora bg-[radial-gradient(circle_at_top,rgba(8,12,28,0.15),transparent_28%),linear-gradient(180deg,rgba(7,10,20,0.12),rgba(7,10,20,0.4))]" />
 
-      <div className="relative z-page-content mx-auto max-w-[1280px] space-y-4 p-4 md:p-5 lg:p-6">
+      <div className="relative z-page-content mx-auto max-w-[1280px] space-y-4 px-[max(1rem,var(--safe-area-left))] pb-[max(2rem,var(--safe-area-bottom))] pt-[max(1rem,var(--safe-area-top))] md:px-5 md:pb-5 md:pt-5 lg:px-6 lg:pb-6 lg:pt-6">
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(16rem,19rem)_1fr] lg:gap-5">
           <m.div
             layout
@@ -111,20 +111,21 @@ export function DashboardAppShell({
             />
           </m.div>
 
-          <div className="space-y-4 lg:space-y-5">
+          <div className="min-w-0 space-y-4 lg:space-y-5">
             <Navbar
               title={pageTitle}
               subtitle={pageSubtitle}
               user={user ?? apiUser!}
               notifications={notifications}
               onMenuClick={() => setMobileOpen(true)}
+              mobileNavOpen={mobileOpen}
               searchPlaceholder="Search within this page"
               onMarkAllNotificationsRead={markAllReadInMenu}
             />
 
             <TopNavigation items={topNavItems} />
 
-            <main id="main-content" className="pb-8" aria-label="Page content">
+            <main id="main-content" className="pb-8 outline-none" aria-label="Page content" tabIndex={-1}>
               {children}
             </main>
           </div>
@@ -134,12 +135,12 @@ export function DashboardAppShell({
       <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
         <DialogContent
           className={cn(
-            "max-w-[90vw] overflow-hidden border-white/10 p-2",
+            "max-h-[min(92dvh,calc(100dvh-var(--safe-area-top)-var(--safe-area-bottom)-0.5rem))] w-[min(20rem,calc(100vw-var(--safe-area-left)-var(--safe-area-right)-1rem))] max-w-[90vw] overflow-hidden overflow-y-auto border-white/10 p-2",
             "bg-glass/20 shadow-glow backdrop-blur-2xl"
           )}
         >
           <div className="p-1">
-            <Sidebar items={sidebarItems} collapsed={false} />
+            <Sidebar items={sidebarItems} collapsed={false} onNavigate={() => setMobileOpen(false)} className="min-h-0 max-h-none" />
           </div>
         </DialogContent>
       </Dialog>

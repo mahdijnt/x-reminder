@@ -1,10 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
 import "./globals.css";
 
 import { AppProviders } from "@/providers/app-providers";
 import { appConfig } from "@/config/app.config";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: { default: appConfig.name, template: `%s | ${appConfig.name}` },
@@ -18,8 +24,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen bg-background text-foreground antialiased">
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-background focus:px-3 focus:py-2 focus:text-sm">Skip to main content</a>
+      <body className="min-h-screen min-h-[100dvh] touch-manipulation overflow-x-hidden bg-background text-foreground antialiased">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-[max(1rem,var(--safe-area-top))] focus:z-50 focus:bg-background focus:px-3 focus:py-2 focus:text-sm">Skip to main content</a>
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

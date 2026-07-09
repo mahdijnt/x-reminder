@@ -30,7 +30,7 @@ export function DataTable<T>({
   className,
 }: DataTableProps<T>) {
   return (
-    <div className={cn("rounded-2xl border border-glass-border glass-surface p-2", className)}>
+    <div className={cn("rounded-2xl border border-glass-border glass-surface p-2 overflow-hidden", className)}>
       <Table>
         {caption ? <TableCaption>{caption}</TableCaption> : null}
         <TableHeader>

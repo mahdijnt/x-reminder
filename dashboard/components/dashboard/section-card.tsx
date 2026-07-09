@@ -31,12 +31,12 @@ export function SectionCard({
   return (
     <AnimatedCard hover={false}>
       <Card className={cn("card-premium rounded-[1.5rem] border-white/10", className)} {...props}>
-        <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0">
+        <CardHeader className="flex flex-col items-start justify-between gap-4 space-y-0 sm:flex-row">
           <div className="space-y-1">
             <CardTitle>{title}</CardTitle>
             {description ? <CardDescription>{description}</CardDescription> : null}
           </div>
-          {action}
+          {action ? <div className="w-full shrink-0 sm:w-auto">{action}</div> : null}
         </CardHeader>
         <CardContent className={contentClassName}>{children}</CardContent>
       </Card>

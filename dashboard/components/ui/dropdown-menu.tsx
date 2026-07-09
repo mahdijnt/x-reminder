@@ -142,7 +142,7 @@ export const DropdownMenuContent = React.forwardRef<
 >(({ className, align = "end", sideOffset = 8, style, ...props }, ref) => {
   const { open, setOpen, triggerRef } = useDropdownMenuContext();
   const contentRef = React.useRef<HTMLDivElement | null>(null);
-  const [position, setPosition] = React.useState({ top: 0, left: 0, minWidth: 192 });
+  const [position, setPosition] = React.useState({ top: 0, left: 0, minWidth: 192, maxHeight: 384 });
 
   const updatePosition = React.useCallback(() => {
     const trigger = triggerRef.current;
@@ -152,10 +152,27 @@ export const DropdownMenuContent = React.forwardRef<
     const minWidth = Math.max(rect.width, 192);
     const left = align === "end" ? rect.right - minWidth : rect.left;
 
+    const root = document.documentElement;
+    const safeTop = parseFloat(getComputedStyle(root).getPropertyValue("--safe-area-top")) || 0;
+    const safeBottom = parseFloat(getComputedStyle(root).getPropertyValue("--safe-area-bottom")) || 0;
+    const safeLeft = parseFloat(getComputedStyle(root).getPropertyValue("--safe-area-left")) || 0;
+    const safeRight = parseFloat(getComputedStyle(root).getPropertyValue("--safe-area-right")) || 0;
+    const viewportPadding = 8;
+    const maxHeight = Math.max(
+      160,
+      window.innerHeight - safeTop - safeBottom - viewportPadding * 2
+    );
+    let top = rect.bottom + sideOffset;
+    const estimatedHeight = Math.min(maxHeight, 384);
+    if (top + estimatedHeight > window.innerHeight - safeBottom - viewportPadding) {
+      top = Math.max(safeTop + viewportPadding, rect.top - sideOffset - estimatedHeight);
+    }
+
     setPosition({
-      top: rect.bottom + sideOffset,
-      left: Math.max(8, Math.min(left, window.innerWidth - minWidth - 8)),
+      top,
+      left: Math.max(safeLeft + viewportPadding, Math.min(left, window.innerWidth - minWidth - safeRight - viewportPadding)),
       minWidth,
+      maxHeight,
     });
   }, [align, sideOffset, triggerRef]);
 
@@ -203,11 +220,12 @@ export const DropdownMenuContent = React.forwardRef<
           top: position.top,
           left: position.left,
           minWidth: position.minWidth,
+          maxHeight: position.maxHeight,
           zIndex: "var(--z-dropdown)",
           ...style,
         }}
         className={cn(
-          "max-h-[min(24rem,calc(100vh-1rem))] overflow-y-auto overflow-x-hidden rounded-lg border border-glass-border bg-popover/95 p-1 text-popover-foreground shadow-glow backdrop-blur-xl animate-ds-in",
+          "overflow-y-auto overflow-x-hidden rounded-lg border border-glass-border bg-popover/95 p-1 text-popover-foreground shadow-glow backdrop-blur-xl animate-ds-in",
           className
         )}
         {...props}
@@ -251,7 +269,7 @@ export const DropdownMenuItem = React.forwardRef<
       type="button"
       role="menuitem"
       className={cn(
-        "relative flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm outline-none transition-colors hover:bg-secondary/60 hover:text-foreground disabled:pointer-events-none disabled:opacity-50",
+        "relative flex min-h-11 w-full items-center gap-2 rounded-md px-2 py-2 text-sm outline-none transition-colors hover:bg-secondary/60 hover:text-foreground focus-visible:bg-secondary/40 disabled:pointer-events-none disabled:opacity-50 touch-manipulation",
         inset && "pl-8",
         className
       )}

@@ -40,12 +40,12 @@ export function NotificationsMenu({ items, onMarkAllRead }: NotificationsMenuPro
           ) : null}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-[22rem]">
+      <DropdownMenuContent className="w-[min(22rem,calc(100vw-var(--safe-area-left)-var(--safe-area-right)-1.5rem))]">
         <DropdownMenuLabel className="flex items-center justify-between gap-3">
           <span>Notifications</span>
           <button
             type="button"
-            className="text-xs font-medium text-primary transition-colors hover:text-primary/80"
+            className="min-h-11 rounded-md px-2 text-xs font-medium text-primary transition-colors hover:text-primary/80 touch-manipulation"
             onClick={onMarkAllRead}
           >
             <span className="inline-flex items-center gap-1">
