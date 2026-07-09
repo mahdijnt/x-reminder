@@ -75,6 +75,9 @@ def main() -> int:
 
     _load_env_file(REPO_ROOT / ".env")
     _load_env_file(REPO_ROOT / ".env.local")
+    _load_env_file(REPO_ROOT / "backend" / ".env")
+    _load_env_file(REPO_ROOT / "dashboard" / ".env.local")
+    _load_env_file(REPO_ROOT / "telegram-bot" / ".env")
 
     missing: list[tuple[str, str]] = []
     weak: list[tuple[str, str]] = []

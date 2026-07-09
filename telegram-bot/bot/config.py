@@ -27,7 +27,13 @@ class Settings:
 
 def _load_env_files() -> None:
     repo_root = Path(__file__).resolve().parents[2]
-    for env_path in (repo_root / ".env", repo_root / ".env.local"):
+    bot_root = Path(__file__).resolve().parents[1]
+    for env_path in (
+        repo_root / ".env",
+        repo_root / ".env.local",
+        bot_root / ".env",
+        bot_root / ".env.local",
+    ):
         if not env_path.exists():
             continue
         for raw_line in env_path.read_text(encoding="utf-8").splitlines():

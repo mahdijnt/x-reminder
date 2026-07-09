@@ -22,6 +22,7 @@ function loadEnvFile(filePath) {
 
 loadEnvFile(path.join(repoRoot, ".env"));
 loadEnvFile(path.join(repoRoot, ".env.local"));
+loadEnvFile(path.join(repoRoot, "dashboard", ".env.local"));
 
 const required = ["NEXT_PUBLIC_API_BASE_URL", "NEXT_PUBLIC_APP_URL"];
 const missing = required.filter((key) => !process.env[key]);

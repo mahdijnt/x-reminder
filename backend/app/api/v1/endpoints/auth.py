@@ -40,7 +40,7 @@ async def x_callback(
 ) -> RedirectResponse:
     app_user_id_resolved, _stored, username = await oauth_service.handle_callback(code, state)
     session = await auth_service.create_x_session(app_user_id_resolved, remember_me=True, x_username=username)
-    frontend_base = settings.CORS_ORIGINS[0] if settings.CORS_ORIGINS else "http://localhost:3000"
+    frontend_base = settings.FRONTEND_URL or (settings.CORS_ORIGINS[0] if settings.CORS_ORIGINS else "http://localhost:3000")
     redirect_url = f"{frontend_base.rstrip('/')}/login?x_auth=success"
     response = RedirectResponse(url=redirect_url, status_code=302)
     max_age = 60 * 60 * 24 * 30

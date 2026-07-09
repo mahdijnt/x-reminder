@@ -153,23 +153,7 @@ class AuthService:
             role = str(record.get("role", "user"))
             name = str(record.get("name", email.split("@", 1)[0]))
         else:
-            if not email or not password:
-                raise HTTPException(status_code=401, detail="Invalid email or password")
-            role = "admin" if email.startswith("admin") else "user"
-            name = email.split("@", 1)[0].replace(".", " ").replace("_", " ").title()
-            salt = secrets.token_hex(16)
-            await self._save_user_record(
-                user_id,
-                {
-                    "user_id": user_id,
-                    "email": email,
-                    "name": name,
-                    "role": role,
-                    "password_hash": self._hash_password(password, salt),
-                    "password_salt": salt,
-                    "created_at": datetime.now(timezone.utc).isoformat(),
-                },
-            )
+            raise HTTPException(status_code=401, detail="Invalid email or password")
         user = self._user_payload(user_id, email=email, name=name, role=role)
         user = await self._enrich_with_x_profile(user_id, user)
         token, expires_at = make_access_token(user_id=user_id, role=role, remember_me=remember_me, secret=self._settings.SECRET_KEY)

@@ -19,9 +19,12 @@ class Environment(str, Enum):
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
+BACKEND_ROOT = Path(__file__).resolve().parents[2]
 ENV_FILES = (
     REPO_ROOT / ".env",
     REPO_ROOT / ".env.local",
+    BACKEND_ROOT / ".env",
+    BACKEND_ROOT / ".env.local",
     Path(".env"),
     Path(".env.local"),
 )
@@ -45,6 +48,9 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api/v1"
     SECRET_KEY: str = Field(default="change-me-in-production", min_length=8)
     JWT_SECRET: str | None = None
+    FRONTEND_URL: str = "http://localhost:3000"
+
+    DATABASE_URL: str | None = None
 
     CORS_ORIGINS: list[str] = Field(default_factory=lambda: ["http://localhost:3000"])
     CORS_ALLOW_CREDENTIALS: bool = True
@@ -83,7 +89,9 @@ class Settings(BaseSettings):
     X_BEARER_TOKEN: str = ""
     X_API_KEY: str = ""
     X_API_SECRET: str = ""
-    X_CALLBACK_URL: str = "http://localhost:8000/api/v1/x/oauth/callback"
+    X_ACCESS_TOKEN: str = ""
+    X_ACCESS_TOKEN_SECRET: str = ""
+    X_CALLBACK_URL: str = "http://localhost:3000/api/auth/x/callback"
     X_API_BASE_URL: str = "https://api.twitter.com"
     X_OAUTH_AUTHORIZE_URL: str = "https://twitter.com/i/oauth2/authorize"
     X_OAUTH_TOKEN_URL: str = "https://api.twitter.com/2/oauth2/token"

@@ -45,6 +45,16 @@ async def test_auth_register_and_login_round_trip():
 
 
 @pytest.mark.asyncio
+async def test_auth_login_rejects_unknown_user():
+  settings = Settings(SECRET_KEY="test-secret-key-32-characters!!", REDIS_ENABLED=False)
+  auth = AuthService(settings, _MemorySessionStore(), _MemoryTokenStore())
+
+  with pytest.raises(HTTPException) as exc:
+    await auth.login("unknown@example.com", "password123")
+  assert exc.value.status_code == 401
+
+
+@pytest.mark.asyncio
 async def test_auth_login_rejects_invalid_password():
   settings = Settings(SECRET_KEY="test-secret-key-32-characters!!", REDIS_ENABLED=False)
   auth = AuthService(settings, _MemorySessionStore(), _MemoryTokenStore())
