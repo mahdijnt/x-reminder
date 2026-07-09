@@ -3,8 +3,8 @@
 from fastapi import APIRouter
 
 from app.api.v1.controllers.health_controller import HealthController
-from app.core.dependencies import HealthServiceDep, RedisHealthServiceDep
-from app.schemas.health import HealthData, RedisHealthData
+from app.core.dependencies import HealthServiceDep, QdrantHealthServiceDep, RedisHealthServiceDep
+from app.schemas.health import HealthData, QdrantHealthData, RedisHealthData
 from app.schemas.responses import APIResponse
 
 router = APIRouter(tags=["health"])
@@ -31,3 +31,16 @@ async def redis_health_check(service: RedisHealthServiceDep) -> APIResponse[Redi
     data = await service.get_health()
     message = "Redis is connected" if data.connected else "Redis is unavailable"
     return APIResponse.ok(data=data, message=message)
+
+
+@router.get(
+    "/health/qdrant",
+    response_model=APIResponse[QdrantHealthData],
+    summary="Qdrant health check",
+    description="Returns Qdrant connectivity, latency, and collection vector counts.",
+)
+async def qdrant_health_check(service: QdrantHealthServiceDep) -> APIResponse[QdrantHealthData]:
+    data = await service.get_health()
+    message = "Qdrant is connected" if data.connected else "Qdrant is unavailable"
+    return APIResponse.ok(data=data, message=message)
+

@@ -23,6 +23,7 @@ from app.services.analytics_service import AnalyticsService
 from app.services.cache_service import CacheService
 from app.services.health_service import HealthService
 from app.services.redis_health_service import RedisHealthService
+from app.services.qdrant_health_service import QdrantHealthService
 from app.services.watch_list_service import WatchListService
 from app.services.x_oauth_service import XOAuthService
 from app.services.x_profile_service import XProfileService
@@ -36,6 +37,8 @@ from app.repositories.qdrant_repository import QdrantRepository
 from app.services.conversation_memory_service import ConversationMemoryService
 from app.services.interest_detection_service import InterestDetectionService
 from app.services.relationship_scoring_service import RelationshipScoringService
+from app.services.account_memory_service import AccountMemoryService
+from app.services.similarity_search_service import SimilaritySearchService
 from app.services.semantic_search_service import SemanticSearchService
 from app.services.smart_search_service import SmartSearchService
 from app.services.topic_detection_service import TopicDetectionService
@@ -113,8 +116,12 @@ async def get_interest_detection_service(
     yield InterestDetectionService(settings, repository, topics)
 
 
-async def get_relationship_scoring_service(settings: SettingsDep) -> AsyncGenerator[RelationshipScoringService, None]:
-    yield RelationshipScoringService(settings)
+async def get_relationship_scoring_service(
+    settings: SettingsDep,
+    repository: Annotated[QdrantRepository, Depends(get_qdrant_repository)],
+    embeddings: Annotated[EmbeddingsService, Depends(get_embeddings_service)],
+) -> AsyncGenerator[RelationshipScoringService, None]:
+    yield RelationshipScoringService(settings, repository, embeddings)
 
 
 async def get_tweet_memory_service(
@@ -131,6 +138,30 @@ async def get_conversation_memory_service(
     embeddings: Annotated[EmbeddingsService, Depends(get_embeddings_service)],
 ) -> AsyncGenerator[ConversationMemoryService, None]:
     yield ConversationMemoryService(settings, repository, embeddings)
+
+
+async def get_account_memory_service(
+    settings: SettingsDep,
+    repository: Annotated[QdrantRepository, Depends(get_qdrant_repository)],
+    embeddings: Annotated[EmbeddingsService, Depends(get_embeddings_service)],
+) -> AsyncGenerator[AccountMemoryService, None]:
+    yield AccountMemoryService(settings, repository, embeddings)
+
+
+async def get_similarity_search_service(
+    settings: SettingsDep,
+    repository: Annotated[QdrantRepository, Depends(get_qdrant_repository)],
+    embeddings: Annotated[EmbeddingsService, Depends(get_embeddings_service)],
+    tweet_memory: Annotated[TweetMemoryService, Depends(get_tweet_memory_service)],
+) -> AsyncGenerator[SimilaritySearchService, None]:
+    yield SimilaritySearchService(settings, repository, embeddings, tweet_memory)
+
+
+async def get_qdrant_health_service(
+    settings: SettingsDep,
+    manager: QdrantManagerDep,
+) -> AsyncGenerator[QdrantHealthService, None]:
+    yield QdrantHealthService(settings, manager)
 
 
 async def get_recommendation_engine() -> AsyncGenerator[StubRecommendationEngine, None]:
@@ -345,4 +376,7 @@ InterestDetectionServiceDep = Annotated[InterestDetectionService, Depends(get_in
 RelationshipScoringServiceDep = Annotated[RelationshipScoringService, Depends(get_relationship_scoring_service)]
 TweetMemoryServiceDep = Annotated[TweetMemoryService, Depends(get_tweet_memory_service)]
 ConversationMemoryServiceDep = Annotated[ConversationMemoryService, Depends(get_conversation_memory_service)]
+AccountMemoryServiceDep = Annotated[AccountMemoryService, Depends(get_account_memory_service)]
+SimilaritySearchServiceDep = Annotated[SimilaritySearchService, Depends(get_similarity_search_service)]
+QdrantHealthServiceDep = Annotated[QdrantHealthService, Depends(get_qdrant_health_service)]
 RecommendationEngineDep = Annotated[StubRecommendationEngine, Depends(get_recommendation_engine)]

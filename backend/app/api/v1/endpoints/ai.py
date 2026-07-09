@@ -5,19 +5,23 @@ from __future__ import annotations
 from fastapi import APIRouter, Query
 
 from app.core.dependencies import (
+    AccountMemoryServiceDep,
     InterestDetectionServiceDep,
     RelationshipScoringServiceDep,
+    SimilaritySearchServiceDep,
     SmartSearchServiceDep,
     TopicDetectionServiceDep,
     TweetMemoryServiceDep,
     RecommendationEngineDep,
 )
 from app.schemas.ai import (
+    AccountStoreRequest,
     InterestProfile,
     RecommendationsResponse,
     RelationshipScore,
     SearchResponse,
     SearchType,
+    SimilarityResponse,
     TopicResult,
     TweetStoreRequest,
 )
@@ -71,6 +75,33 @@ async def relationship_score(
 async def store_tweet_embedding(body: TweetStoreRequest, service: TweetMemoryServiceDep):
     await service.store_tweet(body)
     return APIResponse.ok(data={"stored": True, "tweet_id": body.tweet_id})
+
+
+
+
+@router.get("/similar", response_model=APIResponse[SimilarityResponse])
+async def similar_search(
+    service: SimilaritySearchServiceDep,
+    q: str = Query(min_length=1),
+    target: SearchType = SearchType.TWEETS,
+    user_id: str | None = None,
+    limit: int = Query(default=10, ge=1, le=50),
+    score_threshold: float | None = None,
+):
+    data = await service.find_similar(
+        q,
+        target=target,
+        user_id=user_id,
+        limit=limit,
+        score_threshold=score_threshold,
+    )
+    return APIResponse.ok(data=data)
+
+
+@router.post("/accounts/store", response_model=APIResponse[dict])
+async def store_account_embedding(body: AccountStoreRequest, service: AccountMemoryServiceDep):
+    await service.store_account(body)
+    return APIResponse.ok(data={"stored": True, "user_id": body.user_id})
 
 
 @router.get("/recommendations/{user_id}", response_model=APIResponse[RecommendationsResponse])

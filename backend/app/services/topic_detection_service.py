@@ -24,7 +24,7 @@ class TopicDetectionService:
         lowered = text.lower()
         found: list[str] = []
         for topic, keywords in _TOPIC_KEYWORDS.items():
-            if any(re.search(rf"\\b{re.escape(kw)}\\b", lowered) for kw in keywords):
+            if any(re.search(rf"\b{re.escape(kw)}\b", lowered) for kw in keywords):
                 found.append(topic)
         if found:
             return found

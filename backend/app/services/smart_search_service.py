@@ -60,7 +60,7 @@ class SmartSearchService:
     def _keyword_fallback(self, query: str, search_type: SearchType, limit: int):
         from app.schemas.ai import SearchHit
 
-        tokens = [t for t in re.split(r"\\W+", query.lower()) if t]
+        tokens = [t for t in re.split(r"\W+", query.lower()) if t]
         text = " ".join(tokens) or query
         hit = SearchHit(
             type=search_type if search_type != SearchType.ALL else SearchType.TWEETS,

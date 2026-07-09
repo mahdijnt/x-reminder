@@ -34,3 +34,18 @@ class RedisHealthData(BaseModel):
     pool: dict[str, Any] | RedisPoolStatus
     server_version: str | None = None
     detail: str | None = None
+
+class QdrantCollectionStatus(BaseModel):
+    name: str
+    status: str | None = None
+    vectors_count: int | None = None
+    points_count: int | None = None
+
+
+class QdrantHealthData(BaseModel):
+    connected: bool
+    enabled: bool
+    latency_ms: float | None = None
+    collections: list[QdrantCollectionStatus] = Field(default_factory=list)
+    detail: str | None = None
+

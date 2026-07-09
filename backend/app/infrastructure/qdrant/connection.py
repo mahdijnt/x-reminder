@@ -171,6 +171,67 @@ class QdrantManager:
             self._client = None
         self._collection_count = None
 
+
+    async def health_snapshot(self) -> dict:
+        """Connection latency and per-collection vector counts."""
+        import time
+
+        if not self._settings.QDRANT_ENABLED:
+            return {
+                "connected": False,
+                "latency_ms": None,
+                "collections": [],
+                "detail": "QDRANT_ENABLED=false",
+            }
+
+        if not self.is_connected:
+            await self.connect()
+        if not self.is_connected or self._client is None:
+            return {
+                "connected": False,
+                "latency_ms": None,
+                "collections": [],
+                "detail": "Qdrant client is not connected",
+            }
+
+        started = time.perf_counter()
+        connected = await self.ping()
+        latency_ms = round((time.perf_counter() - started) * 1000, 2)
+        collections: list[dict] = []
+        detail: str | None = None
+
+        if connected:
+            client = self._client
+            assert client is not None
+            names = [
+                self._settings.QDRANT_COLLECTION_TWEETS,
+                self._settings.QDRANT_COLLECTION_ACCOUNTS,
+                self._settings.QDRANT_COLLECTION_CONVERSATIONS,
+            ]
+            for name in names:
+                try:
+                    info = await client.get_collection(name)
+                    collections.append(
+                        {
+                            "name": name,
+                            "status": str(getattr(info.status, "value", info.status)),
+                            "vectors_count": getattr(info, "vectors_count", None),
+                            "points_count": getattr(info, "points_count", None),
+                        }
+                    )
+                except Exception as exc:
+                    collections.append(
+                        {"name": name, "status": "missing", "vectors_count": None, "points_count": None}
+                    )
+                    detail = detail or f"collection_error={exc}"
+
+        return {
+            "connected": connected,
+            "latency_ms": latency_ms if connected else None,
+            "collections": collections,
+            "detail": detail if not connected else detail,
+        }
+
     async def __aenter__(self) -> "QdrantManager":
         await self.connect()
         return self

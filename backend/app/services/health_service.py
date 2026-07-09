@@ -88,12 +88,21 @@ class HealthService:
                 )
                 overall = "degraded"
             else:
-                qdrant_ok = await self._qdrant_manager.ping()
+                snapshot = await self._qdrant_manager.health_snapshot()
+                qdrant_ok = snapshot.get("connected", False)
                 if qdrant_ok:
-                    count = self._qdrant_manager.collection_count
+                    latency = snapshot.get("latency_ms")
+                    collections = snapshot.get("collections") or []
+                    vector_total = sum(
+                        int(c.get("vectors_count") or c.get("points_count") or 0)
+                        for c in collections
+                    )
                     checks["qdrant"] = HealthCheckItem(
                         status="ok",
-                        detail=f"collections={count if count is not None else 'unknown'}",
+                        detail=(
+                            f"latency_ms={latency}; collections={len(collections)}; "
+                            f"vectors_total={vector_total}"
+                        ),
                     )
                 else:
                     checks["qdrant"] = HealthCheckItem(

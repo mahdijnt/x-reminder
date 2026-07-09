@@ -62,3 +62,16 @@ class RecommendationsResponse(BaseModel):
     user_id: str
     items: list[dict[str, Any]] = Field(default_factory=list)
     source: str = "stub"
+
+
+class AccountStoreRequest(BaseModel):
+    user_id: str
+    username: str | None = None
+    bio: str | None = None
+
+
+class SimilarityResponse(BaseModel):
+    query: str
+    target: SearchType
+    hits: list[SearchHit] = Field(default_factory=list)
+

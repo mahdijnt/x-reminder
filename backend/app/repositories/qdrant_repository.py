@@ -156,5 +156,38 @@ class QdrantRepository:
     return qmodels.Filter(must=conditions)
 
 
+  async def scroll(
+    self,
+    collection: str,
+    *,
+    limit: int = 50,
+    filters: qmodels.Filter | None = None,
+  ) -> list[dict[str, Any]]:
+    if not self._settings.QDRANT_ENABLED:
+      return []
+
+    async def _op(client):
+      points, _ = await client.scroll(
+        collection_name=collection,
+        scroll_filter=filters,
+        limit=limit,
+        with_payload=True,
+        with_vectors=False,
+      )
+      return points
+
+    try:
+      points = await self._manager.execute(_op)
+    except QdrantUnavailableError:
+      return []
+
+    results: list[dict[str, Any]] = []
+    for point in points:
+      payload = dict(point.payload or {})
+      payload["id"] = str(point.id)
+      results.append(payload)
+    return results
+
+
 def _point_uuid(point_id: str) -> str:
   return str(uuid.uuid5(uuid.NAMESPACE_URL, point_id))
