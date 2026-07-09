@@ -5,7 +5,6 @@ import type {
   UserProfile,
   StatDatum,
   ProgressDatum,
-  TableColumn,
   SampleRow,
   ChartPoint,
   WatchListRow,
@@ -23,7 +22,6 @@ export type {
   UserProfile,
   StatDatum,
   ProgressDatum,
-  TableColumn,
   SampleRow,
   ChartPoint,
   WatchListRow,
@@ -477,3 +475,4 @@ export const analyticsTopTweetRows: AnalyticsTweetRow[] = [
     state: "Low",
   },
 ];
+
